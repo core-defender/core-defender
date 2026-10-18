@@ -1,0 +1,17 @@
+{
+  "key.categories.coredefender": "Core Defender",
+  "key.coredefender.menu": "Open Defense Menu",
+  "screen.coredefender.menu": "Core Defender",
+  "screen.coredefender.worlds": "Worlds",
+  "screen.coredefender.core": "Core",
+  "screen.coredefender.core_broken": "Destroyed",
+  "screen.coredefender.repair_cost": "Repair",
+  "screen.coredefender.remaining": "Enemies left %s / %s",
+  "screen.coredefender.enemies": "Enemies",
+  "screen.coredefender.elite": "Elite",
+  "screen.coredefender.rewards": "Rewards (per player)",
+  "screen.coredefender.start": "Start Wave",
+  "screen.coredefender.repair": "Repair Core",
+  "screen.coredefender.enter": "Enter",
+  "screen.coredefender.leave": "Leave"
+}

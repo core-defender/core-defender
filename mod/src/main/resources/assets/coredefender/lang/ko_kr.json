@@ -1,0 +1,17 @@
+{
+  "key.categories.coredefender": "Core Defender",
+  "key.coredefender.menu": "디펜스 메뉴 열기",
+  "screen.coredefender.menu": "Core Defender",
+  "screen.coredefender.worlds": "월드",
+  "screen.coredefender.core": "코어",
+  "screen.coredefender.core_broken": "파괴됨",
+  "screen.coredefender.repair_cost": "복구 비용",
+  "screen.coredefender.remaining": "남은 적 %s / %s",
+  "screen.coredefender.enemies": "적 구성",
+  "screen.coredefender.elite": "정예",
+  "screen.coredefender.rewards": "보상 (1인당)",
+  "screen.coredefender.start": "웨이브 시작",
+  "screen.coredefender.repair": "코어 복구",
+  "screen.coredefender.enter": "입장",
+  "screen.coredefender.leave": "나가기"
+}
