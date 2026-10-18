@@ -8,4 +8,7 @@ public interface CoreDefenderKubeEvents {
 
     /** CoreDefenderEvents.menuAction(event => { event.player, event.action, event.arg }) */
     EventHandler MENU_ACTION = GROUP.server("menuAction", () -> MenuActionKubeEvent.class);
+
+    /** CoreDefenderEvents.wallCollapsed(event => { event.server, event.segment }) */
+    EventHandler WALL_COLLAPSED = GROUP.server("wallCollapsed", () -> WallCollapsedKubeEvent.class);
 }

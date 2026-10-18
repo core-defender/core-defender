@@ -13,5 +13,8 @@
   "screen.coredefender.start": "웨이브 시작",
   "screen.coredefender.repair": "코어 복구",
   "screen.coredefender.enter": "입장",
-  "screen.coredefender.leave": "나가기"
+  "screen.coredefender.leave": "나가기",
+  "block.coredefender.core": "코어",
+  "block.coredefender.wall": "성벽",
+  "message.coredefender.wall_collapsed": "성벽 구간 %s 이(가) 붕괴했습니다!"
 }

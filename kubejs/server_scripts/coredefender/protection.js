@@ -1,8 +1,8 @@
-// 디펜스 차원 건축/파괴 금지. 크리에이티브 플레이어(맵 제작용)는 예외.
-// TODO: 포탑 받침대/대형 슬롯 구역에서는 허용 블록만 설치 가능하도록 확장
+// v2 프로토타입 차원(world_1) 건축/파괴 금지. 크리에이티브 플레이어(맵 제작용)는 예외.
+// v3 디펜스 차원(coredefender:defense)의 건설 규칙(성벽 안 자유/밖 금지)은 coredefender 모드가 처리한다.
 
 function cdIsDefenseLevel(level) {
-  return String(level.dimension).startsWith('coredefender:')
+  return String(level.dimension) == 'coredefender:world_1'
 }
 
 function cdBlocksEdit(player) {

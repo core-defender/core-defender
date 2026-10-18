@@ -13,5 +13,8 @@
   "screen.coredefender.start": "Start Wave",
   "screen.coredefender.repair": "Repair Core",
   "screen.coredefender.enter": "Enter",
-  "screen.coredefender.leave": "Leave"
+  "screen.coredefender.leave": "Leave",
+  "block.coredefender.core": "Core",
+  "block.coredefender.wall": "Castle Wall",
+  "message.coredefender.wall_collapsed": "Wall segment %s has collapsed!"
 }

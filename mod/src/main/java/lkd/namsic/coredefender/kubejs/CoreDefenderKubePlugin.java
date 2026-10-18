@@ -13,5 +13,6 @@ public class CoreDefenderKubePlugin implements KubeJSPlugin {
     @Override
     public void registerBindings(BindingRegistry bindings) {
         bindings.add("CoreDefenderUI", CoreDefenderUI.class);
+        bindings.add("CoreDefenderWall", CoreDefenderWall.class);
     }
 }

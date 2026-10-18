@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "broken=false": { "model": "coredefender:block/wall" },
+    "broken=true": { "model": "coredefender:block/wall_broken" }
+  }
+}
