@@ -3,6 +3,7 @@ package lkd.namsic.coredefender.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import lkd.namsic.coredefender.CoreDefender;
 import lkd.namsic.coredefender.network.MenuActionPayload;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -13,12 +14,10 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-public final class ClientEvents {
+@UtilityClass
+public class ClientEvents {
     public static final KeyMapping MENU_KEY = new KeyMapping(
             "key.coredefender.menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.categories.coredefender");
-
-    private ClientEvents() {
-    }
 
     @EventBusSubscriber(modid = CoreDefender.MOD_ID, value = Dist.CLIENT)
     public static final class ModBus {

@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender.wall;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -12,6 +14,8 @@ public class WallState extends SavedData {
     public static final String ID = "coredefender_wall";
     public static final Factory<WallState> FACTORY = new Factory<>(WallState::new, WallState::load);
 
+    @Getter
+    @Accessors(fluent = true)
     boolean built;
     int centerX;
     int centerZ;
@@ -19,25 +23,36 @@ public class WallState extends SavedData {
     int half = 1;
     int height = 5;
     int thickness = 2;
+    /** 변(N/E/S/W)별 강화 단계. 확장해도 유지된다. */
+    final int[] sideLevels = new int[WallGeometry.SIDES.length];
+    @Getter
+    @Accessors(fluent = true)
     final Map<String, WallSegment> segments = new LinkedHashMap<>();
 
-    public boolean built() {
-        return built;
-    }
 
     public WallGeometry geometry() {
         return new WallGeometry(centerX, centerZ, baseY, half, height, thickness);
     }
 
-    public Map<String, WallSegment> segments() {
-        return segments;
+
+    public int sideLevel(String side) {
+        return sideLevels[sideIndex(side)];
     }
 
-    /** 현재 크기에 맞춰 구간을 새로 만든다 (기존 구간 정보는 버림) */
-    void resetSegments(int maxHp) {
+    static int sideIndex(String side) {
+        for (int i = 0; i < WallGeometry.SIDES.length; i++) {
+            if (WallGeometry.SIDES[i].equals(side)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Unknown wall side: " + side);
+    }
+
+    /** 현재 크기에 맞춰 구간을 새로 만든다 (기존 구간 HP 는 버리고 변별 강화 단계는 유지) */
+    void resetSegments() {
         segments.clear();
         for (String id : geometry().segmentIds()) {
-            segments.put(id, new WallSegment(maxHp));
+            segments.put(id, new WallSegment(WallManager.segmentMaxHp(sideLevel(id.substring(0, 1)))));
         }
     }
 
@@ -50,6 +65,7 @@ public class WallState extends SavedData {
         tag.putInt("half", half);
         tag.putInt("height", height);
         tag.putInt("thickness", thickness);
+        tag.putIntArray("sideLevels", sideLevels);
         CompoundTag segmentsTag = new CompoundTag();
         segments.forEach((id, segment) -> segmentsTag.put(id, segment.save()));
         tag.put("segments", segmentsTag);
@@ -65,6 +81,8 @@ public class WallState extends SavedData {
         state.half = tag.getInt("half");
         state.height = tag.getInt("height");
         state.thickness = tag.getInt("thickness");
+        int[] levels = tag.getIntArray("sideLevels");
+        System.arraycopy(levels, 0, state.sideLevels, 0, Math.min(levels.length, state.sideLevels.length));
         CompoundTag segmentsTag = tag.getCompound("segments");
         for (String id : segmentsTag.getAllKeys()) {
             state.segments.put(id, WallSegment.load(segmentsTag.getCompound(id)));

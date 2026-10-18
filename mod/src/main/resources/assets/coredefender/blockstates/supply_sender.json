@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "coredefender:block/supply_sender"
+    }
+  }
+}

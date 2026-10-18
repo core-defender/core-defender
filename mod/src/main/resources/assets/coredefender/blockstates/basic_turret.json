@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "coredefender:block/basic_turret"
+    }
+  }
+}

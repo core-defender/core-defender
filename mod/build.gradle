@@ -13,6 +13,7 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
+    mavenCentral()
     maven {
         name = 'LatvianModder'
         url = 'https://maven.latvian.dev/releases'
@@ -40,6 +41,9 @@ neoForge {
 }
 
 dependencies {
+    compileOnly "org.projectlombok:lombok:${lombok_version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+
     // KubeJS 브리지(플러그인/바인딩/이벤트). 런타임에는 모드팩의 KubeJS 를 사용한다.
     compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}") { transitive = false }
     compileOnly("dev.latvian.mods:rhino:${rhino_version}") { transitive = false }

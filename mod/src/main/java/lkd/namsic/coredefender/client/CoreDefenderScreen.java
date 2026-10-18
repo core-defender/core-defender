@@ -19,20 +19,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Core Defender 메뉴. 표시할 내용은 전부 서버(KubeJS)가 보낸 상태 JSON 에서 온다.
+ * Core Defender 관리 화면. 표시할 내용은 전부 서버(KubeJS)가 보낸 상태 JSON 에서 온다.
  * <p>
  * 상태 JSON 구조는 kubejs/server_scripts/coredefender/menu.js 의 cdBuildMenuState 참고.
  */
 public class CoreDefenderScreen extends Screen {
-    private static final int WIDTH = 320;
-    private static final int HEIGHT = 204;
-    private static final int SIDEBAR = 96;
+    private static final int WIDTH = 360;
+    private static final int HEIGHT = 222;
+    private static final int SIDEBAR = 120;
     private static final int REFRESH_INTERVAL = 20;
+    private static final String[] SIDES = {"N", "E", "S", "W"};
 
     private static final int COLOR_PANEL = 0xF0141821;
     private static final int COLOR_SIDEBAR = 0xF01B2030;
@@ -41,15 +43,22 @@ public class CoreDefenderScreen extends Screen {
     private static final int COLOR_TEXT = 0xFFE0E0E0;
     private static final int COLOR_MUTED = 0xFF9AA0B4;
     private static final int COLOR_TITLE = 0xFFFFC94D;
+    private static final int COLOR_GOOD = 0xFF4CC26B;
+    private static final int COLOR_WARN = 0xFFE0B23A;
+    private static final int COLOR_BAD = 0xFFD9443A;
 
     private JsonObject state;
     private int left;
     private int top;
     private int refreshTicks;
-    /** 툴팁 표시용으로 이번 프레임에 그린 아이템 위치 */
+    /** 툴팁 표시용으로 이번 프레임에 그린 아이템/구간 위치 */
     private final List<ItemSlot> itemSlots = new ArrayList<>();
+    private final List<TextSlot> textSlots = new ArrayList<>();
 
     private record ItemSlot(ItemStack stack, int x, int y) {
+    }
+
+    private record TextSlot(Component text, int x, int y, int w, int h) {
     }
 
     public CoreDefenderScreen(String json) {
@@ -80,29 +89,30 @@ public class CoreDefenderScreen extends Screen {
     protected void init() {
         left = (width - WIDTH) / 2;
         top = (height - HEIGHT) / 2;
-
-        initWorldButtons();
+        initSideUpgradeButtons();
         initActionButtons();
+        addRenderableWidget(Button.builder(Component.translatable("screen.coredefender.storage"), b -> send("storage", ""))
+                .bounds(left + 8, top + HEIGHT - 26, SIDEBAR - 16, 20)
+                .build());
     }
 
-    private void initWorldButtons() {
-        int y = top + 22;
-        for (JsonElement el : array(state, "worlds")) {
-            JsonObject world = el.getAsJsonObject();
-            String id = str(world, "id");
-            boolean unlocked = bool(world, "unlocked");
-            boolean current = bool(world, "current");
+    private int columnX(int column) {
+        return left + 8 + column * 27;
+    }
 
-            Button button = Button.builder(Component.literal(str(world, "name")), b -> {
-                        send("enter", id);
-                        onClose();
-                    })
-                    .bounds(left + 6, y, SIDEBAR - 12, 18)
-                    .tooltip(Tooltip.create(Component.literal(str(world, "status"))))
+    /** 변별 강화 버튼 (성벽 격자 각 열 위) */
+    private void initSideUpgradeButtons() {
+        JsonArray sides = array(obj(state, "wall"), "sides");
+        for (int c = 0; c < SIDES.length; c++) {
+            JsonObject side = findSide(sides, SIDES[c]);
+            JsonObject upgrade = obj(side, "upgrade");
+            String sideId = SIDES[c];
+            Button button = Button.builder(Component.literal("▲"), b -> send("upgrade", sideId))
+                    .bounds(columnX(c), top + 32, 24, 12)
+                    .tooltip(Tooltip.create(costTooltip(upgrade, Component.translatable("screen.coredefender.upgrade"))))
                     .build();
-            button.active = unlocked && !current;
+            button.active = bool(upgrade, "enabled");
             addRenderableWidget(button);
-            y += 22;
         }
     }
 
@@ -110,43 +120,59 @@ public class CoreDefenderScreen extends Screen {
         int x = left + SIDEBAR + 6;
         int y = top + HEIGHT - 26;
         int gap = 4;
-        int buttonWidth = (WIDTH - SIDEBAR - 12 - gap * 2) / 3;
+        int buttonWidth = (WIDTH - SIDEBAR - 12 - gap * 3) / 4;
 
-        JsonObject start = obj(state, "start");
-        Button startButton = Button.builder(Component.translatable("screen.coredefender.start"), b -> send("start", ""))
-                .bounds(x, y, buttonWidth, 20)
-                .build();
-        startButton.active = bool(start, "enabled");
-        if (!startButton.active && !str(start, "reason").isEmpty()) {
-            startButton.setTooltip(Tooltip.create(Component.literal(str(start, "reason"))));
-        }
-        addRenderableWidget(startButton);
+        addAction(x, y, buttonWidth, "start", "screen.coredefender.start", obj(state, "start"), null);
+        addAction(x + (buttonWidth + gap), y, buttonWidth, "repair", "screen.coredefender.repair", obj(state, "repair"),
+                costTooltip(obj(state, "repair"), Component.translatable("screen.coredefender.repair")));
+        addAction(x + (buttonWidth + gap) * 2, y, buttonWidth, "expand", "screen.coredefender.expand", obj(state, "expand"),
+                costTooltip(obj(state, "expand"), Component.translatable("screen.coredefender.expand")));
 
-        JsonObject repair = obj(state, "repair");
-        Button repairButton = Button.builder(Component.translatable("screen.coredefender.repair"), b -> send("repair", ""))
-                .bounds(x + buttonWidth + gap, y, buttonWidth, 20)
-                .build();
-        repairButton.active = bool(repair, "enabled");
-        if (!str(repair, "reason").isEmpty()) {
-            repairButton.setTooltip(Tooltip.create(Component.literal(str(repair, "reason"))));
-        }
-        addRenderableWidget(repairButton);
-
-        JsonObject travel = obj(state, "travel");
-        String action = str(travel, "action");
-        Button travelButton = Button.builder(Component.translatable("screen.coredefender." + ("leave".equals(action) ? "leave" : "enter")), b -> {
-                    send(action, str(travel, "world"));
+        String travel = str(obj(state, "travel"), "action");
+        Button travelButton = Button.builder(Component.translatable("screen.coredefender." + ("leave".equals(travel) ? "leave" : "enter")), b -> {
+                    send(travel, "");
                     onClose();
                 })
-                .bounds(x + (buttonWidth + gap) * 2, y, buttonWidth, 20)
+                .bounds(x + (buttonWidth + gap) * 3, y, buttonWidth, 20)
                 .build();
-        travelButton.active = !action.isEmpty();
+        travelButton.active = !travel.isEmpty();
         addRenderableWidget(travelButton);
+    }
+
+    private void addAction(int x, int y, int w, String action, String labelKey, JsonObject info, @Nullable Component tooltip) {
+        Button button = Button.builder(Component.translatable(labelKey), b -> send(action, ""))
+                .bounds(x, y, w, 20)
+                .build();
+        button.active = bool(info, "enabled");
+        Component reason = str(info, "reason").isEmpty() ? null : Component.literal(str(info, "reason")).withStyle(ChatFormatting.RED);
+        if (tooltip != null || reason != null) {
+            MutableComponent text = Component.empty();
+            if (tooltip != null) {
+                text.append(tooltip);
+            }
+            if (reason != null) {
+                text.append(tooltip != null ? "\n" : "").append(reason);
+            }
+            button.setTooltip(Tooltip.create(text));
+        }
+        addRenderableWidget(button);
+    }
+
+    /** "<label>: <아이템> 보유/필요" (비용 정보가 없으면 label 만) */
+    private static Component costTooltip(JsonObject info, Component label) {
+        if (!info.has("item")) {
+            return label;
+        }
+        ItemStack stack = stack(str(info, "item"), 1);
+        int have = (int) num(info, "have");
+        int count = (int) num(info, "count");
+        return label.copy().append(": ").append(stack.getHoverName())
+                .append(Component.literal(" " + have + "/" + count).withStyle(have >= count ? ChatFormatting.GREEN : ChatFormatting.RED));
     }
 
     @Override
     public void tick() {
-        // 웨이브 진행 상황(코어 HP, 남은 적)을 주기적으로 갱신
+        // 웨이브 진행 상황/성벽 HP 를 주기적으로 갱신
         if (++refreshTicks >= REFRESH_INTERVAL) {
             refreshTicks = 0;
             send("refresh", "");
@@ -173,59 +199,92 @@ public class CoreDefenderScreen extends Screen {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
         itemSlots.clear();
+        textSlots.clear();
 
-        g.drawString(font, Component.translatable("screen.coredefender.worlds"), left + 8, top + 8, COLOR_TITLE);
+        renderWallGrid(g);
 
         int x = left + SIDEBAR + 8;
         int contentWidth = WIDTH - SIDEBAR - 16;
 
-        // 헤더: 월드 이름 + 진행도
         g.drawString(font, Component.literal(str(state, "title")), x, top + 8, COLOR_TITLE);
         Component progress = Component.literal(str(state, "progress"));
         g.drawString(font, progress, x + contentWidth - font.width(progress), top + 8, COLOR_MUTED);
 
-        int y = renderCoreBar(g, x, top + 22, contentWidth);
-        y = renderWave(g, x, y + 6, contentWidth);
+        int y = renderWallTotal(g, x, top + 22, contentWidth);
+        y = renderWave(g, x, y + 4, contentWidth);
         renderRewards(g, x, y + 4, contentWidth);
 
         for (ItemSlot slot : itemSlots) {
             if (mouseX >= slot.x && mouseX < slot.x + 16 && mouseY >= slot.y && mouseY < slot.y + 16) {
                 g.renderTooltip(font, slot.stack, mouseX, mouseY);
+                return;
+            }
+        }
+        for (TextSlot slot : textSlots) {
+            if (mouseX >= slot.x && mouseX < slot.x + slot.w && mouseY >= slot.y && mouseY < slot.y + slot.h) {
+                g.renderTooltip(font, slot.text, mouseX, mouseY);
+                return;
             }
         }
     }
 
-    private int renderCoreBar(GuiGraphics g, int x, int y, int width) {
-        JsonObject core = obj(state, "core");
-        boolean broken = bool(core, "broken");
-        double hp = num(core, "hp");
-        double maxHp = Math.max(1, num(core, "maxHp"));
-        double ratio = broken ? 0 : Math.clamp(hp / maxHp, 0, 1);
+    /** 왼쪽: 변(N/E/S/W) x 구간 격자. 칸 색 = HP 비율, 마우스를 올리면 HP 표시. */
+    private void renderWallGrid(GuiGraphics g) {
+        JsonObject wall = obj(state, "wall");
+        int chunks = (int) num(wall, "interiorChunks");
+        g.drawString(font, Component.translatable("screen.coredefender.wall").append(" " + chunks + "x" + chunks),
+                left + 8, top + 8, COLOR_TITLE);
 
-        g.drawString(font, Component.translatable("screen.coredefender.core"), x, y, COLOR_TEXT);
+        JsonArray sides = array(wall, "sides");
+        JsonArray segments = array(wall, "segments");
+        int perSide = Math.max(1, (int) num(wall, "segmentsPerSide"));
+        int gridTop = top + 48;
+        int cellHeight = Math.min(16, (HEIGHT - 56 - 32) / perSide);
+
+        for (int c = 0; c < SIDES.length; c++) {
+            int cx = columnX(c);
+            int level = (int) num(findSide(sides, SIDES[c]), "level");
+            g.drawString(font, SIDES[c] + level, cx + 2, top + 21, COLOR_MUTED);
+            for (int i = 0; i < perSide; i++) {
+                JsonObject segment = findSegment(segments, SIDES[c] + i);
+                int cy = gridTop + i * cellHeight;
+                double hp = num(segment, "hp");
+                double max = Math.max(1, num(segment, "maxHp"));
+                boolean collapsed = bool(segment, "collapsed");
+                double ratio = collapsed ? 0 : hp / max;
+                int color = collapsed ? 0xFF5A1010 : ratio > 0.5 ? COLOR_GOOD : ratio > 0.25 ? COLOR_WARN : COLOR_BAD;
+                g.fill(cx, cy, cx + 24, cy + cellHeight - 2, COLOR_BAR_BG);
+                g.fill(cx + 1, cy + 1, cx + 1 + (int) (22 * ratio), cy + cellHeight - 3, color);
+                Component tip = Component.literal(SIDES[c] + i + "  ")
+                        .append(collapsed ? Component.translatable("screen.coredefender.wall_collapsed").withStyle(ChatFormatting.RED)
+                                : Component.literal((int) hp + " / " + (int) max));
+                textSlots.add(new TextSlot(tip, cx, cy, 24, cellHeight - 2));
+            }
+        }
+    }
+
+    private int renderWallTotal(GuiGraphics g, int x, int y, int width) {
+        double hp = 0;
+        double max = 0;
+        boolean collapsed = false;
+        for (JsonElement el : array(obj(state, "wall"), "segments")) {
+            JsonObject segment = el.getAsJsonObject();
+            hp += bool(segment, "collapsed") ? 0 : num(segment, "hp");
+            max += num(segment, "maxHp");
+            collapsed |= bool(segment, "collapsed");
+        }
+        double ratio = max > 0 ? hp / max : 0;
+        g.drawString(font, Component.translatable("screen.coredefender.wall_total"), x, y, COLOR_TEXT);
         int barY = y + 11;
         g.fill(x, barY, x + width, barY + 10, COLOR_BAR_BG);
-        int color = ratio > 0.5 ? 0xFF4CC26B : ratio > 0.25 ? 0xFFE0B23A : 0xFFD9443A;
+        int color = collapsed ? COLOR_BAD : ratio > 0.5 ? COLOR_GOOD : ratio > 0.25 ? COLOR_WARN : COLOR_BAD;
         g.fill(x + 1, barY + 1, x + 1 + (int) ((width - 2) * ratio), barY + 9, color);
-
-        Component label = broken
-                ? Component.translatable("screen.coredefender.core_broken")
-                : Component.literal((int) Math.ceil(hp) + " / " + (int) Math.ceil(maxHp));
+        Component label = collapsed ? Component.translatable("screen.coredefender.wall_collapsed")
+                : Component.literal((int) hp + " / " + (int) max);
         g.drawCenteredString(font, label, x + width / 2, barY + 1, 0xFFFFFFFF);
-
-        // 파괴 상태면 복구 비용 표시
-        JsonObject repair = obj(state, "repair");
-        if (broken && repair.has("item")) {
-            ItemStack stack = stack(str(repair, "item"), 1);
-            Component cost = Component.translatable("screen.coredefender.repair_cost")
-                    .append(": ").append(stack.getHoverName())
-                    .append(" " + (int) num(repair, "have") + "/" + (int) num(repair, "count"));
-            int costX = x + width - font.width(cost) - 18;
-            drawItem(g, stack, costX, y - 4);
-            g.drawString(font, cost, costX + 18, y, num(repair, "have") >= num(repair, "count") ? 0xFF4CC26B : 0xFFD9443A);
-        }
         return barY + 10;
     }
+
 
     private int renderWave(GuiGraphics g, int x, int y, int width) {
         JsonObject wave = obj(state, "wave");
@@ -250,9 +309,9 @@ public class CoreDefenderScreen extends Screen {
         y += 11;
 
         JsonArray mobs = array(wave, "mobs");
-        int columns = mobs.size() > 4 ? 2 : 1;
+        int columns = mobs.size() > 3 ? 2 : 1;
         int columnWidth = width / columns;
-        int rows = (mobs.size() + columns - 1) / columns;
+        int rows = Math.max(1, (mobs.size() + columns - 1) / columns);
         for (int i = 0; i < mobs.size(); i++) {
             JsonObject mob = mobs.get(i).getAsJsonObject();
             int mx = x + (i / rows) * columnWidth;
@@ -273,17 +332,15 @@ public class CoreDefenderScreen extends Screen {
     }
 
     private void renderRewards(GuiGraphics g, int x, int y, int width) {
-        JsonObject wave = obj(state, "wave");
         g.drawString(font, Component.translatable("screen.coredefender.rewards"), x, y, COLOR_MUTED);
         y += 10;
         int ix = x;
-        for (JsonElement el : array(wave, "rewards")) {
+        for (JsonElement el : array(obj(state, "wave"), "rewards")) {
             JsonObject reward = el.getAsJsonObject();
-            ItemStack stack = stack(str(reward, "item"), (int) num(reward, "count"));
             if (ix + 18 > x + width) {
                 break;
             }
-            drawItem(g, stack, ix, y);
+            drawItem(g, stack(str(reward, "item"), (int) num(reward, "count")), ix, y);
             ix += 20;
         }
     }
@@ -296,6 +353,24 @@ public class CoreDefenderScreen extends Screen {
 
     // ---------- JSON / 레지스트리 헬퍼 ----------
 
+    private static JsonObject findSide(JsonArray sides, String side) {
+        for (JsonElement el : sides) {
+            if (side.equals(str(el.getAsJsonObject(), "side"))) {
+                return el.getAsJsonObject();
+            }
+        }
+        return new JsonObject();
+    }
+
+    private static JsonObject findSegment(JsonArray segments, String id) {
+        for (JsonElement el : segments) {
+            if (id.equals(str(el.getAsJsonObject(), "id"))) {
+                return el.getAsJsonObject();
+            }
+        }
+        return new JsonObject();
+    }
+
     private static ItemStack stack(String id, int count) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         if (rl == null) {
@@ -306,6 +381,7 @@ public class CoreDefenderScreen extends Screen {
                 .orElseGet(() -> new ItemStack(Items.BARRIER));
     }
 
+    @Nullable
     private static EntityType<?> entityType(String id) {
         ResourceLocation rl = ResourceLocation.tryParse(id);
         return rl == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(rl).orElse(null);
@@ -328,7 +404,7 @@ public class CoreDefenderScreen extends Screen {
 
     private static double num(JsonObject parent, String key) {
         JsonElement el = parent.get(key);
-        return el != null && el.isJsonPrimitive() && el.getAsJsonPrimitive().isNumber() ? el.getAsDouble() : 0;
+        return el != null && el.isJsonPrimitive() && el.getAsJsonPrimitive().isNumber() ? el.getAsDouble() : -1;
     }
 
     private static boolean bool(JsonObject parent, String key) {

@@ -8,6 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lkd.namsic.coredefender.CoreDefender;
 import lkd.namsic.coredefender.wall.WallManager;
 import lkd.namsic.coredefender.wall.WallState;
+import lombok.experimental.UtilityClass;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -19,17 +20,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 /**
- * 관리자/테스트용 명령어: /coredefender tp | wall info|damage|repair|expand|rebuild
+ * 관리자/테스트용 명령어: /cd admin tp | /cd admin wall info|damage|repair|expand|rebuild
  */
 @EventBusSubscriber(modid = CoreDefender.MOD_ID)
-public final class DefenseCommands {
-    private DefenseCommands() {
-    }
-
+@UtilityClass
+public class DefenseCommands {
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-        dispatcher.register(Commands.literal(CoreDefender.MOD_ID)
+        // KubeJS 가 등록하는 /cd 와 같은 트리에 합쳐진다 (Brigadier 가 같은 이름의 노드를 병합)
+        dispatcher.register(Commands.literal("cd").then(Commands.literal("admin")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("tp").executes(DefenseCommands::teleport))
                 .then(Commands.literal("wall")
@@ -43,7 +43,7 @@ public final class DefenseCommands {
                                 .then(Commands.argument("segment", StringArgumentType.word())
                                         .executes(ctx -> repair(ctx, StringArgumentType.getString(ctx, "segment")))))
                         .then(Commands.literal("expand").executes(DefenseCommands::expand))
-                        .then(Commands.literal("rebuild").executes(DefenseCommands::rebuild))));
+                        .then(Commands.literal("rebuild").executes(DefenseCommands::rebuild)))));
     }
 
     private static ServerLevel defense(CommandContext<CommandSourceStack> ctx) {

@@ -11,4 +11,10 @@ public interface CoreDefenderKubeEvents {
 
     /** CoreDefenderEvents.wallCollapsed(event => { event.server, event.segment }) */
     EventHandler WALL_COLLAPSED = GROUP.server("wallCollapsed", () -> WallCollapsedKubeEvent.class);
+
+    /** CoreDefenderEvents.waveCleared(event => { event.server, event.label }) */
+    EventHandler WAVE_CLEARED = GROUP.server("waveCleared", () -> WaveEndKubeEvent.class);
+
+    /** CoreDefenderEvents.waveFailed(event => { event.server, event.label, event.reason }) */
+    EventHandler WAVE_FAILED = GROUP.server("waveFailed", () -> WaveEndKubeEvent.class);
 }

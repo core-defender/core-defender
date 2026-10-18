@@ -1,75 +1,74 @@
 // priority: 40
-// 디펜스 메뉴. 화면은 coredefender 모드(CoreDefenderScreen)가 그리고, 내용은 여기서 상태 JSON 으로 만든다.
+// 디펜스 관리 메뉴. 화면은 coredefender 모드(CoreDefenderScreen)가 그리고, 내용은 여기서 상태 JSON 으로 만든다.
 //
-// 흐름: 메뉴 키(K) → 모드가 'open' 동작 전송 → CoreDefenderEvents.menuAction → CoreDefenderUI.open(player, json)
+// 흐름: 메뉴 키(K) 또는 코어 우클릭 → 모드가 'open' 동작 전송 → CoreDefenderEvents.menuAction → CoreDefenderUI.open(player, json)
 // 화면이 열려 있는 동안 모드가 1초마다 'refresh' 를 보내 진행 상황을 갱신한다.
 
 // 아이템/엔티티 이름은 클라이언트가 ID 로 번역하므로 ID 만 보낸다
-function cdWaveState(wave, label, mult) {
+function cdWaveState(stage, label, mult) {
   return {
     label: label,
     mult: Number(mult),
-    mobs: wave.mobs.map(m => ({ type: m.type, count: m.count, elite: !!m.elite })),
-    rewards: wave.rewards.map(r => ({ item: r.item, count: Math.max(1, Math.floor(r.count * mult)) }))
+    mobs: stage.mobs.map(m => ({ type: m.type, count: m.count, elite: !!m.elite })),
+    rewards: stage.rewards.map(r => ({ item: r.item, count: Math.max(1, Math.floor(r.count * mult)) }))
   }
 }
 
+// 비용이 드는 동작의 버튼 상태: { enabled, reason, item?, count?, have? }
+function cdCostAction(player, cost, blockedReason) {
+  if (blockedReason) return { enabled: false, reason: blockedReason }
+  let have = Number(player.inventory.count(cost.item))
+  return { enabled: have >= cost.count, reason: have >= cost.count ? '' : '재료가 부족합니다', item: cost.item, count: cost.count, have: have }
+}
+
 function cdBuildMenuState(player) {
-  let here = cdWorldCfgByDimension(player.level.dimension)
-  let cfg = here || cdDefaultWorld()
-  let inWorld = !!here
-  let ws = cdState.worlds[cfg.id]
-  let active = cdState.active && cdState.active.world == cfg.id ? cdState.active : null
+  let server = player.server
+  let inDefense = cdInDefense(player)
+  let wall = cdWall(server)
+  let waveInfo = cdWaveInfo()
+  let next = cdNextStage()
 
-  let core = inWorld && !ws.coreBroken ? cdFindCore(player.server, cfg) : null
   let state = {
-    title: cfg.name,
-    progress: ws.cleared ? '클리어 완료' : `${ws.waveIndex} / ${cfg.waves.length}`,
-    core: {
-      broken: ws.coreBroken,
-      hp: core ? Number(core.health) : cfg.core.hp,
-      maxHp: core ? Number(core.maxHealth) : cfg.core.hp
-    },
-    worlds: CD.worlds.map(w => {
-      let s = cdState.worlds[w.id]
-      return {
-        id: w.id,
-        name: w.name,
-        unlocked: s.unlocked,
-        current: !!(here && here.id == w.id),
-        status: !s.unlocked ? '잠김' : s.cleared ? '클리어 (반복 도전 가능)' : `웨이브 ${s.waveIndex}/${w.waves.length}`
-      }
-    }),
-    travel: inWorld ? { action: 'leave', world: '' } : { action: 'enter', world: cfg.id }
+    title: '디펜스 기지',
+    progress: `스테이지 ${next.index + 1}`,
+    travel: { action: inDefense ? 'leave' : 'enter' }
   }
 
-  if (active) {
-    let total = cfg.waves[active.wave].mobs.reduce((sum, m) => sum + m.count, 0)
-    state.active = { remaining: cdRuntime.queue.length + cdRuntime.mobs.length, total: total }
-    state.wave = cdWaveState(cfg.waves[active.wave], `웨이브 ${active.wave + 1} 진행 중`, active.mult)
+  // 성벽: 구간 HP + 변별 강화 버튼
+  state.wall = {
+    interiorChunks: wall.interiorChunks,
+    segmentsPerSide: wall.segmentsPerSide,
+    segments: wall.segments,
+    sides: wall.sides.map(s => {
+      let cost = cdSideUpgradeCost(wall, s.side)
+      return { side: s.side, level: s.level, upgrade: cdCostAction(player, cost, cost ? '' : '최대 강화') }
+    })
+  }
+
+  if (waveInfo.active) {
+    let wave = cdState.wave || { index: next.index, mult: next.mult }
+    state.active = { remaining: waveInfo.remaining, total: waveInfo.total }
+    state.wave = cdWaveState(next.stage, `${waveInfo.label} 진행 중`, wave.mult)
   } else {
-    let next = cdNextWave(cfg)
-    let label = next.replay ? `반복 도전 웨이브 ${next.index + 1}` : `다음 웨이브 ${next.index + 1}/${cfg.waves.length}`
-    state.wave = cdWaveState(next.wave, label, next.mult)
+    state.wave = cdWaveState(next.stage, `다음 웨이브: 스테이지 ${next.index + 1}`, next.mult)
   }
 
-  let startReason = cdState.active ? '이미 웨이브가 진행 중입니다'
-    : ws.coreBroken ? '코어 복구가 필요합니다'
-    : !inWorld ? '디펜스 월드 안에서만 시작할 수 있습니다' : ''
+  let startReason = cdStartReason(server, player, false)
   state.start = { enabled: startReason == '', reason: startReason }
 
-  let cost = cfg.repairCost
-  let have = Number(player.inventory.count(cost.item))
-  let repairReason = !ws.coreBroken ? '코어가 정상입니다'
-    : !inWorld ? '디펜스 월드 안에서만 복구할 수 있습니다'
-    : have < cost.count ? '재료가 부족합니다' : ''
-  state.repair = { enabled: repairReason == '', reason: repairReason, item: cost.item, count: cost.count, have: have }
+  let repairCost = cdRepairCost(wall)
+  state.repair = cdCostAction(player, repairCost,
+    waveInfo.active ? '웨이브 중에는 수복할 수 없습니다' : repairCost.count == 0 ? '수복할 성벽이 없습니다' : '')
+
+  let expandCost = cdExpandCost(wall)
+  state.expand = cdCostAction(player, expandCost,
+    waveInfo.active ? '웨이브 중에는 확장할 수 없습니다' : !expandCost ? '최대 크기' : '')
 
   return state
 }
 
 function cdOpenMenu(player) {
-  if (!cdState) cdInit(player.server, '스크립트 리로드')
+  if (!cdState) cdInit(player.server)
   CoreDefenderUI.open(player, JSON.stringify(cdBuildMenuState(player)))
 }
 
@@ -80,29 +79,33 @@ function cdUpdateMenu(player) {
 CoreDefenderEvents.menuAction(event => {
   let player = event.player
   let server = player.server
-  if (!cdState) cdInit(server, '스크립트 리로드')
+  if (!cdState) cdInit(server)
 
   switch (String(event.action)) {
     case 'open':
       cdOpenMenu(player)
-      break
+      return
     case 'refresh':
-      cdUpdateMenu(player)
       break
     case 'start':
-      cdStartWave(server, player)
-      cdUpdateMenu(player)
+      cdStartWave(server, player, false)
       break
     case 'repair':
       cdCmdRepair(server, player)
-      cdUpdateMenu(player)
+      break
+    case 'upgrade':
+      cdCmdUpgrade(server, player, String(event.arg))
+      break
+    case 'expand':
+      cdCmdExpand(server, player)
       break
     case 'enter':
       // 화면은 클라이언트에서 이미 닫힘
-      cdCmdEnter(server, player, String(event.arg) || null)
-      break
+      cdCmdEnter(server, player)
+      return
     case 'leave':
       cdCmdLeave(server, player)
-      break
+      return
   }
+  cdUpdateMenu(player)
 })

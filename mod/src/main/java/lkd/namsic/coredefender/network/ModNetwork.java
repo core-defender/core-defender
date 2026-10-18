@@ -4,15 +4,15 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import lkd.namsic.coredefender.client.ClientHooks;
 import lkd.namsic.coredefender.kubejs.CoreDefenderKubeEvents;
 import lkd.namsic.coredefender.kubejs.MenuActionKubeEvent;
+import lkd.namsic.coredefender.wall.CoreStorage;
+import lombok.experimental.UtilityClass;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-public final class ModNetwork {
-    private ModNetwork() {
-    }
-
+@UtilityClass
+public class ModNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
 
@@ -24,7 +24,13 @@ public final class ModNetwork {
         });
 
         registrar.playToServer(MenuActionPayload.TYPE, MenuActionPayload.CODEC, (payload, context) -> {
-            if (context.player() instanceof ServerPlayer player) {
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            // 코어 창고는 모드가 직접 연다. 나머지 동작은 KubeJS 가 처리
+            if ("storage".equals(payload.action())) {
+                CoreStorage.open(player);
+            } else {
                 CoreDefenderKubeEvents.MENU_ACTION.post(ScriptType.SERVER, new MenuActionKubeEvent(player, payload.action(), payload.arg()));
             }
         });

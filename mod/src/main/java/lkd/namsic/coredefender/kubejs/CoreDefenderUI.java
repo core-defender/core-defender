@@ -1,15 +1,15 @@
 package lkd.namsic.coredefender.kubejs;
 
 import lkd.namsic.coredefender.network.MenuStatePayload;
+import lombok.experimental.UtilityClass;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * KubeJS 바인딩 CoreDefenderUI. 상태는 스크립트에서 JSON.stringify 한 문자열로 받는다.
  */
-public final class CoreDefenderUI {
-    private CoreDefenderUI() {
-    }
+@UtilityClass
+public class CoreDefenderUI {
 
     /** 메뉴 화면을 연다 (이미 열려 있으면 내용만 갱신). */
     public static void open(ServerPlayer player, String json) {

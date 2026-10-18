@@ -1,12 +1,11 @@
 package lkd.namsic.coredefender.client;
 
 import lkd.namsic.coredefender.network.MenuStatePayload;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 
-public final class ClientHooks {
-    private ClientHooks() {
-    }
-
+@UtilityClass
+public class ClientHooks {
     public static void handleMenuState(MenuStatePayload payload) {
         Minecraft mc = Minecraft.getInstance();
         switch (payload.mode()) {

@@ -1,0 +1,8 @@
+{
+  "values": [
+    "coredefender:basic_turret",
+    "coredefender:spike_trap",
+    "coredefender:supply_sender",
+    "coredefender:supply_receiver"
+  ]
+}

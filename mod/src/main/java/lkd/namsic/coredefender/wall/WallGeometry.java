@@ -121,4 +121,56 @@ public record WallGeometry(int centerX, int centerZ, int baseY, int half, int he
     public BlockPos corePos() {
         return new BlockPos(centerX, baseY, centerZ);
     }
+
+    /** 성벽 윗면(걸을 수 있는 높이)의 y */
+    public int topY() {
+        return baseY + height;
+    }
+
+    public int outerMinX() {
+        return minX() - thickness;
+    }
+
+    public int outerMaxX() {
+        return maxX() + thickness;
+    }
+
+    public int outerMinZ() {
+        return minZ() - thickness;
+    }
+
+    public int outerMaxZ() {
+        return maxZ() + thickness;
+    }
+
+    /** 성벽 바깥면까지의 수평 거리 (성벽 범위 안이면 0) */
+    public double distanceToWall(double x, double z) {
+        double dx = Math.max(Math.max(outerMinX() - x, 0), x - (outerMaxX() + 1));
+        double dz = Math.max(Math.max(outerMinZ() - z, 0), z - (outerMaxZ() + 1));
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
+    /** 주어진 위치에서 가장 가까운 성벽 블록. 성 안쪽(돌파 후)이면 가장 가까운 안쪽 면. */
+    public BlockPos nearestWallBlock(double x, double y, double z) {
+        int bx = Math.clamp((int) Math.floor(x), outerMinX(), outerMaxX());
+        int bz = Math.clamp((int) Math.floor(z), outerMinZ(), outerMaxZ());
+        if (isInterior(bx, bz)) {
+            int toWest = bx - minX();
+            int toEast = maxX() - bx;
+            int toNorth = bz - minZ();
+            int toSouth = maxZ() - bz;
+            int min = Math.min(Math.min(toWest, toEast), Math.min(toNorth, toSouth));
+            if (min == toWest) {
+                bx = minX() - 1;
+            } else if (min == toEast) {
+                bx = maxX() + 1;
+            } else if (min == toNorth) {
+                bz = minZ() - 1;
+            } else {
+                bz = maxZ() + 1;
+            }
+        }
+        int by = Math.clamp((int) Math.floor(y), baseY, baseY + height - 1);
+        return new BlockPos(bx, by, bz);
+    }
 }
