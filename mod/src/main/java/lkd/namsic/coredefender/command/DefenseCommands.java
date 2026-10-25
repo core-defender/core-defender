@@ -1,5 +1,10 @@
 package lkd.namsic.coredefender.command;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -11,6 +16,13 @@ import lkd.namsic.coredefender.wall.WallState;
 import lombok.experimental.UtilityClass;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.levelgen.Heightmap;
+import lkd.namsic.coredefender.wave.TestMobs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +44,22 @@ public class DefenseCommands {
         dispatcher.register(Commands.literal("cd").then(Commands.literal("admin")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("tp").executes(DefenseCommands::teleport))
+                .then(Commands.literal("spawn")
+                        .then(Commands.literal("clear").executes(ctx -> {
+                            TestMobs.clear(ctx.getSource().getServer());
+                            ctx.getSource().sendSuccess(() -> Component.literal("테스트 적을 제거했습니다."), true);
+                            return 1;
+                        }))
+                        .then(Commands.argument("entity", ResourceLocationArgument.id())
+                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.ENTITY_TYPE.keySet(), builder))
+                                .executes(ctx -> spawn(ctx, 1, null, "normal"))
+                                .then(Commands.argument("count", IntegerArgumentType.integer(1, 100))
+                                        .executes(ctx -> spawn(ctx, IntegerArgumentType.getInteger(ctx, "count"), null, "normal"))
+                                        .then(Commands.argument("pos", Vec3Argument.vec3())
+                                                .executes(ctx -> spawn(ctx, IntegerArgumentType.getInteger(ctx, "count"), Vec3Argument.getVec3(ctx, "pos"), "normal"))
+                                                .then(Commands.argument("variant", StringArgumentType.word())
+                                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(new String[]{"normal", "elite", "breaker", "elite_breaker"}, builder))
+                                                        .executes(ctx -> spawn(ctx, IntegerArgumentType.getInteger(ctx, "count"), Vec3Argument.getVec3(ctx, "pos"), StringArgumentType.getString(ctx, "variant"))))))))
                 .then(Commands.literal("wall")
                         .then(Commands.literal("info").executes(DefenseCommands::info))
                         .then(Commands.literal("damage")
@@ -39,9 +67,18 @@ public class DefenseCommands {
                                         .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                                                 .executes(DefenseCommands::damage))))
                         .then(Commands.literal("repair")
-                                .executes(ctx -> repair(ctx, null))
+                                .executes(ctx -> repair(ctx, null, 0))
                                 .then(Commands.argument("segment", StringArgumentType.word())
-                                        .executes(ctx -> repair(ctx, StringArgumentType.getString(ctx, "segment")))))
+                                        .suggests((ctx, builder) -> {
+                                            var targets = new ArrayList<>(List.of("all", "N", "E", "S", "W"));
+                                            var level = WallManager.level(ctx.getSource().getServer());
+                                            if (level != null) targets.addAll(WallManager.state(level).segments().keySet());
+                                            return SharedSuggestionProvider.suggest(targets, builder);
+                                        })
+                                        .executes(ctx -> repair(ctx, StringArgumentType.getString(ctx, "segment"), 0))
+                                        .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                                .executes(ctx -> repair(ctx, StringArgumentType.getString(ctx, "segment"),
+                                                        IntegerArgumentType.getInteger(ctx, "amount"))))))
                         .then(Commands.literal("expand").executes(DefenseCommands::expand))
                         .then(Commands.literal("rebuild").executes(DefenseCommands::rebuild)))));
     }
@@ -52,6 +89,45 @@ public class DefenseCommands {
             ctx.getSource().sendFailure(Component.literal("Defense dimension not loaded"));
         }
         return level;
+    }
+
+    private static int spawn(CommandContext<CommandSourceStack> ctx, int count, Vec3 position, String variant) throws CommandSyntaxException {
+        ServerLevel level = defense(ctx);
+        if (level == null) return 0;
+        if (ctx.getSource().getLevel() != level) {
+            ctx.getSource().sendFailure(Component.literal("디펜스 차원에서 실행하세요. /cd enter"));
+            return 0;
+        }
+        if (!Set.of("normal", "elite", "breaker", "elite_breaker").contains(variant)) {
+            ctx.getSource().sendFailure(Component.literal("variant: normal / elite / breaker / elite_breaker"));
+            return 0;
+        }
+        var id = ResourceLocationArgument.getId(ctx, "entity");
+        var type = BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+        if (type == null || !type.canSummon()) {
+            ctx.getSource().sendFailure(Component.literal("소환할 수 없는 엔티티: " + id));
+            return 0;
+        }
+        WallManager.ensureBuilt(ctx.getSource().getServer());
+        Vec3 pos = position;
+        if (pos == null) {
+            var player = ctx.getSource().getPlayerOrException();
+            Vec3 ahead = player.position().add(Vec3.directionFromRotation(0, player.getYRot()).scale(4));
+            BlockPos block = BlockPos.containing(ahead);
+            pos = new Vec3(ahead.x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, block.getX(), block.getZ()), ahead.z);
+        }
+        if (!level.isInWorldBounds(BlockPos.containing(pos)) || WallManager.state(level).geometry().distanceToWall(pos.x, pos.z) > 64) {
+            ctx.getSource().sendFailure(Component.literal("성벽에서 64블록 이내의 유효한 위치를 지정하세요."));
+            return 0;
+        }
+        int spawned = 0;
+        for (int i = 0; i < count; i++) {
+            if (TestMobs.spawn(level, type, pos, variant.contains("elite"), variant.contains("breaker"))) spawned++;
+        }
+        int result = spawned;
+        if (result == 0) ctx.getSource().sendFailure(Component.literal("Mob 종류만 소환할 수 있으며, 소환 위치에 빈 공간이 필요합니다."));
+        else ctx.getSource().sendSuccess(() -> Component.literal("테스트 적 " + id + " " + result + "마리 소환 (웨이브 보상/진행 제외)"), true);
+        return result;
     }
 
     private static int teleport(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -94,13 +170,25 @@ public class DefenseCommands {
         return 1;
     }
 
-    private static int repair(CommandContext<CommandSourceStack> ctx, String segment) {
+    private static int repair(CommandContext<CommandSourceStack> ctx, String segment, int amount) {
         ServerLevel level = defense(ctx);
         if (level == null) {
             return 0;
         }
-        WallManager.repair(level, segment, 0);
-        ctx.getSource().sendSuccess(() -> Component.literal("Repaired " + (segment == null ? "all segments" : segment)), true);
+        String target = segment == null || segment.equalsIgnoreCase("all") ? null : segment.toUpperCase(Locale.ROOT);
+        if (target != null && Set.of("N", "E", "S", "W").contains(target)) {
+            for (String id : WallManager.state(level).segments().keySet()) {
+                if (id.startsWith(target)) WallManager.repair(level, id, amount);
+            }
+        } else {
+            if (target != null && !WallManager.state(level).segments().containsKey(target)) {
+                ctx.getSource().sendFailure(Component.literal("알 수 없는 성벽 구간: " + target + ". all, N/E/S/W 또는 /cd admin wall info의 구간 ID를 입력하세요."));
+                return 0;
+            }
+            WallManager.repair(level, target, amount);
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal("Repaired " + (target == null ? "all segments" : target)
+                + (amount > 0 ? " (각 구간 +" + amount + " HP, 최대 체력까지)" : " (최대 체력까지)")), true);
         return 1;
     }
 

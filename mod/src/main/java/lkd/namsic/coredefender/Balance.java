@@ -36,10 +36,7 @@ public class Balance {
     public static final float ELITE_HEALTH_MULTIPLIER = 4.0F;
     public static final float ELITE_DAMAGE_MULTIPLIER = 2.0F;
 
-    /** 기초 포탑: 사거리 / 발사 간격 / 화살 피해 */
-    public static final double TURRET_RANGE = 16;
-    public static final int TURRET_INTERVAL = 20;
-    public static final double TURRET_ARROW_DAMAGE = 3.0;
+    // Turret balance lives in turret/TurretStats to keep effective stats and combat in agreement.
 
     /** 보급 송수신기: 단계별 10 tick 당 전송량, 송신기가 로딩하는 청크 반경. 단계 = 강화 부품 적용 수 */
     public static final int[] SUPPLY_RATE = {4, 16, 64, 256};

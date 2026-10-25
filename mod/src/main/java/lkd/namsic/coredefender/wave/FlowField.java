@@ -1,5 +1,8 @@
 package lkd.namsic.coredefender.wave;
 
+import java.util.Comparator;
+import java.util.function.BiPredicate;
+
 import lkd.namsic.coredefender.Balance;
 import lkd.namsic.coredefender.wall.WallGeometry;
 import net.minecraft.core.BlockPos;
@@ -30,100 +33,107 @@ public final class FlowField {
     private final boolean[] barricade;
 
     /** 다음 이동 지점, 그리고 그 사이에 막고 있는 바리케이드(없으면 null) */
-    public record Step(BlockPos waypoint, @Nullable BlockPos barricade) {
+    public record Step(BlockPos waypoint, @Nullable BlockPos barricade, boolean atWall) {
     }
 
     private FlowField(WallGeometry geo, int margin) {
         this.geo = geo;
         this.minX = geo.outerMinX() - margin;
         this.minZ = geo.outerMinZ() - margin;
-        this.width = geo.outerMaxX() + margin - minX + 1;
-        this.depth = geo.outerMaxZ() + margin - minZ + 1;
-        this.dist = new int[width * depth];
-        this.barricade = new boolean[width * depth];
-        Arrays.fill(dist, UNREACHABLE);
+        this.width = geo.outerMaxX() + margin - this.minX + 1;
+        this.depth = geo.outerMaxZ() + margin - this.minZ + 1;
+        this.dist = new int[this.width * this.depth];
+        this.barricade = new boolean[this.width * this.depth];
+        Arrays.fill(this.dist, UNREACHABLE);
     }
 
     public static FlowField compute(ServerLevel level, WallGeometry geo, int margin, LongPredicate isBarricade) {
         FlowField field = new FlowField(geo, margin);
-        field.build(level, isBarricade);
+        field.build((x, z) -> {
+            BlockPos pos = new BlockPos(x, geo.baseY(), z);
+            return solid(level, pos) || solid(level, pos.above());
+        }, (x, z) -> isBarricade.test(new BlockPos(x, geo.baseY(), z).asLong()));
         return field;
     }
 
     private int index(int x, int z) {
-        int ix = x - minX;
-        int iz = z - minZ;
-        if (ix < 0 || iz < 0 || ix >= width || iz >= depth) {
+        int ix = x - this.minX;
+        int iz = z - this.minZ;
+        if (ix < 0 || iz < 0 || ix >= this.width || iz >= this.depth) {
             return -1;
         }
-        return iz * width + ix;
+        return iz * this.width + ix;
     }
 
     private boolean insideWall(int x, int z) {
-        return x >= geo.outerMinX() && x <= geo.outerMaxX() && z >= geo.outerMinZ() && z <= geo.outerMaxZ();
+        return x >= this.geo.outerMinX() && x <= this.geo.outerMaxX() && z >= this.geo.outerMinZ() && z <= this.geo.outerMaxZ();
     }
 
-    private void build(ServerLevel level, LongPredicate isBarricade) {
-        int groundY = geo.baseY();
-        boolean[] blocked = new boolean[width * depth];
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        PriorityQueue<long[]> queue = new PriorityQueue<>((a, b) -> Long.compare(a[0], b[0]));
+    static FlowField computeTestField(WallGeometry geo, BiPredicate<Integer, Integer> blocked,
+                             BiPredicate<Integer, Integer> barricade) {
+        FlowField field = new FlowField(geo, 20);
+        field.build(blocked, barricade);
+        return field;
+    }
 
-        for (int iz = 0; iz < depth; iz++) {
-            for (int ix = 0; ix < width; ix++) {
-                int x = minX + ix;
-                int z = minZ + iz;
-                int i = iz * width + ix;
-                if (insideWall(x, z)) {
+    private void build(BiPredicate<Integer, Integer> solid, BiPredicate<Integer, Integer> isBarricade) {
+        boolean[] blocked = new boolean[this.width * this.depth];
+        PriorityQueue<long[]> queue = new PriorityQueue<>(Comparator.comparingLong(a -> a[0]));
+
+        for (int iz = 0; iz < this.depth; iz++) {
+            for (int ix = 0; ix < this.width; ix++) {
+                int x = this.minX + ix;
+                int z = this.minZ + iz;
+                int i = iz * this.width + ix;
+                if (this.insideWall(x, z)) {
                     blocked[i] = true;
                     continue;
                 }
-                pos.set(x, groundY, z);
-                if (isBarricade.test(pos.asLong())) {
-                    barricade[i] = true;
-                } else if (solid(level, pos) || solid(level, pos.setY(groundY + 1))) {
+                if (isBarricade.test(x, z)) {
+                    this.barricade[i] = true;
+                } else if (solid.test(x, z)) {
                     blocked[i] = true;
                 }
             }
         }
 
         // 시작점: 성벽 바깥면에 바로 붙은 칸
-        for (int iz = 0; iz < depth; iz++) {
-            for (int ix = 0; ix < width; ix++) {
-                int i = iz * width + ix;
-                if (blocked[i] || !touchesWall(minX + ix, minZ + iz)) {
+        for (int iz = 0; iz < this.depth; iz++) {
+            for (int ix = 0; ix < this.width; ix++) {
+                int i = iz * this.width + ix;
+                if (blocked[i] || !this.touchesWall(this.minX + ix, this.minZ + iz)) {
                     continue;
                 }
-                dist[i] = barricade[i] ? Balance.BARRICADE_PATH_COST * 10 : 0;
-                queue.add(new long[]{dist[i], i});
+                this.dist[i] = this.barricade[i] ? Balance.BARRICADE_PATH_COST * 10 : 0;
+                queue.add(new long[]{this.dist[i], i});
             }
         }
 
         while (!queue.isEmpty()) {
             long[] head = queue.poll();
             int i = (int) head[1];
-            if (head[0] > dist[i]) {
+            if (head[0] > this.dist[i]) {
                 continue;
             }
-            int x = minX + i % width;
-            int z = minZ + i / width;
+            int x = this.minX + i % this.width;
+            int z = this.minZ + i / this.width;
             for (int[] n : NEIGHBORS) {
-                int j = index(x + n[0], z + n[1]);
+                int j = this.index(x + n[0], z + n[1]);
                 if (j < 0 || blocked[j]) {
                     continue;
                 }
                 // 대각선 이동은 두 직선 이웃이 모두 열려 있을 때만 (모서리 끼임 방지)
                 if (n[0] != 0 && n[1] != 0) {
-                    int a = index(x + n[0], z);
-                    int b = index(x, z + n[1]);
+                    int a = this.index(x + n[0], z);
+                    int b = this.index(x, z + n[1]);
                     if (a < 0 || b < 0 || blocked[a] || blocked[b]) {
                         continue;
                     }
                 }
-                int step = (n[0] != 0 && n[1] != 0 ? 14 : 10) + (barricade[j] ? Balance.BARRICADE_PATH_COST * 10 : 0);
-                int next = dist[i] + step;
-                if (next < dist[j]) {
-                    dist[j] = next;
+                int step = (n[0] != 0 && n[1] != 0 ? 14 : 10) + (this.barricade[j] ? Balance.BARRICADE_PATH_COST * 10 : 0);
+                int next = this.dist[i] + step;
+                if (next < this.dist[j]) {
+                    this.dist[j] = next;
                     queue.add(new long[]{next, j});
                 }
             }
@@ -135,7 +145,7 @@ public final class FlowField {
     }
 
     private boolean touchesWall(int x, int z) {
-        return !insideWall(x, z) && (insideWall(x + 1, z) || insideWall(x - 1, z) || insideWall(x, z + 1) || insideWall(x, z - 1));
+        return !this.insideWall(x, z) && (this.insideWall(x + 1, z) || this.insideWall(x - 1, z) || this.insideWall(x, z + 1) || this.insideWall(x, z - 1));
     }
 
     /**
@@ -145,33 +155,41 @@ public final class FlowField {
      */
     @Nullable
     public Step next(int x, int z, int lookahead) {
-        int i = index(x, z);
-        if (i < 0 || dist[i] == UNREACHABLE) {
+        int i = this.index(x, z);
+        if (i < 0 || this.dist[i] == UNREACHABLE) {
             return null;
         }
         int cx = x;
         int cz = z;
-        for (int s = 0; s < lookahead && dist[index(cx, cz)] > 0; s++) {
-            int best = -1;
-            int bestDist = dist[index(cx, cz)];
-            for (int[] n : NEIGHBORS) {
-                int j = index(cx + n[0], cz + n[1]);
-                if (j >= 0 && dist[j] < bestDist) {
-                    best = j;
-                    bestDist = dist[j];
-                }
-            }
+        for (int s = 0; s < lookahead && this.dist[this.index(cx, cz)] > 0; s++) {
+            int best = this.nextIndex(cx, cz);
             if (best < 0) {
                 break;
             }
-            int nx = minX + best % width;
-            int nz = minZ + best / width;
-            if (barricade[best]) {
-                return new Step(new BlockPos(cx, geo.baseY(), cz), new BlockPos(nx, geo.baseY(), nz));
+            int nx = this.minX + best % this.width;
+            int nz = this.minZ + best / this.width;
+            if (this.barricade[best]) {
+                return new Step(new BlockPos(cx, this.geo.baseY(), cz), new BlockPos(nx, this.geo.baseY(), nz), false);
             }
             cx = nx;
             cz = nz;
         }
-        return new Step(new BlockPos(cx, geo.baseY(), cz), null);
+        return new Step(new BlockPos(cx, this.geo.baseY(), cz), null, this.touchesWall(cx, cz));
+    }
+    private int nextIndex(int cx, int cz) {
+            int best = -1;
+            int bestDist = this.dist[this.index(cx, cz)];
+            for (int[] n : NEIGHBORS) {
+                int j = this.index(cx + n[0], cz + n[1]);
+                if (n[0] != 0 && n[1] != 0) {
+                    int a = this.index(cx + n[0], cz), b = this.index(cx, cz + n[1]);
+                    if (a < 0 || b < 0 || this.dist[a] == UNREACHABLE || this.dist[b] == UNREACHABLE) continue;
+                }
+                if (j >= 0 && this.dist[j] < bestDist) {
+                    best = j;
+                    bestDist = this.dist[j];
+                }
+            }
+        return best;
     }
 }

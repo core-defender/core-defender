@@ -24,7 +24,7 @@ public class ModBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BasicTurretBlockEntity>> BASIC_TURRET =
             BLOCK_ENTITIES.register("basic_turret",
-                    () -> BlockEntityType.Builder.of(BasicTurretBlockEntity::new, ModBlocks.BASIC_TURRET.get()).build(null));
+                    () -> BlockEntityType.Builder.of(BasicTurretBlockEntity::new, ModBlocks.BASIC_TURRET.get(), ModBlocks.STONE_TURRET.get(), ModBlocks.FLAME_TURRET.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SupplyBlockEntity>> SUPPLY =
@@ -38,7 +38,8 @@ public class ModBlockEntities {
                         ? new InvWrapper(CoreStorage.get(serverLevel).container()) : null,
                 ModBlocks.CORE.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BASIC_TURRET.get(),
-                (turret, side) -> new RestrictedItemHandler(turret.getInventory(), true, false));
+                BasicTurretBlockEntity::itemPort);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BASIC_TURRET.get(), BasicTurretBlockEntity::fluidPort);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SUPPLY.get(),
                 (supply, side) -> new RestrictedItemHandler(supply.getInventory(), supply.isSender(), !supply.isSender()));
     }

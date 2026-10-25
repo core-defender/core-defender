@@ -71,15 +71,15 @@ public class WaveManager {
 
         @Nullable
         public WaveMobController.MobState mobState(UUID uuid) {
-            return mobs.get(uuid);
+            return this.mobs.get(uuid);
         }
 
         public int remaining() {
-            return queue.size() + mobs.size();
+            return this.queue.size() + this.mobs.size();
         }
 
         public boolean tracks(UUID uuid) {
-            return mobs.containsKey(uuid);
+            return this.mobs.containsKey(uuid);
         }
     }
 
@@ -114,12 +114,13 @@ public class WaveManager {
         ServerBossEvent bar = new ServerBossEvent(Component.empty(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.NOTCHED_10);
         ServerBossEvent wallBar = new ServerBossEvent(Component.empty(), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
         active = new ActiveWave(spec, queue, geo.corePos(), bar, wallBar);
-        forceChunks(level, geo, spec.spawnMax() + 8);
+        forceChunks(level, geo, WaveSpawnArea.margin(geo, spec.spawnMax()));
         updateBossBar(level);
         return null;
     }
 
     private static void forceChunks(ServerLevel level, WallGeometry geo, int margin) {
+        if (active == null) return;
         int minCx = (geo.outerMinX() - margin) >> 4;
         int maxCx = (geo.outerMaxX() + margin) >> 4;
         int minCz = (geo.outerMinZ() - margin) >> 4;
@@ -148,7 +149,7 @@ public class WaveManager {
             active.spawnTimer = active.spec.spawnInterval();
         }
 
-        FlowField field = FlowFieldManager.get(level, active.spec.spawnMax() + 8);
+        FlowField field = FlowFieldManager.get(level, WaveSpawnArea.margin(geo, active.spec.spawnMax()));
         Iterator<Map.Entry<UUID, WaveMobController.MobState>> it = active.mobs.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<UUID, WaveMobController.MobState> entry = it.next();
@@ -159,18 +160,22 @@ public class WaveManager {
             }
             if ((now + mob.getId()) % CONTROLLER_INTERVAL == 0) {
                 WaveMobController.tick(level, mob, entry.getValue(), geo, field);
+                // A melee hit can collapse a wall and synchronously finish/clean up this wave.
+                if (active == null) return;
             }
+            WaveMobController.tickControls(mob, entry.getValue());
         }
 
         if (now % 10 == 0) {
             updateBossBar(level);
         }
-        if (active.queue.isEmpty() && active.mobs.isEmpty()) {
+        if (active != null && active.queue.isEmpty() && active.mobs.isEmpty()) {
             finish(server, true, "cleared");
         }
     }
 
     private static void spawnNext(ServerLevel level, WallGeometry geo) {
+        if (active == null) return;
         WaveSpec.MobEntry entry = active.queue.removeFirst();
         EntityType<?> type = EntityType.byString(entry.type()).orElse(null);
         if (type == null) {
@@ -188,38 +193,20 @@ public class WaveManager {
             mob.getVehicle().discard();
         }
         WaveMobs.prepare(mob, entry.elite(), entry.breaker());
-        active.mobs.put(mob.getUUID(), new WaveMobController.MobState(level.getRandom()));
+        active.mobs.put(mob.getUUID(), new WaveMobController.MobState());
         level.addFreshEntity(mob);
     }
 
-    /** 성벽 바깥면에서 [min, max] 거리의 사각 링 위 무작위 지점 */
+    /** 기지 외접원 + [min, max] 간격의 원형 띠 전체에서 무작위 지점 */
     @Nullable
     private static BlockPos findSpawnPos(ServerLevel level, WallGeometry geo) {
+        if (active == null) return null;
         RandomSource random = level.getRandom();
         for (int attempt = 0; attempt < SPAWN_ATTEMPTS; attempt++) {
-            int r = active.spec.spawnMin() + random.nextInt(Math.max(1, active.spec.spawnMax() - active.spec.spawnMin() + 1));
-            int x0 = geo.outerMinX() - r;
-            int x1 = geo.outerMaxX() + r;
-            int z0 = geo.outerMinZ() - r;
-            int z1 = geo.outerMaxZ() + r;
-            int w = x1 - x0;
-            int d = z1 - z0;
-            int t = random.nextInt(2 * (w + d));
-            int x;
-            int z;
-            if (t < w) {
-                x = x0 + t;
-                z = z0;
-            } else if (t < 2 * w) {
-                x = x0 + (t - w);
-                z = z1;
-            } else if (t < 2 * w + d) {
-                x = x0;
-                z = z0 + (t - 2 * w);
-            } else {
-                x = x1;
-                z = z0 + (t - 2 * w - d);
-            }
+            WaveSpawnArea.Point point = WaveSpawnArea.sample(geo, active.spec.spawnMin(), active.spec.spawnMax(),
+                    random.nextDouble(), random.nextDouble());
+            int x = (int) Math.floor(point.x());
+            int z = (int) Math.floor(point.z());
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
             BlockPos pos = new BlockPos(x, y, z);
             if (level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()
@@ -231,6 +218,7 @@ public class WaveManager {
     }
 
     private static void updateBossBar(ServerLevel level) {
+        if (active == null) return;
         int total = Math.max(1, active.spec.total());
         int remaining = active.remaining();
         active.bossBar.setName(Component.translatable("bossbar.coredefender.wave", active.spec.label(), remaining));
@@ -254,6 +242,8 @@ public class WaveManager {
 
         for (ServerBossEvent bar : List.of(active.bossBar, active.wallBar)) {
             for (ServerPlayer player : List.copyOf(bar.getPlayers())) {
+                // Minecraft owns this level; borrowers must not close it.
+                //noinspection resource
                 if (player.level() != level) {
                     bar.removePlayer(player);
                 }
@@ -273,12 +263,14 @@ public class WaveManager {
 
     /** 관리자 중단: 보상/패배 이벤트 없이 정리만 한다. */
     public static void abort(MinecraftServer server) {
+        TestMobs.clear(server);
         if (active != null) {
             cleanup(server);
         }
     }
 
     private static void finish(MinecraftServer server, boolean success, String reason) {
+        if (active == null) return;
         WaveSpec spec = active.spec;
         cleanup(server);
         var handler = success ? CoreDefenderKubeEvents.WAVE_CLEARED : CoreDefenderKubeEvents.WAVE_FAILED;
@@ -287,6 +279,7 @@ public class WaveManager {
 
     private static void cleanup(MinecraftServer server) {
         ActiveWave wave = active;
+        if (wave == null) return;
         active = null;
         ServerLevel level = WallManager.level(server);
         if (level != null) {

@@ -6,10 +6,10 @@ import lkd.namsic.coredefender.DefenseDimension;
 import lkd.namsic.coredefender.killzone.KillzoneManager;
 import lkd.namsic.coredefender.turret.BasicTurretBlockEntity;
 import lkd.namsic.coredefender.wall.DamageNumbers;
-import lkd.namsic.coredefender.wall.WallManager;
 import lkd.namsic.coredefender.wave.WaveManager;
 import lkd.namsic.coredefender.wave.WaveMobController;
 import lkd.namsic.coredefender.wave.WaveMobs;
+import lkd.namsic.coredefender.wave.TestMobs;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -33,6 +33,7 @@ public class WaveEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         WaveManager.tick(event.getServer());
+        TestMobs.tick(event.getServer());
         DamageNumbers.tick();
     }
 
@@ -48,7 +49,7 @@ public class WaveEvents {
             return;
         }
         WaveManager.ActiveWave wave = WaveManager.getActive();
-        if (wave == null || !wave.tracks(event.getEntity().getUUID())) {
+        if ((wave == null || !wave.tracks(event.getEntity().getUUID())) && !TestMobs.tracks(event.getEntity().getUUID())) {
             event.setCanceled(true);
         }
     }
@@ -57,7 +58,9 @@ public class WaveEvents {
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Post event) {
         WaveManager.ActiveWave wave = WaveManager.getActive();
-        if (wave == null || !(event.getEntity() instanceof Mob mob) || !WaveMobs.isWaveMob(mob)
+        // Minecraft owns this level; borrowers must not close it.
+        //noinspection resource
+        if (!(event.getEntity() instanceof Mob mob) || !WaveMobs.isWaveMob(mob)
                 || !(event.getSource().getEntity() instanceof Player player) || !(mob.level() instanceof ServerLevel level)) {
             return;
         }
@@ -95,13 +98,14 @@ public class WaveEvents {
             }
             return;
         }
+        // Minecraft owns this level; borrowers must not close it.
+        //noinspection resource
         if (!(projectile.level() instanceof ServerLevel level) || !DefenseDimension.is(level)
                 || !(result instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
         BlockPos pos = hit.getBlockPos();
-        boolean damaged = WallManager.damageAt(level, pos, Balance.RANGED_WALL_DAMAGE)
-                || KillzoneManager.damage(level, pos, Balance.RANGED_WALL_DAMAGE);
+        boolean damaged = KillzoneManager.damage(level, pos, Balance.RANGED_WALL_DAMAGE);
         if (damaged) {
             projectile.discard();
             event.setCanceled(true);

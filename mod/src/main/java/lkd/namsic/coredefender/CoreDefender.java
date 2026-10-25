@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender;
 
+import lkd.namsic.coredefender.registry.ModTurrets;
+
 import com.mojang.logging.LogUtils;
 import lkd.namsic.coredefender.network.ModNetwork;
 import lkd.namsic.coredefender.registry.ModBlockEntities;
@@ -20,6 +22,8 @@ public class CoreDefender {
 
     public CoreDefender(IEventBus modBus) {
         ModItems.init();
+        ModTurrets.MENUS.register(modBus);
+        ModTurrets.ENTITIES.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
         ModBlocks.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);

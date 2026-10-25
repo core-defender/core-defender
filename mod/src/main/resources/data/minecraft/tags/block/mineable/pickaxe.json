@@ -3,6 +3,8 @@
     "coredefender:basic_turret",
     "coredefender:spike_trap",
     "coredefender:supply_sender",
-    "coredefender:supply_receiver"
+    "coredefender:supply_receiver",
+    "coredefender:stone_turret",
+    "coredefender:flame_turret"
   ]
 }

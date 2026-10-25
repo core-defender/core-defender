@@ -59,12 +59,24 @@ public class ModBlocks {
     /** 기초 포탑 (공학 1단계) */
     public static final DeferredBlock<BasicTurretBlock> BASIC_TURRET = BLOCKS.registerBlock("basic_turret", BasicTurretBlock::new,
             BlockBehaviour.Properties.of()
+                    .noOcclusion()
                     .mapColor(MapColor.STONE)
                     .sound(SoundType.STONE)
                     .strength(3.0F, 6.0F)
                     .requiresCorrectToolForDrops());
 
     /** 보급 송신기 (디펜스 차원 밖) / 수신기 (디펜스 차원 안) */
+    public static final DeferredBlock<BasicTurretBlock> STONE_TURRET = BLOCKS.registerBlock("stone_turret", BasicTurretBlock::new,
+            BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3, 6));
+    public static final DeferredBlock<BasicTurretBlock> FLAME_TURRET = BLOCKS.registerBlock("flame_turret", BasicTurretBlock::new,
+            BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3, 6));
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
+    public static final DeferredItem<BlockItem> STONE_TURRET_ITEM = ITEMS.registerSimpleBlockItem(STONE_TURRET);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
+    public static final DeferredItem<BlockItem> FLAME_TURRET_ITEM = ITEMS.registerSimpleBlockItem(FLAME_TURRET);
+
     public static final DeferredBlock<SupplyBlock> SUPPLY_SENDER = BLOCKS.registerBlock("supply_sender",
             properties -> new SupplyBlock(properties, true),
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
@@ -73,11 +85,23 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
 
     public static final DeferredItem<BlockItem> CORE_ITEM = ITEMS.registerSimpleBlockItem(CORE);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> BASIC_TURRET_ITEM = ITEMS.registerSimpleBlockItem(BASIC_TURRET);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> SUPPLY_SENDER_ITEM = ITEMS.registerSimpleBlockItem(SUPPLY_SENDER);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> SUPPLY_RECEIVER_ITEM = ITEMS.registerSimpleBlockItem(SUPPLY_RECEIVER);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> WALL_ITEM = ITEMS.registerSimpleBlockItem(WALL);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> BARRICADE_ITEM = ITEMS.registerSimpleBlockItem(BARRICADE);
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> SPIKE_TRAP_ITEM = ITEMS.registerSimpleBlockItem(SPIKE_TRAP);
 
 }

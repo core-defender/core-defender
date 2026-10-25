@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'idea'
     id 'net.neoforged.moddev' version '2.0.148'
 }
 
@@ -35,12 +36,16 @@ neoForge {
 
     mods {
         "${mod_id}" {
-            sourceSet(sourceSets.main)
+            // ModDevGradle exposes this method through its dynamic Groovy DSL.
+            //noinspection GroovyAssignabilityCheck
+            sourceSet(sourceSets.getByName('main'))
         }
     }
 }
 
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.3'
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
@@ -48,6 +53,11 @@ dependencies {
     compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}") { transitive = false }
     compileOnly("dev.latvian.mods:rhino:${rhino_version}") { transitive = false }
 }
+
+tasks.named('test') { useJUnitPlatform() }
+// Geometry tests use Minecraft's actual AABB/VoxelShape implementation.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath
 
 var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
     var replaceProperties = [
@@ -66,6 +76,7 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
     inputs.properties replaceProperties
     expand replaceProperties
     from 'src/main/templates'
+    rename { name -> name.endsWith('.template') ? name.substring(0, name.length() - '.template'.length()) : name }
     into 'build/generated/sources/modMetadata'
 }
 sourceSets.main.resources.srcDir generateModMetadata
@@ -83,4 +94,37 @@ tasks.register('deployToInstance', Copy) {
     dependsOn tasks.named('jar')
     from tasks.named('jar')
     into instanceDir.map { "${it}/mods" }
+}
+
+// Always expose GameTest sources to Gradle/IDE, without requiring a local modpack.
+sourceSets {
+    gameTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+idea.module {
+    testSources.from(sourceSets.gameTest.java.srcDirs)
+    testResources.from(sourceSets.gameTest.resources.srcDirs)
+}
+// Compile server tests during normal verification, but do not launch Minecraft.
+tasks.named('check') { dependsOn tasks.named('gameTestClasses') }
+
+// Isolated real-server regression suite; never reads or changes the player's save.
+// Run with -PturretGameTests -PtestInstanceDir=<modpack instance> runTurretGameTest.
+if (providers.gradleProperty('turretGameTests').isPresent()) {
+    def testInstance = providers.gradleProperty('testInstanceDir').get()
+    dependencies {
+        gameTestRuntimeOnly fileTree(dir: "${testInstance}/mods", include: ['kubejs-neoforge-*.jar', 'rhino-*.jar', 'architectury-*.jar'])
+    }
+    neoForge.mods.coredefender.sourceSet(sourceSets.gameTest)
+    neoForge.runs {
+        turretGameTest {
+            type = 'gameTestServer'
+            sourceSet = sourceSets.gameTest
+            gameDirectory = file('build/turret-gametest')
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'coredefender'
+            jvmArgument '-Xmx2G'
+        }
+    }
 }

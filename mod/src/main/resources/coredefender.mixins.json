@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "lkd.namsic.coredefender.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["EntityBarrierMixin", "VineryPotMixin", "TurretArrowMixin", "TurretArrowAccess", "TurretEffectMixin", "TurretDamageAccess"],
+  "client": ["VineryPotRendererMixin"],
+  "injectors": { "defaultRequire": 1 }
+}

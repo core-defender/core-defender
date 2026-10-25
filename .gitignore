@@ -2,9 +2,12 @@
 .gradle/
 build/
 run/
+mod/logs/
 out/
 .idea/
 *.iml
+node_modules/
+*.xlsx.inspect.ndjson
 .vscode/
 
 # KubeJS 런타임 생성물
