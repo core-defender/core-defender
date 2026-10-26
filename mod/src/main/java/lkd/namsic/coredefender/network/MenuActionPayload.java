@@ -13,12 +13,12 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record MenuActionPayload(String action, String arg) implements CustomPacketPayload {
     public static final Type<MenuActionPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "menu_action"));
+        new Type<>(ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "menu_action"));
 
     public static final StreamCodec<ByteBuf, MenuActionPayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.stringUtf8(64), MenuActionPayload::action,
-            ByteBufCodecs.stringUtf8(256), MenuActionPayload::arg,
-            MenuActionPayload::new
+        ByteBufCodecs.stringUtf8(64), MenuActionPayload::action,
+        ByteBufCodecs.stringUtf8(256), MenuActionPayload::arg,
+        MenuActionPayload::new
     );
 
     @Override

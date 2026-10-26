@@ -22,7 +22,9 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-/** 고정 받침대 위에서 회전하는 석궁. 바닐라 텍스처를 재사용한다. */
+/**
+ * 고정 받침대 위에서 회전하는 석궁. 바닐라 텍스처를 재사용한다.
+ */
 @EventBusSubscriber(modid = CoreDefender.MOD_ID, value = Dist.CLIENT)
 public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurretBlockEntity> {
     private static final BlockState WOOD = Blocks.SPRUCE_PLANKS.defaultBlockState();
@@ -47,18 +49,21 @@ public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurre
     @Override
     public void render(BasicTurretBlockEntity turret, float partialTick, PoseStack pose,
                        MultiBufferSource buffers, int light, int overlay) {
-        if (turret.getLevel() == null) return;
+        if (turret.getLevel() == null) {
+            return;
+        }
+
         double now = turret.getLevel().getGameTime() + partialTick;
-        float reload = (float) Math.clamp((now - turret.getReloadStarted()) / Math.max(1,turret.clientInterval), 0, 1);
+        float reload = (float) Math.clamp((now - turret.getReloadStarted()) / Math.max(1, turret.clientInterval), 0, 1);
         float draw = turret.isLoaded() ? reload * reload * (3 - 2 * reload) : 0;
         float shotAge = (float) (now - turret.getLastShot());
         float recoil = shotAge >= 0 && shotAge < 5 ? .10F * (1 - shotAge / 5) : 0;
 
         pose.pushPose();
-        boolean warning = turret.status == 2 || turret.status == 3 || turret.status == 4 || turret.status == 8 || turret.status == 9;
+        boolean warning = turret.status == 2 || turret.status == 3 || turret.status == 4 || turret.status == 8 || turret.status == 9 || turret.status == 11;
         BlockState lamp = (warning ? Blocks.REDSTONE_BLOCK : turret.clientAmpWarning || turret.outputBlocked ? Blocks.GOLD_BLOCK
-                : turret.status == 7 ? Blocks.GRAY_CONCRETE : Blocks.EMERALD_BLOCK).defaultBlockState();
-        this.box(pose,buffers,lamp,.38F,.18F,.02F,.24F,.16F,.08F,15728880,overlay);
+            : turret.status == 7 ? Blocks.GRAY_CONCRETE : Blocks.EMERALD_BLOCK).defaultBlockState();
+        this.box(pose, buffers, lamp, .38F, .18F, .02F, .24F, .16F, .08F, 15728880, overlay);
         pose.translate(.5, 0, .5);
         this.box(pose, buffers, METAL, -.18F, .75F, -.18F, .36F, .38F, .36F, light, overlay);
         pose.translate(0, 1.3, 0);
@@ -67,22 +72,49 @@ public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurre
         pose.mulPose(Axis.XP.rotationDegrees(turret.renderPitch(partialTick)));
         pose.translate(0, 0, -recoil);
         if (turret.kind() == 1) {
-            this.box(pose,buffers,WOOD,-.30F,-.08F,-.48F,.60F,.18F,.98F,light,overlay);
-            this.box(pose,buffers,METAL,-.34F,-.14F,-.15F,.12F,.42F,.20F,light,overlay);
-            this.box(pose,buffers,METAL,.22F,-.14F,-.15F,.12F,.42F,.20F,light,overlay);
-            pose.mulPose(Axis.XP.rotationDegrees(-45 + draw * 45));
-            this.box(pose,buffers,WOOD,-.07F,0,-.4F,.14F,.12F,1.1F,light,overlay);
-            this.box(pose,buffers,METAL,-.22F,.06F,.38F,.44F,.08F,.36F,light,overlay);
-            if(turret.isLoaded())this.box(pose,buffers,Blocks.COBBLESTONE.defaultBlockState(),-.15F,.14F,.41F,.30F,.28F,.30F,light,overlay);
-            pose.popPose();return;
+            this.box(pose, buffers, WOOD, -.30F, -.08F, -.48F, .60F, .18F, .98F, light, overlay);
+            this.box(pose, buffers, METAL, -.34F, -.14F, -.15F, .12F, .42F, .20F, light, overlay);
+            this.box(pose, buffers, METAL, .22F, -.14F, -.15F, .12F, .42F, .20F, light, overlay);
+            // Local +Z is the firing direction; the rear cup swings upward and forward.
+            pose.mulPose(Axis.XP.rotationDegrees(45 - draw * 45));
+            this.box(pose, buffers, WOOD, -.07F, 0, -.7F, .14F, .12F, 1.1F, light, overlay);
+            this.box(pose, buffers, METAL, -.22F, .06F, -.74F, .44F, .08F, .36F, light, overlay);
+            if (turret.isLoaded() && (shotAge < 0 || shotAge >= 4)) {
+                this.box(pose, buffers, Blocks.COBBLESTONE.defaultBlockState(), -.15F, .14F, -.71F, .30F, .28F, .30F, light, overlay);
+            }
+
+            pose.popPose();
+            return;
         }
+
+        if (turret.kind() == 3) {
+            float tilt = shotAge >= 0 && shotAge < 20 ? (float) Math.sin(shotAge / 20 * Math.PI) * 65 : 0;
+            pose.mulPose(Axis.XP.rotationDegrees(tilt));
+            this.box(pose, buffers, METAL, -.38F, -.15F, -.36F, .76F, .10F, .72F, light, overlay);
+            this.box(pose, buffers, METAL, -.38F, -.05F, -.36F, .08F, .40F, .72F, light, overlay);
+            this.box(pose, buffers, METAL, .30F, -.05F, -.36F, .08F, .40F, .72F, light, overlay);
+            this.box(pose, buffers, METAL, -.30F, -.05F, -.36F, .60F, .40F, .08F, light, overlay);
+            this.box(pose, buffers, METAL, -.30F, -.05F, .28F, .60F, .25F, .08F, light, overlay);
+            if (turret.isLoaded() || shotAge >= 0 && shotAge < 20) {
+                this.box(pose, buffers, Blocks.BLACK_TERRACOTTA.defaultBlockState(), -.29F, .12F, -.27F, .58F, .02F, .54F, light, overlay);
+            }
+
+            pose.popPose();
+            return;
+        }
+
         if (turret.kind() == 2) {
-            this.box(pose,buffers,Blocks.COPPER_BLOCK.defaultBlockState(),-.28F,-.18F,-.38F,.56F,.42F,.56F,light,overlay);
-            this.box(pose,buffers,METAL,-.12F,-.07F,.12F,.24F,.24F,.58F,light,overlay);
-            this.box(pose,buffers,Blocks.BLACKSTONE.defaultBlockState(),-.16F,-.11F,.65F,.32F,.32F,.12F,light,overlay);
-            if(shotAge>=0&&shotAge<10)this.box(pose,buffers,Blocks.ORANGE_STAINED_GLASS.defaultBlockState(),-.08F,-.03F,.78F,.16F,.16F,.20F,15728880,overlay);
-            pose.popPose();return;
+            this.box(pose, buffers, Blocks.COPPER_BLOCK.defaultBlockState(), -.28F, -.18F, -.38F, .56F, .42F, .56F, light, overlay);
+            this.box(pose, buffers, METAL, -.12F, -.07F, .12F, .24F, .24F, .58F, light, overlay);
+            this.box(pose, buffers, Blocks.BLACKSTONE.defaultBlockState(), -.16F, -.11F, .65F, .32F, .32F, .12F, light, overlay);
+            if (shotAge >= 0 && shotAge < 10) {
+                this.box(pose, buffers, Blocks.ORANGE_STAINED_GLASS.defaultBlockState(), -.08F, -.03F, .78F, .16F, .16F, .20F, 15728880, overlay);
+            }
+
+            pose.popPose();
+            return;
         }
+
         this.box(pose, buffers, WOOD, -.10F, -.08F, -.55F, .20F, .16F, 1.05F, light, overlay);
         this.box(pose, buffers, METAL, -.13F, -.10F, -.15F, .26F, .20F, .12F, light, overlay);
         this.box(pose, buffers, METAL, -.035F, .08F, -.45F, .07F, .025F, .95F, light, overlay);
@@ -95,6 +127,7 @@ public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurre
             this.beam(pose, buffers, WOOD, side * .37F, 0, .34F, side * .66F, 0, tipZ, .065F, light, overlay);
             this.beam(pose, buffers, STRING, side * .66F, .04F, tipZ, 0, .04F, stringZ, .018F, light, overlay);
         }
+
         // 발사 직후 4틱은 화살을 숨기고, 다음 화살이 위에서 레일로 내려온다.
         if (turret.isLoaded() && reload >= .2F) {
             float feed = Math.clamp((reload - .2F) / .5F, 0, 1);
@@ -107,6 +140,7 @@ public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurre
             this.box(pose, buffers, STRING, -.009F, -.06F, -.4F, .018F, .12F, .13F, light, overlay);
             pose.popPose();
         }
+
         pose.popPose();
     }
 

@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender.wall;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 
 import lombok.Getter;
@@ -11,7 +13,9 @@ import net.minecraft.world.level.saveddata.SavedData;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** 디펜스 차원에 저장되는 성벽 상태. */
+/**
+ * 디펜스 차원에 저장되는 성벽 상태.
+ */
 public class WallState extends SavedData {
     public static final String ID = "coredefender_wall";
     public static final Factory<WallState> FACTORY = new Factory<>(WallState::new, WallState::load);
@@ -20,8 +24,8 @@ public class WallState extends SavedData {
     @Accessors(fluent = true)
     boolean built;
     boolean barrierMigrated = true;
-    private WallGeometry cachedGeometry;
-    private List<BarrierGeometry.Panel> cachedPanels;
+    private @Nullable WallGeometry cachedGeometry;
+    private List<BarrierGeometry.Panel> cachedPanels = List.of();
 
     public List<BarrierGeometry.Panel> panels() {
         WallGeometry geo = this.geometry();
@@ -29,6 +33,7 @@ public class WallState extends SavedData {
             this.cachedGeometry = geo;
             this.cachedPanels = BarrierGeometry.panels(geo);
         }
+
         return this.cachedPanels;
     }
 
@@ -36,15 +41,20 @@ public class WallState extends SavedData {
         WallSegment segment = this.segments.get(id);
         return this.built && segment != null && !segment.collapsed;
     }
+
     int centerX;
     int centerZ;
     int baseY;
     int half = 1;
-    /** 축소 후에도 시설 삭제 범위를 기억한다. */
+    /**
+     * 축소 후에도 시설 삭제 범위를 기억한다.
+     */
     int largestHalf = 1;
     int height = 5;
     int thickness = 0;
-    /** 변(N/E/S/W)별 강화 단계. 확장해도 유지된다. */
+    /**
+     * 변(N/E/S/W)별 강화 단계. 확장해도 유지된다.
+     */
     final int[] sideLevels = new int[WallGeometry.SIDES.length];
     @Getter
     @Accessors(fluent = true)
@@ -66,10 +76,13 @@ public class WallState extends SavedData {
                 return i;
             }
         }
+
         throw new IllegalArgumentException("Unknown wall side: " + side);
     }
 
-    /** 현재 크기에 맞춰 구간을 새로 만든다 (기존 구간 HP 는 버리고 변별 강화 단계는 유지) */
+    /**
+     * 현재 크기에 맞춰 구간을 새로 만든다 (기존 구간 HP 는 버리고 변별 강화 단계는 유지)
+     */
     void resetSegments() {
         this.segments.clear();
         for (String id : this.geometry().segmentIds()) {
@@ -112,6 +125,7 @@ public class WallState extends SavedData {
         for (String id : segmentsTag.getAllKeys()) {
             state.segments.put(id, WallSegment.load(segmentsTag.getCompound(id)));
         }
+
         return state;
     }
 }

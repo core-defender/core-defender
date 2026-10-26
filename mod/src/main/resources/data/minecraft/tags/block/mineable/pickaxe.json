@@ -5,6 +5,7 @@
     "coredefender:supply_sender",
     "coredefender:supply_receiver",
     "coredefender:stone_turret",
-    "coredefender:flame_turret"
+    "coredefender:flame_turret",
+    "coredefender:oil_turret"
   ]
 }

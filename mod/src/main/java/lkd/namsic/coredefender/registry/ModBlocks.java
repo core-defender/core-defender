@@ -22,54 +22,70 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CoreDefender.MOD_ID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CoreDefender.MOD_ID);
 
-    /** 성 중앙의 관리 거점. 파괴 불가. */
+    /**
+     * 성 중앙의 관리 거점. 파괴 불가.
+     */
     public static final DeferredBlock<CoreBlock> CORE = BLOCKS.registerBlock("core", CoreBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_CYAN)
-                    .strength(-1.0F, 3600000.0F)
-                    .lightLevel(state -> 12)
-                    .noLootTable()
-                    .pushReaction(PushReaction.BLOCK));
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_CYAN)
+            .strength(-1.0F, 3600000.0F)
+            .lightLevel(state -> 12)
+            .noLootTable()
+            .pushReaction(PushReaction.BLOCK));
 
-    /** 시스템이 생성하는 성벽. 블록 자체는 파괴 불가이고 HP 는 구간 단위로 WallState 가 관리한다. */
+    /**
+     * 시스템이 생성하는 성벽. 블록 자체는 파괴 불가이고 HP 는 구간 단위로 WallState 가 관리한다.
+     */
     public static final DeferredBlock<WallBlock> WALL = BLOCKS.registerBlock("wall", WallBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.DEEPSLATE)
-                    .sound(SoundType.DEEPSLATE_BRICKS)
-                    .strength(-1.0F, 3600000.0F)
-                    .noLootTable()
-                    .pushReaction(PushReaction.BLOCK));
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.DEEPSLATE)
+            .sound(SoundType.DEEPSLATE_BRICKS)
+            .strength(-1.0F, 3600000.0F)
+            .noLootTable()
+            .pushReaction(PushReaction.BLOCK));
 
-    /** 킬존 바리케이드: 성벽 밖에 설치 가능, HP 는 KillzoneManager 가 관리 */
+    /**
+     * 킬존 바리케이드: 성벽 밖에 설치 가능, HP 는 KillzoneManager 가 관리
+     */
     public static final DeferredBlock<BarricadeBlock> BARRICADE = BLOCKS.registerBlock("barricade", BarricadeBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .sound(SoundType.WOOD)
-                    .strength(2.0F, 6.0F));
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .sound(SoundType.WOOD)
+            .strength(2.0F, 6.0F));
 
-    /** 킬존 가시 함정: 통과 가능, 웨이브 몹 감속 + 피해 */
+    /**
+     * 킬존 가시 함정: 통과 가능, 웨이브 몹 감속 + 피해
+     */
     public static final DeferredBlock<SpikeTrapBlock> SPIKE_TRAP = BLOCKS.registerBlock("spike_trap", SpikeTrapBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .sound(SoundType.METAL)
-                    .strength(1.5F, 6.0F)
-                    .noCollission()
-                    .noOcclusion());
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.METAL)
+            .sound(SoundType.METAL)
+            .strength(1.5F, 6.0F)
+            .noCollission()
+            .noOcclusion());
 
-    /** 기초 포탑 (공학 1단계) */
+    /**
+     * 기초 포탑 (공학 1단계)
+     */
     public static final DeferredBlock<BasicTurretBlock> BASIC_TURRET = BLOCKS.registerBlock("basic_turret", BasicTurretBlock::new,
-            BlockBehaviour.Properties.of()
-                    .noOcclusion()
-                    .mapColor(MapColor.STONE)
-                    .sound(SoundType.STONE)
-                    .strength(3.0F, 6.0F)
-                    .requiresCorrectToolForDrops());
+        BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .mapColor(MapColor.STONE)
+            .sound(SoundType.STONE)
+            .strength(3.0F, 6.0F)
+            .requiresCorrectToolForDrops());
 
-    /** 보급 송신기 (디펜스 차원 밖) / 수신기 (디펜스 차원 안) */
+    /**
+     * 보급 송신기 (디펜스 차원 밖) / 수신기 (디펜스 차원 안)
+     */
     public static final DeferredBlock<BasicTurretBlock> STONE_TURRET = BLOCKS.registerBlock("stone_turret", BasicTurretBlock::new,
-            BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3, 6));
+        BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(3, 6));
+    public static final DeferredBlock<BasicTurretBlock> OIL_TURRET = BLOCKS.registerBlock("oil_turret", BasicTurretBlock::new,
+        BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(3, 6));
+    @SuppressWarnings("unused")
+    public static final DeferredItem<BlockItem> OIL_TURRET_ITEM = ITEMS.registerSimpleBlockItem(OIL_TURRET);
     public static final DeferredBlock<BasicTurretBlock> FLAME_TURRET = BLOCKS.registerBlock("flame_turret", BasicTurretBlock::new,
-            BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3, 6));
+        BlockBehaviour.Properties.of().noOcclusion().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3, 6));
     // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
     @SuppressWarnings("unused")
     public static final DeferredItem<BlockItem> STONE_TURRET_ITEM = ITEMS.registerSimpleBlockItem(STONE_TURRET);
@@ -78,11 +94,11 @@ public class ModBlocks {
     public static final DeferredItem<BlockItem> FLAME_TURRET_ITEM = ITEMS.registerSimpleBlockItem(FLAME_TURRET);
 
     public static final DeferredBlock<SupplyBlock> SUPPLY_SENDER = BLOCKS.registerBlock("supply_sender",
-            properties -> new SupplyBlock(properties, true),
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
+        properties -> new SupplyBlock(properties, true),
+        BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
     public static final DeferredBlock<SupplyBlock> SUPPLY_RECEIVER = BLOCKS.registerBlock("supply_receiver",
-            properties -> new SupplyBlock(properties, false),
-            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
+        properties -> new SupplyBlock(properties, false),
+        BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).sound(SoundType.METAL).strength(3.0F, 6.0F));
 
     public static final DeferredItem<BlockItem> CORE_ITEM = ITEMS.registerSimpleBlockItem(CORE);
     // Registered entry point: invoked by the game registry, scripts, or annotation discovery.

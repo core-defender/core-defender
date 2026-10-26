@@ -8,12 +8,14 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class WallBlock extends Block {
     public static final MapCodec<WallBlock> CODEC = simpleCodec(WallBlock::new);
-    /** 구간이 붕괴했는지 (외형만 바뀜) */
+    /**
+     * 구간이 붕괴했는지 (외형만 바뀜)
+     */
     public static final BooleanProperty BROKEN = BooleanProperty.create("broken");
 
     public WallBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(BROKEN, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(BROKEN, false));
     }
 
     @Override

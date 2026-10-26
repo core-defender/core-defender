@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender.wall;
 
+import net.minecraft.server.level.ServerPlayer;
+
 import lkd.namsic.coredefender.supply.SupplyBlockEntity;
 import net.minecraft.sounds.SoundEvents;
 
@@ -25,10 +27,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Arrays;
+
 import lkd.namsic.coredefender.Balance;
 import lkd.namsic.coredefender.killzone.KillzoneManager;
 
@@ -39,7 +42,9 @@ import lkd.namsic.coredefender.killzone.KillzoneManager;
 public class WallManager {
     public static final int INITIAL_HALF = 1;
     public static final int BASE_SEGMENT_HP = 500;
-    /** 강화 1단계당 최대 HP 증가율 */
+    /**
+     * 강화 1단계당 최대 HP 증가율
+     */
     public static final double HP_PER_LEVEL = 0.5;
 
     @Nullable
@@ -51,12 +56,15 @@ public class WallManager {
         return level.getDataStorage().computeIfAbsent(WallState.FACTORY, WallState.ID);
     }
 
-    /** 성벽/코어가 아직 없으면 차원 중앙(0, 0)에 생성한다. */
+    /**
+     * 성벽/코어가 아직 없으면 차원 중앙(0, 0)에 생성한다.
+     */
     public static void ensureBuilt(MinecraftServer server) {
         ServerLevel level = level(server);
         if (level == null) {
             return;
         }
+
         WallState state = state(level);
         if (state.built) {
             migrateBarrier(level, state);
@@ -66,8 +74,10 @@ public class WallManager {
                 state.setDirty();
                 FlowFieldManager.invalidate();
             }
+
             return;
         }
+
         state.centerX = 0;
         state.centerZ = 0;
         // 청크가 로드되지 않았으면 getHeight 가 최저 높이를 돌려주므로 먼저 생성/로드한다
@@ -82,20 +92,30 @@ public class WallManager {
         state.setDirty();
     }
 
-    // ---------- 블록 배치 ----------
 
-    /** 구 블록 성벽을 한 번만 전환. 상태/HP는 보존하고 성벽 위 시설만 회수한다. */
+    /**
+     * 구 블록 성벽을 한 번만 전환. 상태/HP는 보존하고 성벽 위 시설만 회수한다.
+     */
     private static void migrateBarrier(ServerLevel level, WallState state) {
-        if (state.barrierMigrated) return;
+        if (state.barrierMigrated) {
+            return;
+        }
+
         WallGeometry geo = state.geometry();
         for (int[] column : geo.columns()) {
             int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, column[0], column[1]);
-            for (int y = geo.topY(); y < top; y++) CoreStorage.salvage(level, new BlockPos(column[0], y, column[1]));
+            for (int y = geo.topY(); y < top; y++) {
+                CoreStorage.salvage(level, new BlockPos(column[0], y, column[1]));
+            }
+
             for (int y = geo.baseY(); y < geo.topY(); y++) {
                 BlockPos pos = new BlockPos(column[0], y, column[1]);
-                if (level.getBlockState(pos).is(ModBlocks.WALL.get())) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                if (level.getBlockState(pos).is(ModBlocks.WALL.get())) {
+                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                }
             }
         }
+
         state.barrierMigrated = true;
         state.setDirty();
         FlowFieldManager.invalidate();
@@ -110,14 +130,17 @@ public class WallManager {
         BarrierSync.tick(server);
     }
 
-    // ---------- 피해 / 수복 / 확장 ----------
 
-    public static void hit(ServerLevel level, String id, Vec3 point, int amount) {
-        if (!state(level).active(id)) return;
+    public static void hit(ServerLevel level, String id, Vec3 point, double baseDamage) {
+        int amount = WallDamage.scale(baseDamage, level.getDifficulty());
+        if (amount == 0 || !state(level).active(id)) {
+            return;
+        }
+
         damage(level, id, amount);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 4, 0.2, 0.2, 0.2, 0.02);
         level.playSound(null, point.x, point.y, point.z, SoundEvents.AMETHYST_BLOCK_HIT,
-                SoundSource.BLOCKS, 0.4F, 1.5F);
+            SoundSource.BLOCKS, 0.4F, 1.5F);
         DamageNumbers.spawn(level, point, amount, ChatFormatting.RED);
     }
 
@@ -127,6 +150,7 @@ public class WallManager {
         if (segment == null || segment.collapsed || amount <= 0) {
             return;
         }
+
         segment.hp = Math.max(0, segment.hp - amount);
         state.setDirty();
 
@@ -136,28 +160,38 @@ public class WallManager {
     }
 
     private static void collapse(ServerLevel level, WallState state, String id) {
-        state.segments.get(id).collapsed = true;
+        WallSegment segment = state.segments.get(id);
+        if (segment == null) {
+            return;
+        }
+
+        segment.collapsed = true;
         state.setDirty();
 
         MinecraftServer server = level.getServer();
-        WaveManager.onWallCollapsed(server);
         server.getPlayerList().broadcastSystemMessage(
-                Component.translatable("message.coredefender.wall_collapsed", id).withStyle(ChatFormatting.RED), false);
+            Component.translatable("message.coredefender.wall_collapsed", id).withStyle(ChatFormatting.RED), false);
+        // 실패 이벤트가 수복 안내를 출력하므로 붕괴 알림 뒤에 호출한다.
+        WaveManager.onWallCollapsed(server);
         CoreDefenderKubeEvents.WALL_COLLAPSED.post(ScriptType.SERVER, new WallCollapsedKubeEvent(server, id));
     }
 
-    /** 구간 수복. id 가 null 이면 전체. amount 가 0 이하면 최대 HP 까지. */
+    /**
+     * 구간 수복. id 가 null 이면 전체. amount 가 0 이하면 최대 HP 까지.
+     */
     public static void repair(ServerLevel level, @Nullable String id, int amount) {
         WallState state = state(level);
         for (Map.Entry<String, WallSegment> entry : state.segments.entrySet()) {
             if (id != null && !id.equals(entry.getKey())) {
                 continue;
             }
+
             WallSegment segment = entry.getValue();
             segment.hp = amount > 0 ? (int) Math.min(segment.maxHp, (long) segment.hp + amount) : segment.maxHp;
             segment.collapsed = false;
 
         }
+
         state.setDirty();
     }
 
@@ -165,7 +199,9 @@ public class WallManager {
         return (int) Math.round(BASE_SEGMENT_HP * (1 + HP_PER_LEVEL * sideLevel));
     }
 
-    /** 한 변을 강화: 해당 변 구간들의 최대 HP 와 현재 HP 가 함께 오른다. */
+    /**
+     * 한 변을 강화: 해당 변 구간들의 최대 HP 와 현재 HP 가 함께 오른다.
+     */
     public static void upgradeSide(ServerLevel level, String side) {
         WallState state = state(level);
         int index = WallState.sideIndex(side);
@@ -176,6 +212,7 @@ public class WallManager {
                 if (!segment.collapsed) {
                     segment.hp += newMax - segment.maxHp;
                 }
+
                 segment.maxHp = newMax;
             }
         });
@@ -186,7 +223,9 @@ public class WallManager {
         return state(level).segments.values().stream().anyMatch(s -> s.collapsed);
     }
 
-    /** 경계를 사방 1청크씩 확장한다. 기존 일반 시설은 유지한다. */
+    /**
+     * 경계를 사방 1청크씩 확장한다. 기존 일반 시설은 유지한다.
+     */
     public static void expand(ServerLevel level) {
         WallState state = state(level);
         WallGeometry oldGeo = state.geometry();
@@ -200,6 +239,7 @@ public class WallManager {
                 if (oldGeo.isInterior(x, z)) {
                     continue;
                 }
+
                 for (int y = newGeo.baseY(); y < newGeo.baseY() + 3; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
                     BlockState block = level.getBlockState(pos);
@@ -216,60 +256,78 @@ public class WallManager {
         state.setDirty();
     }
 
-    /** 경계 상태는 유지하고 코어 블록을 복구한다. */
+    /**
+     * 경계 상태는 유지하고 코어 블록을 복구한다.
+     */
     public static void rebuild(ServerLevel level) {
         WallState state = state(level);
         placeWall(level, state);
         level.setBlock(state.geometry().corePos(), ModBlocks.CORE.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
-    // ---------- 조회 ----------
 
-    /** 크기/강화/HP를 선택 초기화. 장벽에는 실체 블록이 없어 일반 시설은 유지한다. */
+    /**
+     * 크기/강화/HP를 선택 초기화. 장벽에는 실체 블록이 없어 일반 시설은 유지한다.
+     */
     public static void reset(ServerLevel level, String scope) {
         WallState state = state(level);
         if (scope.equals("hp")) {
             repair(level, null, 0);
             return;
         }
+
         boolean resize = scope.equals("wall") || scope.equals("size");
         if (resize) {
             state.half = INITIAL_HALF;
             state.height = 5;
             state.thickness = 0;
         }
-        if (scope.equals("wall") || scope.equals("levels")) Arrays.fill(state.sideLevels, 0);
+
+        if (scope.equals("wall") || scope.equals("levels")) {
+            Arrays.fill(state.sideLevels, 0);
+        }
+
         state.resetSegments();
         rebuild(level);
         if (resize) {
             BlockPos core = state.geometry().corePos();
-            for (var player : level.players()) {
+            for (ServerPlayer player : level.players()) {
                 player.teleportTo(level, core.getX() + 0.5, core.getY(), core.getZ() + 3.5, player.getYRot(), player.getXRot());
             }
         }
+
         FlowFieldManager.invalidate();
         state.setDirty();
     }
 
-    /** 현재 기지와 킬존의 지상 시설을 드롭 없이 삭제. 지형/코어/성벽은 유지. */
+    /**
+     * 현재 기지와 킬존의 지상 시설을 드롭 없이 삭제. 지형/코어/성벽은 유지.
+     */
     public static void clearFacilities(ServerLevel level) {
         WallState state = state(level);
         WallGeometry geo = new WallGeometry(state.centerX, state.centerZ, state.baseY,
-                Math.max(state.half, state.largestHalf), state.height, state.thickness);
+            Math.max(state.half, state.largestHalf), state.height, state.thickness);
         int margin = Balance.KILLZONE_WIDTH;
         for (int x = geo.outerMinX() - margin; x <= geo.outerMaxX() + margin; x++) {
             for (int z = geo.outerMinZ() - margin; z <= geo.outerMaxZ() + margin; z++) {
                 int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
                 for (int y = geo.baseY(); y < top; y++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (pos.equals(geo.corePos()) || level.getBlockState(pos).isAir()) continue;
+                    if (pos.equals(geo.corePos()) || level.getBlockState(pos).isAir()) {
+                        continue;
+                    }
+
                     KillzoneManager.unregister(level, pos);
-                    if (level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) supply.releaseChunks();
+                    if (level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) {
+                        supply.releaseChunks();
+                    }
+
                     level.removeBlockEntity(pos);
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
                 }
             }
         }
+
         state.largestHalf = state.half;
         state.setDirty();
         FlowFieldManager.invalidate();
@@ -285,6 +343,7 @@ public class WallManager {
             s.addProperty("level", state.sideLevel(side));
             sides.add(s);
         }
+
         json.add("sides", sides);
         JsonArray segments = new JsonArray();
         state.segments.forEach((id, segment) -> {

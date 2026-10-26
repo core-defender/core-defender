@@ -6,5 +6,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(AbstractArrow.class)
 public interface TurretArrowAccess {
-    @Invoker("setPierceLevel") void cd$setPierceLevel(byte level);
+    @Invoker("setPierceLevel")
+    void cd$setPierceLevel(byte level);
 }

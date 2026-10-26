@@ -17,6 +17,7 @@ public class ServerLifecycleEvents {
     public static void onServerStopping(ServerStoppingEvent event) {
         WaveManager.abort(event.getServer());
     }
+
     private static final int BARRIER_SYNC_INTERVAL = 5;
 
     @SubscribeEvent

@@ -1,9 +1,14 @@
 package lkd.namsic.coredefender.mixin;
+
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+
 @Mixin(LivingEntity.class)
 public interface TurretDamageAccess {
-    @Accessor("lastHurt") float cd$lastHurt();
-    @Accessor("lastHurt") void cd$lastHurt(float value);
+    @Accessor("lastHurt")
+    float cd$lastHurt();
+
+    @Accessor("lastHurt")
+    void cd$lastHurt(float value);
 }

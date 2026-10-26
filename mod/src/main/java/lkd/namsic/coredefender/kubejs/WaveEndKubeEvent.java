@@ -9,6 +9,8 @@ import net.minecraft.server.MinecraftServer;
  * CoreDefenderEvents.waveCleared / waveFailed (event => { event.server, event.label, event.success, event.reason })
  * reason: cleared | wall_collapsed
  */
+// KubeJS exposes bean getters as event properties.
+@SuppressWarnings("ClassCanBeRecord")
 @Getter
 @RequiredArgsConstructor
 public class WaveEndKubeEvent implements KubeEvent {

@@ -9,7 +9,7 @@ function cdWaveState(stage, label, mult) {
   return {
     label: label,
     mult: Number(mult),
-    mobs: stage.mobs.map(m => ({ type: m.type, count: m.count, elite: !!m.elite })),
+    mobs: stage.mobs.map(m => ({ type: m.type, count: m.count, elite: !!m.elite, boss: m.boss || '' })),
     rewards: stage.rewards.map(r => ({ item: r.item, count: Math.max(1, Math.floor(r.count * mult)) }))
   }
 }
@@ -30,7 +30,7 @@ function cdBuildMenuState(player) {
 
   let state = {
     title: '디펜스 기지',
-    progress: `스테이지 ${next.index + 1}`,
+    progress: next.label,
     travel: { action: inDefense ? 'leave' : 'enter' }
   }
 
@@ -48,17 +48,18 @@ function cdBuildMenuState(player) {
   if (waveInfo.active) {
     let wave = cdState.wave || { index: next.index, mult: next.mult }
     state.active = { remaining: waveInfo.remaining, total: waveInfo.total }
-    state.wave = cdWaveState(next.stage, `${waveInfo.label} 진행 중`, wave.mult)
+    state.wave = cdWaveState(wave.stage || next.stage, `${waveInfo.label} 진행 중`, wave.mult)
   } else {
-    state.wave = cdWaveState(next.stage, `다음 웨이브: 스테이지 ${next.index + 1}`, next.mult)
+    state.wave = cdWaveState(next.stage, `${next.label} / ${cdWaitingText(server)}`, next.mult)
   }
 
-  let startReason = cdStartReason(server, player, false)
-  state.start = { enabled: startReason == '', reason: startReason }
+  let advanceReason = cdAdvanceReason(cdState, waveInfo.active, wall.segments.some(s => s.collapsed))
+  if (!inDefense) advanceReason = '기지 안에서 난이도를 올려주세요'
+  state.advance = { enabled: advanceReason === '', reason: advanceReason }
 
   let repairCost = cdRepairCost(wall)
   state.repair = cdCostAction(player, repairCost,
-    waveInfo.active ? '웨이브 중에는 수복할 수 없습니다' : repairCost.count == 0 ? '수복할 성벽이 없습니다' : '')
+    waveInfo.active ? '웨이브 중에는 수복할 수 없습니다' : repairCost.count === 0 ? '수복할 성벽이 없습니다' : '')
 
   let expandCost = cdExpandCost(wall)
   state.expand = cdCostAction(player, expandCost,
@@ -69,13 +70,19 @@ function cdBuildMenuState(player) {
 
 function cdOpenMenu(player) {
   if (!cdState) cdInit(player.server)
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
   CoreDefenderUI.open(player, JSON.stringify(cdBuildMenuState(player)))
 }
 
 function cdUpdateMenu(player) {
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
   CoreDefenderUI.update(player, JSON.stringify(cdBuildMenuState(player)))
 }
 
+// Java bindings and JSON properties are supplied by CoreDefender at runtime.
+//noinspection JSUnresolvedReference
 CoreDefenderEvents.menuAction(event => {
   let player = event.player
   let server = player.server
@@ -87,8 +94,8 @@ CoreDefenderEvents.menuAction(event => {
       return
     case 'refresh':
       break
-    case 'start':
-      cdStartWave(server, player, false)
+    case 'advance':
+      cdAdvance(server, player)
       break
     case 'repair':
       cdCmdRepair(server, player)

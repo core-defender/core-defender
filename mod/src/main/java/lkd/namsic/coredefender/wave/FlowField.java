@@ -7,7 +7,8 @@ import lkd.namsic.coredefender.Balance;
 import lkd.namsic.coredefender.wall.WallGeometry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.PriorityQueue;
@@ -32,7 +33,9 @@ public final class FlowField {
     private final int[] dist;
     private final boolean[] barricade;
 
-    /** 다음 이동 지점, 그리고 그 사이에 막고 있는 바리케이드(없으면 null) */
+    /**
+     * 다음 이동 지점, 그리고 그 사이에 막고 있는 바리케이드(없으면 null)
+     */
     public record Step(BlockPos waypoint, @Nullable BlockPos barricade, boolean atWall) {
     }
 
@@ -62,6 +65,7 @@ public final class FlowField {
         if (ix < 0 || iz < 0 || ix >= this.width || iz >= this.depth) {
             return -1;
         }
+
         return iz * this.width + ix;
     }
 
@@ -70,7 +74,7 @@ public final class FlowField {
     }
 
     static FlowField computeTestField(WallGeometry geo, BiPredicate<Integer, Integer> blocked,
-                             BiPredicate<Integer, Integer> barricade) {
+                                      BiPredicate<Integer, Integer> barricade) {
         FlowField field = new FlowField(geo, 20);
         field.build(blocked, barricade);
         return field;
@@ -89,6 +93,7 @@ public final class FlowField {
                     blocked[i] = true;
                     continue;
                 }
+
                 if (isBarricade.test(x, z)) {
                     this.barricade[i] = true;
                 } else if (solid.test(x, z)) {
@@ -104,6 +109,7 @@ public final class FlowField {
                 if (blocked[i] || !this.touchesWall(this.minX + ix, this.minZ + iz)) {
                     continue;
                 }
+
                 this.dist[i] = this.barricade[i] ? Balance.BARRICADE_PATH_COST * 10 : 0;
                 queue.add(new long[]{this.dist[i], i});
             }
@@ -115,6 +121,7 @@ public final class FlowField {
             if (head[0] > this.dist[i]) {
                 continue;
             }
+
             int x = this.minX + i % this.width;
             int z = this.minZ + i / this.width;
             for (int[] n : NEIGHBORS) {
@@ -122,6 +129,7 @@ public final class FlowField {
                 if (j < 0 || blocked[j]) {
                     continue;
                 }
+
                 // 대각선 이동은 두 직선 이웃이 모두 열려 있을 때만 (모서리 끼임 방지)
                 if (n[0] != 0 && n[1] != 0) {
                     int a = this.index(x + n[0], z);
@@ -130,6 +138,7 @@ public final class FlowField {
                         continue;
                     }
                 }
+
                 int step = (n[0] != 0 && n[1] != 0 ? 14 : 10) + (this.barricade[j] ? Balance.BARRICADE_PATH_COST * 10 : 0);
                 int next = this.dist[i] + step;
                 if (next < this.dist[j]) {
@@ -148,6 +157,35 @@ public final class FlowField {
         return !this.insideWall(x, z) && (this.insideWall(x + 1, z) || this.insideWall(x - 1, z) || this.insideWall(x, z + 1) || this.insideWall(x, z - 1));
     }
 
+    public @Nullable Vec3 directApproach(Vec3 position, double bodyRadius) {
+        double x = Math.clamp(position.x, this.geo.outerMinX(), this.geo.outerMaxX() + 1.0);
+        double z = Math.clamp(position.z, this.geo.outerMinZ(), this.geo.outerMaxZ() + 1.0);
+        Vec3 outward = new Vec3(position.x - x, 0, position.z - z);
+        double standOff = bodyRadius + .35;
+        if (outward.lengthSqr() <= standOff * standOff) {
+            return null;
+        }
+
+        Vec3 destination = new Vec3(x, this.geo.baseY(), z).add(outward.normalize().scale(standOff));
+        Vec3 delta = destination.subtract(position);
+        int steps = Math.max(1, (int) Math.ceil(delta.horizontalDistance() * 2));
+        for (int step = 0; step <= steps; step++) {
+            double fraction = (double) step / steps;
+            double px = position.x + delta.x * fraction;
+            double pz = position.z + delta.z * fraction;
+            for (int bx = (int) Math.floor(px - bodyRadius); bx <= (int) Math.floor(px + bodyRadius); bx++) {
+                for (int bz = (int) Math.floor(pz - bodyRadius); bz <= (int) Math.floor(pz + bodyRadius); bz++) {
+                    int index = this.index(bx, bz);
+                    if (index < 0 || this.dist[index] == UNREACHABLE || this.barricade[index]) {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        return destination;
+    }
+
     /**
      * (x, z) 에서 거리 지도를 따라 최대 lookahead 칸 전진한 지점.
      * 도중에 바리케이드를 만나면 그 직전 칸과 바리케이드 위치를 돌려준다.
@@ -159,6 +197,7 @@ public final class FlowField {
         if (i < 0 || this.dist[i] == UNREACHABLE) {
             return null;
         }
+
         int cx = x;
         int cz = z;
         for (int s = 0; s < lookahead && this.dist[this.index(cx, cz)] > 0; s++) {
@@ -166,30 +205,42 @@ public final class FlowField {
             if (best < 0) {
                 break;
             }
+
             int nx = this.minX + best % this.width;
             int nz = this.minZ + best / this.width;
             if (this.barricade[best]) {
                 return new Step(new BlockPos(cx, this.geo.baseY(), cz), new BlockPos(nx, this.geo.baseY(), nz), false);
             }
+
             cx = nx;
             cz = nz;
         }
+
         return new Step(new BlockPos(cx, this.geo.baseY(), cz), null, this.touchesWall(cx, cz));
     }
+
     private int nextIndex(int cx, int cz) {
-            int best = -1;
-            int bestDist = this.dist[this.index(cx, cz)];
-            for (int[] n : NEIGHBORS) {
-                int j = this.index(cx + n[0], cz + n[1]);
-                if (n[0] != 0 && n[1] != 0) {
-                    int a = this.index(cx + n[0], cz), b = this.index(cx, cz + n[1]);
-                    if (a < 0 || b < 0 || this.dist[a] == UNREACHABLE || this.dist[b] == UNREACHABLE) continue;
-                }
-                if (j >= 0 && this.dist[j] < bestDist) {
-                    best = j;
-                    bestDist = this.dist[j];
+        int best = -1;
+        int currentDist = this.dist[this.index(cx, cz)];
+        int bestScore = Integer.MAX_VALUE;
+        for (int[] n : NEIGHBORS) {
+            int j = this.index(cx + n[0], cz + n[1]);
+            if (n[0] != 0 && n[1] != 0) {
+                int a = this.index(cx + n[0], cz), b = this.index(cx, cz + n[1]);
+                if (a < 0 || b < 0 || this.dist[a] == UNREACHABLE || this.dist[b] == UNREACHABLE) {
+                    continue;
                 }
             }
+
+            if (j >= 0 && this.dist[j] < currentDist) {
+                int score = this.dist[j] + (n[0] != 0 && n[1] != 0 ? 14 : 10);
+                if (score < bestScore) {
+                    best = j;
+                    bestScore = score;
+                }
+            }
+        }
+
         return best;
     }
 }

@@ -14,7 +14,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Ravager;
+import net.minecraft.world.entity.monster.Zoglin;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -23,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * 웨이브 몹 행동. 타겟(어그로한 플레이어)이 없으면 성벽을 향해 이동/공격한다.
@@ -31,7 +36,9 @@ import org.jetbrains.annotations.Nullable;
  */
 @UtilityClass
 public class WaveMobController {
-    /** 몹 하나의 런타임 상태 (저장하지 않음) */
+    /**
+     * 몹 하나의 런타임 상태 (저장하지 않음)
+     */
     public static final class MobState {
         long nextAttack;
         long aggroUntil;
@@ -42,12 +49,14 @@ public class WaveMobController {
         Vec3 finalApproach;
         @Nullable
         Vec3 attackLookTarget;
-        @Nullable
-        BarrierGeometry.Panel approachPanel;
+        BarrierGeometry.@Nullable Panel approachPanel;
+        boolean directApproach;
     }
 
     private static final double MELEE_REACH = 2.2;
-    /** 몹 몸체 가장자리에서 장벽까지의 근접 공격 거리 */
+    /**
+     * 몹 몸체 가장자리에서 장벽까지의 근접 공격 거리
+     */
     private static final double WALL_ATTACK_REACH = 0.65;
     private static final int LOOKAHEAD = 6;
     private static final int REACH_CHECK_INTERVAL = 40;
@@ -55,8 +64,18 @@ public class WaveMobController {
     public static void tick(ServerLevel level, Mob mob, MobState state, WallGeometry geo, FlowField field) {
         state.finalApproach = null;
         state.approachPanel = null;
+        state.directApproach = false;
         state.attackLookTarget = null;
         long now = level.getGameTime();
+        if (mob.getTags().contains(WaveSummoner.TAG)) {
+            mob.setTarget(null);
+            if (geo.distanceToWall(mob.getX(), mob.getZ()) <= mob.getPersistentData().getDouble("cd_summoner_standoff")) {
+                mob.getNavigation().stop();
+                state.attackLookTarget = Vec3.atCenterOf(geo.nearestWallBlock(mob.getX(), mob.getEyeY(), mob.getZ()));
+                return;
+            }
+        }
+
         if (handleAggro(mob, state, now)) {
             return;
         }
@@ -75,24 +94,41 @@ public class WaveMobController {
                 shootAtWall(level, mob, wallBlock);
                 state.nextAttack = now + Balance.RANGED_INTERVAL;
             }
+
             return;
         }
 
-        var panel = BarrierSystem.nearestActive(level, mob.getBoundingBox().getCenter());
+        BarrierGeometry.Panel panel = BarrierSystem.nearestActive(level, mob.getBoundingBox().getCenter());
         Vec3 contact = panel == null ? null : panel.nearest(mob.getBoundingBox().getCenter());
-        boolean touching = contact != null && contact.distanceTo(mob.getBoundingBox().getCenter())
-                <= mob.getBbWidth() / 2.0 + WALL_ATTACK_REACH;
-        if (touching) {
+        // NullAway does not infer contact's nullness from the panel-dependent initializer.
+        //noinspection ConstantValue
+        if (panel != null && contact != null && contact.distanceTo(mob.getBoundingBox().getCenter())
+            <= mob.getBbWidth() / 2.0 + WALL_ATTACK_REACH) {
             mob.getNavigation().stop();
             state.attackLookTarget = panel.nearest(new Vec3(mob.getX(), mob.getEyeY(), mob.getZ()));
             if (mob instanceof Creeper creeper) {
                 creeper.ignite();
             } else if (now >= state.nextAttack) {
-                mob.swing(InteractionHand.MAIN_HAND);
-                WallManager.hit(level, panel.id(), contact, Math.max(1, Math.round(WaveMobs.attackDamage(mob))));
+                playMeleeAttack(level, mob);
+                WallManager.hit(level, panel.id(), contact, WaveMobs.attackDamage(mob));
                 state.nextAttack = now + Balance.MELEE_INTERVAL;
             }
+
             return;
+        }
+
+        Vec3 direct = field.directApproach(mob.position(), mob.getBbWidth() / 2.0);
+        if (direct != null && panel != null && Math.abs(mob.getY() - geo.baseY()) < .25) {
+            Vec3 movement = direct.subtract(mob.position());
+            Vec3 nearby = movement.normalize().scale(Math.min(2, movement.length()));
+            if (level.noCollision(mob, mob.getBoundingBox().expandTowards(nearby))) {
+                mob.getNavigation().stop();
+                state.lastWaypoint = null;
+                state.finalApproach = direct;
+                state.approachPanel = panel;
+                state.directApproach = true;
+                return;
+            }
         }
 
         FlowField.Step step = field.next(mob.getBlockX(), mob.getBlockZ(), LOOKAHEAD);
@@ -100,10 +136,12 @@ public class WaveMobController {
             moveTo(mob, state, wallBlock);
             return;
         }
+
         if (step.barricade() != null && mob.position().distanceTo(Vec3.atCenterOf(step.barricade())) <= MELEE_REACH) {
             attackBarricade(level, mob, state, step.barricade(), now);
             return;
         }
+
         moveTo(mob, state, step.waypoint());
         // 마지막 접근 목표만 저장한다. MoveControl 명령은 아래 tickControls에서 매 틱 유지한다.
         Vec3 destination = Vec3.atBottomCenterOf(step.waypoint());
@@ -113,20 +151,27 @@ public class WaveMobController {
         }
     }
 
-    /** 짧게 만료되는 시선 지시와 마지막 접근의 MOVE_TO를 매 틱 유지한다. */
+    /**
+     * 짧게 만료되는 시선 지시와 마지막 접근의 MOVE_TO를 매 틱 유지한다.
+     */
     public static void tickControls(Mob mob, MobState state) {
         if (state.attackLookTarget != null && mob.getTarget() == null) {
             mob.getLookControl().setLookAt(state.attackLookTarget);
         }
+
         if (state.finalApproach == null || state.approachPanel == null || mob.getTarget() != null
-                || !mob.getNavigation().isDone()) return;
+            || !mob.getNavigation().isDone()) {
+            return;
+        }
+
         Vec3 center = mob.getBoundingBox().getCenter();
         if (state.approachPanel.nearest(center).distanceTo(center) <= mob.getBbWidth() / 2.0 + WALL_ATTACK_REACH
-                || mob.position().distanceToSqr(state.finalApproach) > 4.0) {
+            || (!state.directApproach && mob.position().distanceToSqr(state.finalApproach) > 4.0)) {
             state.finalApproach = null;
             state.approachPanel = null;
             return;
         }
+
         Vec3 target = state.finalApproach;
         mob.getMoveControl().setWantedPosition(target.x, target.y, target.z, 1.0);
     }
@@ -138,42 +183,52 @@ public class WaveMobController {
         }
     }
 
-    // ---------- 플레이어 어그로 ----------
 
-    /** 플레이어 타겟을 유지하면 true. 만료/이탈/도달 불가면 타겟을 해제하고 false. */
+    /**
+     * 플레이어 타겟을 유지하면 true. 만료/이탈/도달 불가면 타겟을 해제하고 false.
+     */
     private static boolean handleAggro(Mob mob, MobState state, long now) {
         LivingEntity target = mob.getTarget();
         if (target == null) {
             return false;
         }
+
         boolean keep = target.isAlive()
-                && target instanceof Player player && !player.isCreative() && !player.isSpectator()
-                && now < state.aggroUntil
-                && mob.distanceTo(target) <= Balance.AGGRO_LEASH
-                && !BarrierSystem.separates(mob, target);
+            && target instanceof Player player && !player.isCreative() && !player.isSpectator()
+            && now < state.aggroUntil
+            && mob.distanceTo(target) <= Balance.AGGRO_LEASH
+            && !BarrierSystem.separates(mob, target);
         if (keep && !(mob instanceof RangedAttackMob) && now >= state.nextReachCheck) {
             state.nextReachCheck = now + REACH_CHECK_INTERVAL;
             keep = canReach(mob, target);
         }
+
         if (!keep) {
             mob.setTarget(null);
             state.lastWaypoint = null;
         }
+
         return keep;
     }
 
-    /** 플레이어가 웨이브 몹을 공격했을 때: 주변에서 플레이어에게 닿을 수 있는 몹만 반응한다. */
-    public static void onPlayerAttack(ServerLevel level, Player player, Mob attacked, @Nullable WaveManager.ActiveWave wave) {
+    /**
+     * 플레이어가 웨이브 몹을 공격했을 때: 주변에서 플레이어에게 닿을 수 있는 몹만 반응한다.
+     */
+    public static void onPlayerAttack(ServerLevel level, Player player, Mob attacked, WaveManager.@Nullable ActiveWave wave) {
         long now = level.getGameTime();
         for (Mob mob : level.getEntitiesOfClass(Mob.class, attacked.getBoundingBox().inflate(Balance.AGGRO_RADIUS), WaveMobs::isWaveMob)) {
             MobState state = wave == null ? null : wave.mobState(mob.getUUID());
-            if (state == null) state = TestMobs.state(mob.getUUID());
+            if (state == null) {
+                state = TestMobs.state(mob.getUUID());
+            }
+
             if (state == null) {
                 continue;
             }
+
             boolean able = mob instanceof RangedAttackMob
-                    ? mob.distanceTo(player) <= Balance.AGGRO_LEASH && mob.hasLineOfSight(player) && !BarrierSystem.separates(mob, player)
-                    : canReach(mob, player);
+                ? mob.distanceTo(player) <= Balance.AGGRO_LEASH && mob.hasLineOfSight(player) && !BarrierSystem.separates(mob, player)
+                : canReach(mob, player);
             if (able) {
                 mob.setTarget(player);
                 state.aggroUntil = now + Balance.AGGRO_DURATION;
@@ -183,12 +238,14 @@ public class WaveMobController {
     }
 
     private static boolean canReach(Mob mob, LivingEntity target) {
-        if (BarrierSystem.separates(mob, target)) return false;
+        if (BarrierSystem.separates(mob, target)) {
+            return false;
+        }
+
         Path path = mob.getNavigation().createPath(target, 1);
         return path != null && path.canReach();
     }
 
-    // ---------- 공격 ----------
 
     private static void shootAtWall(ServerLevel level, Mob mob, BlockPos wallBlock) {
         ItemStack weapon = mob.getMainHandItem();
@@ -198,6 +255,7 @@ public class WaveMobController {
         double dz = target.z - mob.getZ();
         double dy = target.y - arrow.getY() + Math.sqrt(dx * dx + dz * dz) * 0.2;
         arrow.shoot(dx, dy, dz, 1.6F, 4.0F);
+        arrow.setBaseDamage(arrow.getBaseDamage() * WaveMobs.damageScale(mob));
         arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
         mob.swing(InteractionHand.MAIN_HAND);
         mob.playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (mob.getRandom().nextFloat() * 0.4F + 0.8F));
@@ -208,13 +266,28 @@ public class WaveMobController {
         mob.getNavigation().stop();
         state.attackLookTarget = Vec3.atCenterOf(barricade);
         if (now >= state.nextAttack) {
-            mob.swing(InteractionHand.MAIN_HAND);
+            playMeleeAttack(level, mob);
             KillzoneManager.damage(level, barricade, Math.max(1, Math.round(WaveMobs.attackDamage(mob))));
             state.nextAttack = now + Balance.MELEE_INTERVAL;
         }
     }
 
-    /** 파괴자 몹: 근처 바리케이드를 우선 공격 */
+    static void playMeleeAttack(ServerLevel level, Mob mob) {
+        if (mob instanceof IronGolem || mob instanceof Ravager || mob instanceof Hoglin || mob instanceof Zoglin || mob instanceof Warden) {
+            // These vanilla handlers only start the attack animation and sound; no victim or mob damage is involved.
+            mob.handleEntityEvent((byte) 4);
+            level.broadcastEntityEvent(mob, (byte) 4);
+            if (mob instanceof Warden) {
+                mob.playSound(SoundEvents.WARDEN_ATTACK_IMPACT, 10, 1);
+            }
+        } else {
+            mob.swing(InteractionHand.MAIN_HAND);
+        }
+    }
+
+    /**
+     * 파괴자 몹: 근처 바리케이드를 우선 공격
+     */
     private static boolean attackNearbyBarricade(ServerLevel level, Mob mob, MobState state, long now) {
         BlockPos nearest = null;
         double best = 16 * 16;
@@ -226,14 +299,17 @@ public class WaveMobController {
                 nearest = pos;
             }
         }
+
         if (nearest == null) {
             return false;
         }
+
         if (Math.sqrt(best) <= MELEE_REACH) {
             attackBarricade(level, mob, state, nearest, now);
         } else {
             moveTo(mob, state, nearest);
         }
+
         return true;
     }
 }

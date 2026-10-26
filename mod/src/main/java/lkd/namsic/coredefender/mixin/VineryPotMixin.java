@@ -24,18 +24,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 abstract class VineryPotMixin {
     @Inject(method = "getCollisionShape", at = @At("RETURN"), cancellable = true)
     private void coredefender$oilFloor(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context,
-                                      CallbackInfoReturnable<VoxelShape> ci) {
+                                       CallbackInfoReturnable<VoxelShape> ci) {
         if (VineryOil.active(level.getBlockEntity(pos))) {
             ci.setReturnValue(Shapes.or(ci.getReturnValue(), Block.box(0, 0, 0, 16, 4, 16)));
         }
     }
+
     @Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
     private void coredefender$oilStomp(Level level, BlockState state, BlockPos pos, Entity entity, float distance, CallbackInfo ci) {
-        if (VineryOil.fallOn(level, pos, entity, distance)) ci.cancel();
+        if (VineryOil.fallOn(level, pos, entity, distance)) {
+            ci.cancel();
+        }
     }
 
     @Inject(method = "onRemove", at = @At("HEAD"))
     private void coredefender$oilDrop(BlockState state, Level level, BlockPos pos, BlockState next, boolean moved, CallbackInfo ci) {
-        if (!state.is(next.getBlock())) VineryOil.removed(level, pos);
+        if (!state.is(next.getBlock())) {
+            VineryOil.removed(level, pos);
+        }
     }
 }

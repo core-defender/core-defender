@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 @UtilityClass
 public class ClientEvents {
     public static final KeyMapping MENU_KEY = new KeyMapping(
-            "key.coredefender.menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.categories.coredefender");
+        "key.coredefender.menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.categories.coredefender");
 
     @EventBusSubscriber(modid = CoreDefender.MOD_ID, value = Dist.CLIENT)
     public static final class ModBus {

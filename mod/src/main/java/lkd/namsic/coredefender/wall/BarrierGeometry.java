@@ -9,16 +9,23 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 렌더링/충돌/폭발 판정이 공유하는 얇은 구간 면. 블록이나 엔티티를 생성하지 않는다. */
+/**
+ * 렌더링/충돌/폭발 판정이 공유하는 얇은 구간 면. 블록이나 엔티티를 생성하지 않는다.
+ */
 public final class BarrierGeometry {
-    private BarrierGeometry() {}
+    private BarrierGeometry() {
+    }
+
     public static final double THICKNESS = 0.02;
 
     public record Panel(String id, AABB box, VoxelShape shape) {
-        public Panel(String id, AABB box) { this(id, box, Shapes.create(box)); }
+        public Panel(String id, AABB box) {
+            this(id, box, Shapes.create(box));
+        }
+
         public Vec3 nearest(Vec3 point) {
             return new Vec3(Math.clamp(point.x, this.box.minX, this.box.maxX), Math.clamp(point.y, this.box.minY, this.box.maxY),
-                    Math.clamp(point.z, this.box.minZ, this.box.maxZ));
+                Math.clamp(point.z, this.box.minZ, this.box.maxZ));
         }
     }
 
@@ -36,10 +43,13 @@ public final class BarrierGeometry {
             result.add(new Panel("W" + i, new AABB(x0 - THICKNESS, geo.baseY(), a, x0 + THICKNESS, geo.topY(), b)));
             result.add(new Panel("E" + i, new AABB(x1 - THICKNESS, geo.baseY(), a, x1 + THICKNESS, geo.topY(), b)));
         }
+
         return List.copyOf(result);
     }
 
-    /** 바닐라와 같은 축 순서로 이동량만 줄인다. 위치를 되돌리거나 경로를 다시 찾지 않는다. */
+    /**
+     * 바닐라와 같은 축 순서로 이동량만 줄인다. 위치를 되돌리거나 경로를 다시 찾지 않는다.
+     */
     public static Vec3 clipMovement(AABB box, Vec3 motion, List<VoxelShape> shapes) {
         double x = motion.x, y = motion.y, z = motion.z;
         y = Shapes.collide(Direction.Axis.Y, box, shapes, y);
@@ -49,8 +59,12 @@ public final class BarrierGeometry {
             z = Shapes.collide(Direction.Axis.Z, box, shapes, z);
             box = box.move(0, 0, z);
         }
+
         x = Shapes.collide(Direction.Axis.X, box, shapes, x);
-        if (!zFirst) z = Shapes.collide(Direction.Axis.Z, box.move(x, 0, 0), shapes, z);
+        if (!zFirst) {
+            z = Shapes.collide(Direction.Axis.Z, box.move(x, 0, 0), shapes, z);
+        }
+
         return new Vec3(x, y, z);
     }
 }

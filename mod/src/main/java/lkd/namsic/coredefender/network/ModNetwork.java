@@ -1,6 +1,7 @@
 package lkd.namsic.coredefender.network;
 
 import lkd.namsic.coredefender.client.BarrierRenderer;
+import lkd.namsic.coredefender.client.OilSurfaceRenderer;
 
 import dev.latvian.mods.kubejs.script.ScriptType;
 import lkd.namsic.coredefender.client.ClientHooks;
@@ -17,8 +18,16 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class ModNetwork {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(OilSurfacePayload.TYPE, OilSurfacePayload.CODEC, (payload, context) -> {
+            if (FMLEnvironment.dist.isClient()) {
+                OilSurfaceRenderer.accept(payload);
+            }
+        });
+
         registrar.playToClient(BarrierStatePayload.TYPE, BarrierStatePayload.CODEC, (payload, context) -> {
-            if (FMLEnvironment.dist.isClient()) BarrierRenderer.accept(payload.json());
+            if (FMLEnvironment.dist.isClient()) {
+                BarrierRenderer.accept(payload.json());
+            }
         });
 
         registrar.playToClient(MenuStatePayload.TYPE, MenuStatePayload.CODEC, (payload, context) -> {
@@ -32,6 +41,7 @@ public class ModNetwork {
             if (!(context.player() instanceof ServerPlayer player)) {
                 return;
             }
+
             // 코어 창고는 모드가 직접 연다. 나머지 동작은 KubeJS 가 처리
             if ("storage".equals(payload.action())) {
                 CoreStorage.open(player);

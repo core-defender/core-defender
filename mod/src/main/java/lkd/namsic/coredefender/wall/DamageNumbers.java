@@ -34,9 +34,10 @@ public class DamageNumbers {
         if (display == null) {
             return;
         }
+
         CompoundTag tag = new CompoundTag();
         tag.putString("text", Component.Serializer.toJson(
-                Component.literal("-" + amount).withStyle(color, ChatFormatting.BOLD), level.registryAccess()));
+            Component.literal("-" + amount).withStyle(color, ChatFormatting.BOLD), level.registryAccess()));
         tag.putString("billboard", "center");
         tag.putString("alignment", "center");
         tag.putInt("background", 0);
@@ -48,7 +49,7 @@ public class DamageNumbers {
         // 같은 블록을 여러 번 맞아도 숫자가 겹치지 않게 살짝 흩뿌린다
         double jitter = 0.3;
         display.moveTo(pos.x + (level.getRandom().nextDouble() - 0.5) * jitter,
-                pos.y + 0.3, pos.z + (level.getRandom().nextDouble() - 0.5) * jitter);
+            pos.y + 0.3, pos.z + (level.getRandom().nextDouble() - 0.5) * jitter);
         display.addTag(TAG);
         level.addFreshEntity(display);
         ACTIVE.add(new Floating(display, new int[]{0}));
@@ -64,6 +65,7 @@ public class DamageNumbers {
                 it.remove();
                 continue;
             }
+
             display.moveTo(display.getX(), display.getY() + RISE_PER_TICK, display.getZ());
         }
     }

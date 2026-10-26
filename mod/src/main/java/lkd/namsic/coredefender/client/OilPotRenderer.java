@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender.client;
 
+import net.minecraft.nbt.CompoundTag;
+
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,7 +27,9 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = CoreDefender.MOD_ID, value = Dist.CLIENT)
 public final class OilPotRenderer {
-    private OilPotRenderer() {}
+    private OilPotRenderer() {
+    }
+
     @SubscribeEvent
     public static void tooltip(ItemTooltipEvent event) {
         if (BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()).toString().equals("vinery:grapevine_pot")) {
@@ -36,21 +40,22 @@ public final class OilPotRenderer {
             event.getToolTip().add(Component.translatable("tooltip.coredefender.oil_bottle").withStyle(ChatFormatting.GRAY));
         }
     }
+
     public static void render(BlockEntity entity, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         OilBatch batch = VineryOil.batch(entity);
-        var tag = entity.getPersistentData().getCompound(VineryOil.KEY);
+        CompoundTag tag = entity.getPersistentData().getCompound(VineryOil.KEY);
         double age = entity.getLevel() == null || !tag.contains("lastStomp") ? 20
-                : entity.getLevel().getGameTime() + partialTick - tag.getLong("lastStomp");
+            : entity.getLevel().getGameTime() + partialTick - tag.getLong("lastStomp");
         float squash = age >= 0 && age < 8 ? (float) Math.sin(age / 8 * Math.PI) * .035F : 0;
         float surface = .07F + .15F * batch.seeds() / OilBatch.SEEDS - squash;
-        var mc = Minecraft.getInstance();
+        Minecraft mc = Minecraft.getInstance();
         pose.pushPose();
         pose.translate(.08, .065, .08);
         pose.scale(.84F, Math.max(.01F, surface - .065F), .84F);
         // NeoForge explicitly treats null as the model-selected render type.
         //noinspection DataFlowIssue
         mc.getBlockRenderer().renderSingleBlock((batch.stomps() > 0 ? Blocks.YELLOW_TERRACOTTA : Blocks.HAY_BLOCK).defaultBlockState(),
-                pose, buffers, light, overlay, ModelData.EMPTY, null);
+            pose, buffers, light, overlay, ModelData.EMPTY, null);
         pose.popPose();
         // 씨앗이 점차 잠기고, 압착이 끝나면 황금빛 액체 표면만 남는다.
         if (batch.stomps() > 0) {
@@ -62,9 +67,13 @@ public final class OilPotRenderer {
             mc.getBlockRenderer().renderSingleBlock(Blocks.HONEY_BLOCK.defaultBlockState(), pose, buffers, light, overlay, ModelData.EMPTY, null);
             pose.popPose();
         }
+
         if (!batch.ready()) {
             ResourceLocation id = ResourceLocation.tryParse(tag.getString("seed"));
-            if (id == null) return;
+            if (id == null) {
+                return;
+            }
+
             ItemStack seed = new ItemStack(BuiltInRegistries.ITEM.get(id));
             int count = Math.min(5, batch.seeds());
             for (int i = 0; i < count; i++) {

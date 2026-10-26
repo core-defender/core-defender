@@ -15,7 +15,7 @@ const path = require('node:path');
 
 function setup(bridgeAvailable = true) {
   const data = new Map();
-  data.set('coredefender', JSON.stringify({version: 3, stage: 7, uptime: 300, lastClearUptime: 250, wave: {index: 7, mult: 2}}));
+  data.set('coredefender', JSON.stringify({version: 5, tier: 2, stage: 7, uptime: 300, remaining: 250, enabled: true, repeats: 2, wave: {index: 7, mult: 2}}));
   const calls = [];
   let root;
   const node = name => ({name, children: [], then(child) {this.children.push(child); return this;},
@@ -25,20 +25,25 @@ function setup(bridgeAvailable = true) {
   }, tell: () => {}};
   const player = {tell: message => calls.push(['message', message])};
   const context = vm.createContext({
-    CD_CONFIG: {}, Text: {yellow: s => s, red: s => s},
-    CoreDefenderWave: {abort: () => calls.push(['abort']), isActive: () => true},
+    cdValidateConfig() {}, CD_CONFIG: {waveDelaySeconds: 600}, Text: {yellow: s => s, red: s => s},
+    CoreDefenderWave: {readConfig: () => JSON.stringify({waveDelaySeconds: 600}), abort: () => calls.push(['abort']), isActive: () => true},
     CoreDefenderWall: {reset: (_, scope) => {calls.push(['reset', scope]); return bridgeAvailable;}},
     CoreDefenderEvents: {waveCleared() {}, waveFailed() {}},
     ServerEvents: {loaded() {}, unloaded() {}, tick() {}, commandRegistry(fn) {
       fn({commands: {literal: node, argument: node}, arguments: {INTEGER: {create() {}, getResult() {}}}, register: tree => {root = tree;}});
     }}
   });
-  // Node.js CommonJS runtime provides require and __dirname.
-  //noinspection JSUnresolvedVariable
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '../kubejs/server_scripts/coredefender/main.js'), 'utf8'), context);
+  // Node.js supplies __dirname in CommonJS modules.
+  //noinspection JSUnresolvedReference
+  const scriptDirectory = path.join(__dirname, '../kubejs/server_scripts/coredefender/');
+  for (const file of ['progression.js', 'main.js']) vm.runInContext(fs.readFileSync(path.join(scriptDirectory, file), 'utf8'), context);
   const admin = root.children.find(n => n.name === 'admin');
   assert.equal(admin.permission({hasPermission: level => level <= 1}), false);
   assert.equal(admin.permission({hasPermission: level => level <= 2}), true);
+  const auto = admin.children.find(n => n.name === 'auto');
+  assert.equal(typeof auto.children.find(n => n.name === 'off').run, 'function');
+  assert.equal(typeof auto.children.find(n => n.name === 'on').run, 'function');
+  assert.equal(typeof admin.children.find(n => n.name === 'start').run, 'function');
   const reset = admin.children.find(n => n.name === 'reset');
   return {calls, data, reset, execute(scope) {
     const command = scope ? reset.children.find(n => n.name === scope) : reset;
@@ -56,7 +61,8 @@ for (const scope of [undefined, 'all', 'progress', 'wall', 'size', 'levels', 'hp
   const resetProgress = !scope || scope === 'all' || scope === 'progress';
   assert.equal(saved.stage, resetProgress ? 0 : 7);
   assert.equal(saved.uptime, resetProgress ? 0 : 300);
-  assert.equal(saved.lastClearUptime, resetProgress ? -1 : 250);
+  assert.equal(saved.tier, resetProgress ? 1 : 2);
+  assert.equal(saved.enabled, !resetProgress);
 }
 const failed = setup(false);
 const saved = failed.execute();

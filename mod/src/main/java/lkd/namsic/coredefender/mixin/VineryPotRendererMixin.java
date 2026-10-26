@@ -18,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("unused")
 abstract class VineryPotRendererMixin {
     @Inject(method = "render(Lnet/satisfy/vinery/core/block/entity/GrapevinePotBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
-            at = @At("HEAD"), cancellable = true)
+        at = @At("HEAD"), cancellable = true)
     private void coredefender$oilRender(@Coerce Object pot, float partialTick, PoseStack pose, MultiBufferSource buffers,
-                                       int light, int overlay, CallbackInfo ci) {
+                                        int light, int overlay, CallbackInfo ci) {
         BlockEntity entity = (BlockEntity) pot;
         if (VineryOil.active(entity)) {
             OilPotRenderer.render(entity, partialTick, pose, buffers, light, overlay);

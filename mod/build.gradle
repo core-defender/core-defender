@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'idea'
+    id 'net.ltgt.errorprone' version '5.1.1'
     id 'net.neoforged.moddev' version '2.0.148'
 }
 
@@ -44,6 +45,9 @@ neoForge {
 }
 
 dependencies {
+    implementation 'org.jspecify:jspecify:1.0.1'
+    errorprone 'com.google.errorprone:error_prone_core:2.50.0'
+    errorprone 'com.uber.nullaway:nullaway:0.14.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.14.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.3'
     compileOnly "org.projectlombok:lombok:${lombok_version}"
@@ -52,6 +56,12 @@ dependencies {
     // KubeJS 브리지(플러그인/바인딩/이벤트). 런타임에는 모드팩의 KubeJS 를 사용한다.
     compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}") { transitive = false }
     compileOnly("dev.latvian.mods:rhino:${rhino_version}") { transitive = false }
+}
+
+tasks.named('processResources') {
+    from(rootProject.file('../kubejs/config/coredefender-waves.json')) {
+        into 'defaults'
+    }
 }
 
 tasks.named('test') { useJUnitPlatform() }
@@ -84,6 +94,12 @@ neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.errorprone {
+        disableAllChecks = true
+        error('NullAway')
+        option('NullAway:OnlyNullMarked', 'true')
+        option('NullAway:HandleTestAssertionLibraries', 'true')
+    }
 }
 
 // 빌드 후 모드팩 인스턴스로 복사: gradlew deployToInstance
@@ -116,6 +132,14 @@ if (providers.gradleProperty('turretGameTests').isPresent()) {
     def testInstance = providers.gradleProperty('testInstanceDir').get()
     dependencies {
         gameTestRuntimeOnly fileTree(dir: "${testInstance}/mods", include: ['kubejs-neoforge-*.jar', 'rhino-*.jar', 'architectury-*.jar'])
+    }
+    def prepareWaveTestScripts = tasks.register('prepareWaveTestScripts', Copy) {
+        from rootProject.file('../kubejs/server_scripts/coredefender')
+        include 'config.js', 'progression.js', 'main.js', 'menu.js'
+        into layout.buildDirectory.dir('turret-gametest/kubejs/server_scripts/coredefender')
+    }
+    tasks.matching { it.name == 'runTurretGameTest' }.configureEach {
+        dependsOn prepareWaveTestScripts
     }
     neoForge.mods.coredefender.sourceSet(sourceSets.gameTest)
     neoForge.runs {

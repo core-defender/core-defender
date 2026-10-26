@@ -1,44 +1,98 @@
 // priority: 100
-// First tuning pass for 4 -> 8 pre-Create turrets, with player support and no turret knockback.
-// Enemy count, delivery rate and rewards are intentionally kept together per stage.
-const CD_CONFIG = {
-  dimension: 'coredefender:defense',
-  speedBonus: [{ within: 30 * 60, mult: 1.5 }, { within: 120 * 60, mult: 1.2 }],
-  // Pre-Create repairs must not require Create alloy. Ordinary iron is also an early wave reward.
-  repair: { item: 'minecraft:iron_ingot', perCollapsed: 8, perHundredMissing: 1 },
-  sideUpgrade: [
-    { item: 'minecraft:iron_ingot', count: 32 }, { item: 'create:brass_ingot', count: 32 },
-    { item: 'immersiveengineering:ingot_steel', count: 32 }, { item: 'mekanism:ingot_refined_obsidian', count: 16 }
-  ],
-  expand: { item: 'coredefender:wall_expansion_plan', maxHalf: 4 },
-  // Uniform annulus around the base's circumscribed circle; preserve the surrounding swarm.
-  spawnRadius: [
-    { fromStage: 0, min: 12, max: 24 }, { fromStage: 5, min: 16, max: 28 },
-    { fromStage: 10, min: 20, max: 36 }, { fromStage: 15, min: 24, max: 40 }, { fromStage: 20, min: 32, max: 48 }
-  ],
-  maxAlive: 60,
-  spawnInterval: 12,
-  endlessGrowth: 0.12,
-  stages: [
-    { spawnInterval: 20, maxAlive: 16, mobs: [{ type: 'minecraft:zombie', count: 12 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 6 }, { item: 'minecraft:copper_ingot', count: 6 }, { item: 'minecraft:arrow', count: 64 }] },
-    { spawnInterval: 18, maxAlive: 20, mobs: [{ type: 'minecraft:zombie', count: 18 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 8 }, { item: 'minecraft:redstone', count: 8 }, { item: 'minecraft:arrow', count: 64 }, { item: 'minecraft:coal', count: 8 }] },
-    { spawnInterval: 16, maxAlive: 24, mobs: [{ type: 'minecraft:zombie', count: 20 }, { type: 'minecraft:husk', count: 4 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 10 }, { item: 'minecraft:copper_ingot', count: 10 }, { item: 'minecraft:wheat_seeds', count: 20 }, { item: 'minecraft:flint', count: 8 }] },
-    { spawnInterval: 15, maxAlive: 28, mobs: [{ type: 'minecraft:zombie', count: 24 }, { type: 'minecraft:husk', count: 4 }, { type: 'minecraft:skeleton', count: 4 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 12 }, { item: 'minecraft:arrow', count: 96 }, { item: 'minecraft:redstone', count: 12 }, { item: 'minecraft:slime_ball', count: 2 }] },
-    { spawnInterval: 14, maxAlive: 32, mobs: [{ type: 'minecraft:zombie', count: 28 }, { type: 'minecraft:husk', count: 6 }, { type: 'minecraft:skeleton', count: 6 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 14 }, { item: 'minecraft:copper_ingot', count: 12 }, { item: 'minecraft:coal', count: 12 }, { item: 'minecraft:gunpowder', count: 8 }] },
-    { spawnInterval: 13, maxAlive: 36, mobs: [{ type: 'minecraft:zombie', count: 32 }, { type: 'minecraft:husk', count: 8 }, { type: 'minecraft:skeleton', count: 8 }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 16 }, { item: 'minecraft:arrow', count: 128 }, { item: 'minecraft:wheat_seeds', count: 30 }, { item: 'minecraft:gold_ingot', count: 4 }] },
-    { spawnInterval: 12, maxAlive: 40, mobs: [{ type: 'minecraft:zombie', count: 36 }, { type: 'minecraft:husk', count: 10 }, { type: 'minecraft:skeleton', count: 10 }, { type: 'minecraft:zombie', count: 2, elite: true }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 18 }, { item: 'minecraft:gunpowder', count: 12 }, { item: 'minecraft:coal', count: 16 }, { item: 'minecraft:gold_ingot', count: 6 }] },
-    { spawnInterval: 11, maxAlive: 44, mobs: [{ type: 'minecraft:zombie', count: 42 }, { type: 'minecraft:husk', count: 12 }, { type: 'minecraft:skeleton', count: 12 }, { type: 'minecraft:vindicator', count: 2, breaker: true }, { type: 'minecraft:zombie', count: 2, elite: true }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 20 }, { item: 'minecraft:arrow', count: 128 }, { item: 'minecraft:wheat_seeds', count: 40 }, { item: 'minecraft:diamond', count: 1 }] },
-    { spawnInterval: 10, maxAlive: 48, mobs: [{ type: 'minecraft:zombie', count: 50 }, { type: 'minecraft:husk', count: 14 }, { type: 'minecraft:skeleton', count: 12 }, { type: 'minecraft:vindicator', count: 3, breaker: true }, { type: 'minecraft:creeper', count: 3 }, { type: 'minecraft:zombie', count: 2, elite: true }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 24 }, { item: 'minecraft:copper_ingot', count: 24 }, { item: 'minecraft:gunpowder', count: 16 }, { item: 'minecraft:diamond', count: 2 }] },
-    { spawnInterval: 10, maxAlive: 52, mobs: [{ type: 'minecraft:zombie', count: 58 }, { type: 'minecraft:husk', count: 16 }, { type: 'minecraft:skeleton', count: 16 }, { type: 'minecraft:vindicator', count: 4, breaker: true }, { type: 'minecraft:creeper', count: 3 }, { type: 'minecraft:zombie', count: 3, elite: true }],
-      rewards: [{ item: 'minecraft:iron_ingot', count: 28 }, { item: 'minecraft:arrow', count: 192 }, { item: 'minecraft:coal', count: 24 }, { item: 'minecraft:diamond', count: 3 }, { item: 'minecraft:gold_ingot', count: 12 }] }
-  ]
+// The JSON file is the editable source; the bundled copy bootstraps new installations.
+// Java bindings and JSON properties are supplied by CoreDefender at runtime.
+//noinspection JSUnresolvedReference
+const CD_CONFIG = JSON.parse(String(CoreDefenderWave.defaultConfig()))
+
+function cdValidateConfig(config, server) {
+  function requireValue(ok, path) { if (!ok) throw new Error('설정값 확인: ' + path) }
+  function number(value, min, max, path, integer) {
+    requireValue(typeof value === 'number' && isFinite(value) && value >= min && value <= max && (!integer || Math.floor(value) === value), path)
+  }
+  const checkedTypes = {}
+  function mob(type, path) {
+    requireValue(typeof type === 'string', path)
+    if (!checkedTypes[type]) {
+      // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+      //noinspection JSUnresolvedReference
+      requireValue(CoreDefenderWave.isMobType(server, type), path + ' (' + type + ')')
+      checkedTypes[type] = true
+    }
+  }
+  requireValue(config.schemaVersion === 1, 'schemaVersion = 1')
+  requireValue(config.dimension === 'coredefender:defense', 'dimension')
+  requireValue(config.maxTier === 2, 'maxTier = 2')
+  number(config.waveDelaySeconds, 60, 86400, 'waveDelaySeconds', true)
+  const rules = config.rules
+  requireValue(!!rules, 'rules')
+  const limits = {
+    spawnMinDistance: [16, 128], spawnMaxDistance: [16, 128], spawnAcceleration: [0, .9],
+    bossRemainingFraction: [0, 1], wardReduction: [0, .99], wardSeconds: [0, 600],
+    summonInitialSeconds: [0, 600], summonIntervalSeconds: [1, 600], summonMaxAlive: [0, 128],
+    summonBatchSize: [1, 16], summonerStandOff: [2, 64]
+  }
+  Object.keys(limits).forEach(key => number(rules[key], limits[key][0], limits[key][1], 'rules.' + key,
+    key === 'summonMaxAlive' || key === 'summonBatchSize'))
+  requireValue(rules.spawnMaxDistance >= rules.spawnMinDistance, 'spawnMaxDistance >= spawnMinDistance')
+  requireValue(Array.isArray(config.tiers) && config.tiers.length === 2, 'tiers: 2개 난이도')
+  config.tiers.forEach((tier, ti) => {
+    requireValue(Array.isArray(tier) && tier.length === 10, 'tiers[' + ti + ']: 10개 웨이브')
+    tier.forEach((wave, wi) => {
+      let path = 'tiers[' + ti + '][' + wi + ']'
+      number(wave.healthMultiplier, 1, 32, path + '.healthMultiplier')
+      number(wave.damageMultiplier, 1, 32, path + '.damageMultiplier')
+      number(wave.speedMultiplier, 1, 2, path + '.speedMultiplier')
+      number(wave.maxAlive, 1, 512, path + '.maxAlive', true)
+      number(wave.spawnInterval, 1, 1200, path + '.spawnInterval', true)
+      number(wave.spawnBatchSize, 1, 16, path + '.spawnBatchSize', true)
+      requireValue(Array.isArray(wave.mobs) && wave.mobs.length > 0, path + '.mobs')
+      let total = 0
+      wave.mobs.forEach((entry, mi) => {
+        mob(entry.type, path + '.mobs[' + mi + '].type')
+        number(entry.count, 1, 10000, path + '.mobs[' + mi + '].count', true)
+        requireValue(!entry.boss, path + '.mobs: 보스는 bosses에서 지정')
+        if (entry.elite !== undefined) requireValue(typeof entry.elite === 'boolean', path + '.elite')
+        if (entry.breaker !== undefined) requireValue(typeof entry.breaker === 'boolean', path + '.breaker')
+        total += entry.count
+      })
+      requireValue(total <= 10000, path + ': 총수 10000 이하')
+      requireValue(Array.isArray(wave.rewards), path + '.rewards')
+      wave.rewards.forEach(reward => {
+        // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+        //noinspection JSUnresolvedReference
+        requireValue(CoreDefenderWave.isItemType(reward.item), path + '.rewards.item')
+        number(reward.count, 1, 4096, path + '.rewards.count', true)
+      })
+    })
+  })
+  requireValue(Array.isArray(config.bosses) && config.bosses.length === 2, 'bosses')
+  config.bosses.forEach((tier, ti) => ['mini', 'repeatMini', 'boss'].forEach(kind => {
+    let entry = tier[kind], path = 'bosses[' + ti + '].' + kind
+    requireValue(!!entry, path)
+    mob(entry.type, path + '.type')
+    number(entry.health, 1, 1024, path + '.health')
+    number(entry.attack, 0, 2048, path + '.attack')
+    number(entry.armor, 0, 30, path + '.armor')
+  }))
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
+  requireValue(!!config.repair && CoreDefenderWave.isItemType(config.repair.item), 'repair.item')
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
+  number(config.repair.perCollapsed, 0, 4096, 'repair.perCollapsed', true)
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
+  number(config.repair.perHundredMissing, 0, 4096, 'repair.perHundredMissing', true)
+  requireValue(Array.isArray(config.sideUpgrade) && config.sideUpgrade.length === 4, 'sideUpgrade')
+  config.sideUpgrade.forEach(cost => {
+    // Optional mod materials may be absent in the minimal server test runtime.
+    requireValue(typeof cost.item === 'string' && /^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(cost.item), 'sideUpgrade.item')
+    number(cost.count, 1, 4096, 'sideUpgrade.count', true)
+  })
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
+  requireValue(!!config.expand && CoreDefenderWave.isItemType(config.expand.item), 'expand.item')
+  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
+  //noinspection JSUnresolvedReference
+  requireValue(config.expand.maxHalf === 4, 'expand.maxHalf = 4')
 }

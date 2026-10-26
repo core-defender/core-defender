@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-/** CoreDefenderEvents.menuAction(event => { event.player, event.action, event.arg }) */
+/**
+ * CoreDefenderEvents.menuAction(event => { event.player, event.action, event.arg })
+ */
 @RequiredArgsConstructor
 public class MenuActionKubeEvent implements KubePlayerEvent {
     private final ServerPlayer player;
@@ -17,6 +19,6 @@ public class MenuActionKubeEvent implements KubePlayerEvent {
 
     @Override
     public Player getEntity() {
-        return player;
+        return this.player;
     }
 }

@@ -25,9 +25,11 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * 송신기는 단계에 따라 주변 청크를 로딩해 플레이어가 디펜스 차원에 있어도 생산 시설이 돈다.
  */
 public class SupplyBlockEntity extends BlockEntity {
-    /** 송신기 청크 로딩 티켓 (블록이 남아 있는 한 유지) */
+    /**
+     * 송신기 청크 로딩 티켓 (블록이 남아 있는 한 유지)
+     */
     public static final TicketController TICKETS = new TicketController(
-            ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "supply"));
+        ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "supply"));
 
     @Getter
     private final boolean sender;
@@ -35,7 +37,7 @@ public class SupplyBlockEntity extends BlockEntity {
     private final ItemStackHandler inventory = new ItemStackHandler(9) {
         @Override
         protected void onContentsChanged(int slot) {
-            setChanged();
+            SupplyBlockEntity.this.setChanged();
         }
     };
     @Getter
@@ -48,33 +50,42 @@ public class SupplyBlockEntity extends BlockEntity {
         this.sender = state.getBlock() instanceof SupplyBlock block && block.isSender();
     }
 
-    /** 다른 차원에 있으면 동작하지 않는다 (송신기는 디펜스 차원 밖, 수신기는 디펜스 차원 안) */
+    /**
+     * 다른 차원에 있으면 동작하지 않는다 (송신기는 디펜스 차원 밖, 수신기는 디펜스 차원 안)
+     */
     public boolean isOperational() {
-        return level != null && sender != DefenseDimension.is(level);
+        return this.level != null && this.sender != DefenseDimension.is(this.level);
     }
 
     public boolean upgrade() {
-        if (tier >= Balance.SUPPLY_RATE.length - 1) {
+        if (this.tier >= Balance.SUPPLY_RATE.length - 1) {
             return false;
         }
-        tier++;
-        setChanged();
-        if (level instanceof ServerLevel serverLevel) {
-            updateChunkLoading(serverLevel);
+
+        this.tier++;
+        this.setChanged();
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.updateChunkLoading(serverLevel);
         }
+
         return true;
     }
 
+    // BlockEntityTicker requires position and state even though this ticker only needs the entity.
+    @SuppressWarnings("unused")
     public static void serverTick(Level level, BlockPos pos, BlockState state, SupplyBlockEntity supply) {
         if (!(level instanceof ServerLevel serverLevel) || !supply.isOperational()) {
             return;
         }
+
         if (supply.forcedRadius < 0) {
             supply.updateChunkLoading(serverLevel);
         }
+
         if (--supply.cooldown > 0) {
             return;
         }
+
         supply.cooldown = Balance.SUPPLY_INTERVAL;
         IItemHandler buffer = SupplyNetwork.get(serverLevel.getServer()).getBuffer();
         if (supply.sender) {
@@ -90,59 +101,64 @@ public class SupplyBlockEntity extends BlockEntity {
             if (simulated.isEmpty()) {
                 continue;
             }
+
             ItemStack remainder = ItemHandlerHelper.insertItemStacked(to, simulated, true);
             int movable = simulated.getCount() - remainder.getCount();
             if (movable <= 0) {
                 continue;
             }
+
             ItemHandlerHelper.insertItemStacked(to, from.extractItem(i, movable, false), false);
             budget -= movable;
         }
     }
 
-    // ---------- 청크 로딩 (송신기) ----------
 
     private void updateChunkLoading(ServerLevel level) {
-        if (!sender) {
+        if (!this.sender) {
             return;
         }
-        setForced(level, false);
-        forcedRadius = Balance.SUPPLY_CHUNK_RADIUS[tier];
-        setForced(level, true);
+
+        this.setForced(level, false);
+        this.forcedRadius = Balance.SUPPLY_CHUNK_RADIUS[this.tier];
+        this.setForced(level, true);
     }
 
     private void setForced(ServerLevel level, boolean add) {
-        if (forcedRadius < 0) {
+        if (this.forcedRadius < 0) {
             return;
         }
-        int cx = worldPosition.getX() >> 4;
-        int cz = worldPosition.getZ() >> 4;
-        for (int dx = -forcedRadius; dx <= forcedRadius; dx++) {
-            for (int dz = -forcedRadius; dz <= forcedRadius; dz++) {
-                TICKETS.forceChunk(level, worldPosition, cx + dx, cz + dz, add, true);
+
+        int cx = this.worldPosition.getX() >> 4;
+        int cz = this.worldPosition.getZ() >> 4;
+        for (int dx = -this.forcedRadius; dx <= this.forcedRadius; dx++) {
+            for (int dz = -this.forcedRadius; dz <= this.forcedRadius; dz++) {
+                TICKETS.forceChunk(level, this.worldPosition, cx + dx, cz + dz, add, true);
             }
         }
     }
 
-    /** 블록이 제거될 때 호출 */
+    /**
+     * 블록이 제거될 때 호출
+     */
     public void releaseChunks() {
-        if (level instanceof ServerLevel serverLevel) {
-            setForced(serverLevel, false);
-            forcedRadius = -1;
+        if (this.level instanceof ServerLevel serverLevel) {
+            this.setForced(serverLevel, false);
+            this.forcedRadius = -1;
         }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put("inventory", inventory.serializeNBT(registries));
-        tag.putInt("tier", tier);
+        tag.put("inventory", this.inventory.serializeNBT(registries));
+        tag.putInt("tier", this.tier);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        inventory.deserializeNBT(registries, tag.getCompound("inventory"));
-        tier = Math.clamp(tag.getInt("tier"), 0, Balance.SUPPLY_RATE.length - 1);
+        this.inventory.deserializeNBT(registries, tag.getCompound("inventory"));
+        this.tier = Math.clamp(tag.getInt("tier"), 0, Balance.SUPPLY_RATE.length - 1);
     }
 }

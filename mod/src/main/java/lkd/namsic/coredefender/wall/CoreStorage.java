@@ -1,5 +1,7 @@
 package lkd.namsic.coredefender.wall;
 
+import org.jspecify.annotations.Nullable;
+
 import lkd.namsic.coredefender.supply.SupplyBlockEntity;
 import lkd.namsic.coredefender.turret.BasicTurretBlockEntity;
 import lombok.Getter;
@@ -41,7 +43,7 @@ public class CoreStorage extends SavedData {
     private final SimpleContainer container = new SimpleContainer(SIZE);
 
     public CoreStorage() {
-        container.addListener(changed -> setDirty());
+        this.container.addListener(changed -> this.setDirty());
     }
 
     public static CoreStorage get(ServerLevel defense) {
@@ -53,16 +55,20 @@ public class CoreStorage extends SavedData {
         if (level == null) {
             return;
         }
+
         Container container = get(level).container;
         player.openMenu(new SimpleMenuProvider((id, inventory, p) -> ChestMenu.sixRows(id, inventory, container),
-                Component.translatable("container.coredefender.core_storage")));
+            Component.translatable("container.coredefender.core_storage")));
     }
 
-    /** 창고에 넣고, 남는 것은 코어 위에 떨어뜨린다. */
+    /**
+     * 창고에 넣고, 남는 것은 코어 위에 떨어뜨린다.
+     */
     public static void insert(ServerLevel level, ItemStack stack) {
         if (stack.isEmpty()) {
             return;
         }
+
         ItemStack remainder = get(level).container.addItem(stack);
         if (!remainder.isEmpty()) {
             Block.popResource(level, WallManager.state(level).geometry().corePos().above(), remainder);
@@ -77,6 +83,7 @@ public class CoreStorage extends SavedData {
         if (state.isAir()) {
             return;
         }
+
         BlockEntity blockEntity = level.getBlockEntity(pos);
         List<ItemStack> items = new ArrayList<>(Block.getDrops(state, level, pos, blockEntity));
         items.addAll(takeContents(level, pos, blockEntity));
@@ -84,8 +91,10 @@ public class CoreStorage extends SavedData {
         items.forEach(item -> insert(level, item));
     }
 
-    /** 블록 엔티티의 내용물을 꺼낸다 (꺼낸 뒤 제거하므로 제거 시 바닥에 쏟아지지 않는다) */
-    private static List<ItemStack> takeContents(ServerLevel level, BlockPos pos, BlockEntity blockEntity) {
+    /**
+     * 블록 엔티티의 내용물을 꺼낸다 (꺼낸 뒤 제거하므로 제거 시 바닥에 쏟아지지 않는다)
+     */
+    private static List<ItemStack> takeContents(ServerLevel level, BlockPos pos, @Nullable BlockEntity blockEntity) {
         List<ItemStack> items = new ArrayList<>();
         IItemHandler handler = switch (blockEntity) {
             case BasicTurretBlockEntity turret -> turret.getInventory();
@@ -105,12 +114,13 @@ public class CoreStorage extends SavedData {
                 items.add(container.removeItemNoUpdate(i));
             }
         }
+
         return items;
     }
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        ContainerHelper.saveAllItems(tag, container.getItems(), registries);
+        ContainerHelper.saveAllItems(tag, this.container.getItems(), registries);
         return tag;
     }
 

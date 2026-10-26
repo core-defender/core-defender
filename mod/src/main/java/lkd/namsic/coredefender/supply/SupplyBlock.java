@@ -8,6 +8,7 @@ import lkd.namsic.coredefender.registry.ModItems;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -22,13 +23,15 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-/** 보급 송신기/수신기. 강화 부품을 들고 우클릭하면 다음 단계로 강화된다 (단계 순서대로만). */
+/**
+ * 보급 송신기/수신기. 강화 부품을 들고 우클릭하면 다음 단계로 강화된다 (단계 순서대로만).
+ */
 public class SupplyBlock extends BaseEntityBlock {
     public static final MapCodec<SupplyBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            propertiesCodec(),
-            Codec.BOOL.fieldOf("sender").forGetter(SupplyBlock::isSender)
+        propertiesCodec(),
+        Codec.BOOL.fieldOf("sender").forGetter(SupplyBlock::isSender)
     ).apply(instance, SupplyBlock::new));
 
     @Getter
@@ -67,6 +70,7 @@ public class SupplyBlock extends BaseEntityBlock {
         if (upgradeTier < 0) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
+
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) {
             if (upgradeTier != supply.getTier() + 1) {
                 player.displayClientMessage(Component.translatable("message.coredefender.supply_upgrade_order", supply.getTier() + 1), true);
@@ -75,16 +79,18 @@ public class SupplyBlock extends BaseEntityBlock {
                 player.displayClientMessage(Component.translatable("message.coredefender.supply_upgraded", supply.getTier()), true);
             }
         }
+
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) {
-            int buffered = SupplyNetwork.get(level.getServer()).itemCount();
+        if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) {
+            int buffered = SupplyNetwork.get(serverLevel.getServer()).itemCount();
             String key = supply.isOperational() ? "message.coredefender.supply_status" : "message.coredefender.supply_wrong_dimension";
             player.displayClientMessage(Component.translatable(key, supply.getTier(), buffered), true);
         }
+
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -96,6 +102,7 @@ public class SupplyBlock extends BaseEntityBlock {
                 Block.popResource(level, pos, supply.getInventory().getStackInSlot(i));
             }
         }
+
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

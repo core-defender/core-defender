@@ -19,7 +19,7 @@ public class SupplyNetwork extends SavedData {
     private final ItemStackHandler buffer = new ItemStackHandler(Balance.SUPPLY_BUFFER_STACKS) {
         @Override
         protected void onContentsChanged(int slot) {
-            setDirty();
+            SupplyNetwork.this.setDirty();
         }
     };
 
@@ -29,15 +29,16 @@ public class SupplyNetwork extends SavedData {
 
     public int itemCount() {
         int count = 0;
-        for (int i = 0; i < buffer.getSlots(); i++) {
-            count += buffer.getStackInSlot(i).getCount();
+        for (int i = 0; i < this.buffer.getSlots(); i++) {
+            count += this.buffer.getStackInSlot(i).getCount();
         }
+
         return count;
     }
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put("buffer", buffer.serializeNBT(registries));
+        tag.put("buffer", this.buffer.serializeNBT(registries));
         return tag;
     }
 

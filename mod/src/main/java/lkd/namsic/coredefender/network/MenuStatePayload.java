@@ -16,12 +16,12 @@ public record MenuStatePayload(int mode, String json) implements CustomPacketPay
     public static final int CLOSE = 2;
 
     public static final Type<MenuStatePayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "menu_state"));
+        new Type<>(ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "menu_state"));
 
     public static final StreamCodec<ByteBuf, MenuStatePayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, MenuStatePayload::mode,
-            ByteBufCodecs.stringUtf8(1 << 20), MenuStatePayload::json,
-            MenuStatePayload::new
+        ByteBufCodecs.VAR_INT, MenuStatePayload::mode,
+        ByteBufCodecs.stringUtf8(1 << 20), MenuStatePayload::json,
+        MenuStatePayload::new
     );
 
     @Override

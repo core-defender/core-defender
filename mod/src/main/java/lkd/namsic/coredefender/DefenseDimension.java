@@ -8,9 +8,11 @@ import net.minecraft.world.level.Level;
 
 @UtilityClass
 public class DefenseDimension {
-    /** 서버 공유 디펜스 차원 (data/coredefender/dimension/defense.json) */
+    /**
+     * 서버 공유 디펜스 차원 (data/coredefender/dimension/defense.json)
+     */
     public static final ResourceKey<Level> KEY =
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "defense"));
+        ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "defense"));
 
     public static boolean is(Level level) {
         return level.dimension() == KEY;
