@@ -14,6 +14,7 @@ import java.util.Set;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lkd.namsic.coredefender.CoreDefender;
@@ -57,6 +58,9 @@ public class DefenseCommands {
                     ctx.getSource().sendSuccess(() -> Component.literal("테스트 적을 제거했습니다."), true);
                     return 1;
                 }))
+                .then(bossCommand("boss"))
+                .then(bossCommand("mini"))
+                .then(bossCommand("repeat_mini"))
                 .then(Commands.argument("entity", ResourceLocationArgument.id())
                     .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.ENTITY_TYPE.keySet(), builder))
                     .executes(ctx -> spawn(ctx, 1, null, "normal", new CompoundTag()))
@@ -110,14 +114,54 @@ public class DefenseCommands {
         return level;
     }
 
-    private static int spawn(CommandContext<CommandSourceStack> ctx, int count, @Nullable Vec3 position, String variant, CompoundTag nbt) {
+    private static LiteralArgumentBuilder<CommandSourceStack> bossCommand(String kind) {
+        return Commands.literal(kind)
+            .executes(ctx -> spawnBoss(ctx, kind, 1, null))
+            .then(Commands.argument("tier", IntegerArgumentType.integer(1))
+                .executes(ctx -> spawnBoss(ctx, kind, IntegerArgumentType.getInteger(ctx, "tier"), null))
+                .then(Commands.argument("pos", Vec3Argument.vec3())
+                    .executes(ctx -> spawnBoss(ctx, kind, IntegerArgumentType.getInteger(ctx, "tier"), Vec3Argument.getVec3(ctx, "pos")))));
+    }
+
+    private static int spawnBoss(CommandContext<CommandSourceStack> ctx, String kind, int tier, @Nullable Vec3 position) {
         ServerLevel level = defense(ctx);
-        if (level == null) {
+        Vec3 pos = level == null ? null : testPosition(ctx, level, position);
+        if (level == null || pos == null) {
             return 0;
         }
 
+        String error = TestMobs.spawnBoss(level, kind, tier, pos);
+        if (error != null) {
+            ctx.getSource().sendFailure(Component.literal(error));
+            return 0;
+        }
+
+        ctx.getSource().sendSuccess(() -> Component.literal("테스트 " + tier + "단계 " + kind + " 소환 (웨이브 보상/진행 제외)"), true);
+        return 1;
+    }
+
+    /**
+     * 테스트 적은 디펜스 차원에서 성벽 64블록 이내에만 소환한다.
+     */
+    private static @Nullable Vec3 testPosition(CommandContext<CommandSourceStack> ctx, ServerLevel level, @Nullable Vec3 position) {
         if (ctx.getSource().getLevel() != level) {
             ctx.getSource().sendFailure(Component.literal("디펜스 차원에서 실행하세요. /cd enter"));
+            return null;
+        }
+
+        WallManager.ensureBuilt(ctx.getSource().getServer());
+        Vec3 pos = position == null ? ctx.getSource().getPosition() : position;
+        if (!level.isInWorldBounds(BlockPos.containing(pos)) || WallManager.state(level).geometry().distanceToWall(pos.x, pos.z) > 64) {
+            ctx.getSource().sendFailure(Component.literal("성벽에서 64블록 이내의 유효한 위치를 지정하세요."));
+            return null;
+        }
+
+        return pos;
+    }
+
+    private static int spawn(CommandContext<CommandSourceStack> ctx, int count, @Nullable Vec3 position, String variant, CompoundTag nbt) {
+        ServerLevel level = defense(ctx);
+        if (level == null) {
             return 0;
         }
 
@@ -133,11 +177,8 @@ public class DefenseCommands {
             return 0;
         }
 
-        WallManager.ensureBuilt(ctx.getSource().getServer());
-        Vec3 pos = position == null ? ctx.getSource().getPosition() : position;
-
-        if (!level.isInWorldBounds(BlockPos.containing(pos)) || WallManager.state(level).geometry().distanceToWall(pos.x, pos.z) > 64) {
-            ctx.getSource().sendFailure(Component.literal("성벽에서 64블록 이내의 유효한 위치를 지정하세요."));
+        Vec3 pos = testPosition(ctx, level, position);
+        if (pos == null) {
             return 0;
         }
 

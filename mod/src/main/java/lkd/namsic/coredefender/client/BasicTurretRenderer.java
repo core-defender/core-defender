@@ -41,7 +41,7 @@ public final class BasicTurretRenderer implements BlockEntityRenderer<BasicTurre
         float recoil = shotAge >= 0 && shotAge < 5 ? .10F * (1 - shotAge / 5) : 0;
 
         switch (turret.kind()) {
-            case 1 -> StoneTurretRenderer.render(turret, partialTick, pose, buffers, light, overlay, draw, shotAge, recoil);
+            case 1 -> StoneTurretRenderer.render(turret, partialTick, pose, buffers, light, overlay, reload, shotAge, recoil);
             case 3 -> OilTurretRenderer.render(turret, partialTick, shotAge, recoil, pose, buffers, light, overlay);
             // 0 = 화살, 2 = 화염
             default -> ArrowFlameTurretModels.render(turret, partialTick, pose, buffers, light, overlay, reload, draw, shotAge, recoil);

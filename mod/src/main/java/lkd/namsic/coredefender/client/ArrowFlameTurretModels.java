@@ -76,8 +76,10 @@ public final class ArrowFlameTurretModels {
 
             if (turret.isLoaded() && reload >= .2F) {
                 float feed = Math.clamp((reload - .2F) / .5F, 0, 1);
+                float slide = 1 - feed * feed * (3 - 2 * feed);
                 pose.pushPose();
-                pose.translate(0, TurretPose.ARROW_HEIGHT + (1 - feed) * .22, -.18 * (1 - feed));
+                // 화살은 레일 높이를 유지한 채 뒤쪽에서 밀려 들어와 장전된다.
+                pose.translate(0, TurretPose.ARROW_HEIGHT, -.3 * slide);
                 part(prefix + "bolt", pose, buffers, light, overlay, 1, 1, 1);
                 pose.popPose();
             }

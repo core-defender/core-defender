@@ -131,6 +131,12 @@ def generate(renderer_path=None):
         (ASSETS / 'models/block' / f'{target}.json').write_text(json.dumps(model, indent=2) + '\n', encoding='utf-8')
         item = {'parent': f'coredefender:block/{target}', 'display': {
             'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [.625, .625, .625]}}}
+        if target == 'spike_trap':
+            # 3픽셀 높이 판이라 기본 손 위치에서는 옆면만 보인다. 윗면이 시점을 향하도록 세운다.
+            hand = {'rotation': [70, 0, 0], 'translation': [0, 4, 0], 'scale': [.5, .5, .5]}
+            item['display'].update(firstperson_righthand=hand, firstperson_lefthand=hand,
+                                   thirdperson_righthand={'rotation': [75, 45, 0], 'translation': [0, 3, 2], 'scale': [.375, .375, .375]},
+                                   thirdperson_lefthand={'rotation': [75, 45, 0], 'translation': [0, 3, 2], 'scale': [.375, .375, .375]})
         (ASSETS / 'models/item' / f'{target}.json').write_text(json.dumps(item, indent=2) + '\n', encoding='utf-8')
         if renderer:
             preview = dict(model, textures={k: str(ASSETS / 'textures/block' / f'{target}_{k}.png') for k in kinds})

@@ -80,6 +80,16 @@ NBT는 엔티티 ID·수량·좌표·종류 중 마지막으로 지정한 인자
 /cd admin spawn clear
 ```
 
+보스는 `/cd admin spawn <boss|mini|repeat_mini> [단계] [x y z]`로 1마리 소환한다. 단계 기본값은 1이다.
+웨이브 설정의 보스 능력치와 해당 웨이브(미니 보스는 5번째, 보스·반복 미니 보스는 10번째)의 배율·규칙을 적용하며,
+소환사 보스의 방호와 졸개 소환도 동작한다. 졸개도 테스트 적으로 취급한다.
+
+```text
+/cd admin spawn boss
+/cd admin spawn mini 2 ~ ~ ~10
+/cd admin spawn repeat_mini 1
+```
+
 테스트 적은 실제 웨이브 AI/피해 규칙을 사용하지만 웨이브 잔여 수·클리어 보상에는 포함하지 않는다.
 성벽을 실제로 공격하므로 진행 중 웨이브의 패배에는 영향을 줄 수 있다.
 `spawn clear`, `abort`, 초기화 또는 서버 종료로 제거되며 재접속 후 잔존하지 않는다.
