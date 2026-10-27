@@ -1,7 +1,5 @@
 // coredefender 모드 아이템 레시피. 공학 단계별 재료로 진행을 묶는다.
 
-// KubeJS supplies these Java bindings and script globals at runtime.
-//noinspection JSUnresolvedVariable
 ServerEvents.recipes(event => {
   // 수동 압착통: 씨앗 10개 -> 250mB. Create 기본 압착(씨앗 1개 -> 100mB)은 유지한다.
   event.custom({
@@ -20,16 +18,12 @@ ServerEvents.recipes(event => {
   ]).id('coredefender:seed_oil_bucket_from_bottles')
 
   // 킬존 (공학 이전)
-  // KubeJS supplies these Java bindings and script globals at runtime.
-  //noinspection JSUnresolvedVariable
   event.shaped(Item.of('coredefender:barricade', 4), [
     'S S',
     'PPP',
     'PPP'
   ], { S: 'minecraft:stick', P: '#minecraft:planks' })
 
-  // KubeJS supplies these Java bindings and script globals at runtime.
-  //noinspection JSUnresolvedVariable
   event.shaped(Item.of('coredefender:spike_trap', 4), [
     'N N',
     'III'

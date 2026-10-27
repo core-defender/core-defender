@@ -1,6 +1,4 @@
 // Arrow, stone and oil turrets are available before Create; flame remains registered for a later tier.
-// KubeJS supplies these Java bindings and script globals at runtime.
-//noinspection JSUnresolvedVariable
 ServerEvents.recipes(event => {
   event.shaped('coredefender:stone_turret', ['SLS', 'IPI', 'CCC'], {
     S: 'minecraft:string', L: '#minecraft:logs', I: 'minecraft:iron_ingot', P: 'minecraft:piston', C: 'minecraft:cobblestone'
@@ -12,8 +10,6 @@ ServerEvents.recipes(event => {
   event.shaped('coredefender:range_analyzer', [' C ', ' R ', ' I '], {
     C: 'minecraft:copper_ingot', R: 'minecraft:redstone', I: 'minecraft:iron_ingot'
   }).id('coredefender:range_analyzer')
-  // KubeJS supplies these Java bindings and script globals at runtime.
-  //noinspection JSUnresolvedVariable
   event.shaped(Item.of('coredefender:module_chassis', 4), ['CIC', ' R ', 'CIC'], {
     C: 'minecraft:copper_ingot', I: 'minecraft:iron_ingot', R: 'minecraft:redstone'
   }).id('coredefender:module_chassis')

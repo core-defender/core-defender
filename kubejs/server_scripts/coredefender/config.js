@@ -1,7 +1,5 @@
 // priority: 100
 // The JSON file is the editable source; the bundled copy bootstraps new installations.
-// Java bindings and JSON properties are supplied by CoreDefender at runtime.
-//noinspection JSUnresolvedReference
 const CD_CONFIG = JSON.parse(String(CoreDefenderWave.defaultConfig()))
 
 function cdValidateConfig(config, server) {
@@ -13,8 +11,6 @@ function cdValidateConfig(config, server) {
   function mob(type, path) {
     requireValue(typeof type === 'string', path)
     if (!checkedTypes[type]) {
-      // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-      //noinspection JSUnresolvedReference
       requireValue(CoreDefenderWave.isMobType(server, type), path + ' (' + type + ')')
       checkedTypes[type] = true
     }
@@ -39,7 +35,7 @@ function cdValidateConfig(config, server) {
     requireValue(Array.isArray(tier) && tier.length === 10, 'tiers[' + ti + ']: 10개 웨이브')
     tier.forEach((wave, wi) => {
       let path = 'tiers[' + ti + '][' + wi + ']'
-      number(wave.healthMultiplier, 1, 32, path + '.healthMultiplier')
+      number(wave.healthMultiplier, 0.1, 32, path + '.healthMultiplier')
       number(wave.damageMultiplier, 1, 32, path + '.damageMultiplier')
       number(wave.speedMultiplier, 1, 2, path + '.speedMultiplier')
       number(wave.maxAlive, 1, 512, path + '.maxAlive', true)
@@ -58,8 +54,6 @@ function cdValidateConfig(config, server) {
       requireValue(total <= 10000, path + ': 총수 10000 이하')
       requireValue(Array.isArray(wave.rewards), path + '.rewards')
       wave.rewards.forEach(reward => {
-        // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-        //noinspection JSUnresolvedReference
         requireValue(CoreDefenderWave.isItemType(reward.item), path + '.rewards.item')
         number(reward.count, 1, 4096, path + '.rewards.count', true)
       })
@@ -74,14 +68,8 @@ function cdValidateConfig(config, server) {
     number(entry.attack, 0, 2048, path + '.attack')
     number(entry.armor, 0, 30, path + '.armor')
   }))
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   requireValue(!!config.repair && CoreDefenderWave.isItemType(config.repair.item), 'repair.item')
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   number(config.repair.perCollapsed, 0, 4096, 'repair.perCollapsed', true)
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   number(config.repair.perHundredMissing, 0, 4096, 'repair.perHundredMissing', true)
   requireValue(Array.isArray(config.sideUpgrade) && config.sideUpgrade.length === 4, 'sideUpgrade')
   config.sideUpgrade.forEach(cost => {
@@ -89,10 +77,6 @@ function cdValidateConfig(config, server) {
     requireValue(typeof cost.item === 'string' && /^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(cost.item), 'sideUpgrade.item')
     number(cost.count, 1, 4096, 'sideUpgrade.count', true)
   })
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   requireValue(!!config.expand && CoreDefenderWave.isItemType(config.expand.item), 'expand.item')
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   requireValue(config.expand.maxHalf === 4, 'expand.maxHalf = 4')
 }

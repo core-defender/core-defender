@@ -68,6 +68,8 @@ public class WallManager {
         WallState state = state(level);
         if (state.built) {
             migrateBarrier(level, state);
+            // 블록 엔티티가 생기기 전에 설치된 코어는 서버 스레드 조회 시 엔티티가 생성된다.
+            level.getBlockEntity(state.geometry().corePos());
             // 기존 블록 성벽 두께는 이전 처리에만 사용한다. 장벽 경계는 정확히 청크 크기다.
             if (state.thickness != 0) {
                 state.thickness = 0;

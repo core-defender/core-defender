@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +34,7 @@ public final class VineryOil {
 
     public static final String KEY = "coredefender_oil";
     private static final ResourceLocation POT = ResourceLocation.parse("vinery:grapevine_pot");
-    private static final TagKey<Item> SEEDS = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:seeds"));
+    public static final TagKey<Item> SEEDS = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:seeds"));
 
     public static OilBatch batch(BlockEntity entity) {
         CompoundTag tag = entity.getPersistentData().getCompound(KEY);
@@ -91,7 +90,7 @@ public final class VineryOil {
         if (held.is(SEEDS) && batch.seeds() < OilBatch.SEEDS) {
             String id = BuiltInRegistries.ITEM.getKey(held.getItem()).toString();
             if (batch.seeds() > 0 && !seed.equals(id)) {
-                player.displayClientMessage(Component.translatable("message.coredefender.oil_same_seed"), true);
+                level.playSound(null, pos, SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, .6F, 1.2F);
                 return;
             }
 
@@ -115,12 +114,7 @@ public final class VineryOil {
             }
 
             level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1F, 1F);
-            return;
         }
-
-        player.displayClientMessage(batch.ready()
-            ? Component.translatable("message.coredefender.oil_ready")
-            : Component.translatable("message.coredefender.oil_progress", batch.seeds(), OilBatch.SEEDS, batch.stomps(), OilBatch.STOMPS), true);
     }
 
     /**
@@ -148,9 +142,7 @@ public final class VineryOil {
         batch = batch.stomp();
         store(entity, batch, tag.getString("seed"));
         level.blockEvent(pos, entity.getBlockState().getBlock(), 1, 0);
-        level.playSound(null, pos, SoundEvents.HONEY_BLOCK_STEP, SoundSource.BLOCKS, .8F, 1F);
-        player.displayClientMessage(batch.ready() ? Component.translatable("message.coredefender.oil_ready")
-            : Component.translatable("message.coredefender.oil_progress", batch.seeds(), OilBatch.SEEDS, batch.stomps(), OilBatch.STOMPS), true);
+        level.playSound(null, pos, batch.ready() ? SoundEvents.BREWING_STAND_BREW : SoundEvents.HONEY_BLOCK_STEP, SoundSource.BLOCKS, .8F, 1F);
         return true;
     }
 

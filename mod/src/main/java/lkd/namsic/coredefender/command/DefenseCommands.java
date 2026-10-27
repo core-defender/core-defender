@@ -104,7 +104,7 @@ public class DefenseCommands {
     private static @Nullable ServerLevel defense(CommandContext<CommandSourceStack> ctx) {
         ServerLevel level = WallManager.level(ctx.getSource().getServer());
         if (level == null) {
-            ctx.getSource().sendFailure(Component.literal("Defense dimension not loaded"));
+            ctx.getSource().sendFailure(Component.literal("디펜스 차원이 로드되지 않았습니다."));
         }
 
         return level;
@@ -179,10 +179,10 @@ public class DefenseCommands {
 
         WallState state = WallManager.state(level);
         WallGeometry geo = state.geometry();
-        ctx.getSource().sendSuccess(() -> Component.literal(String.format("Wall: interior %dx%d chunks, x[%d..%d] z[%d..%d] y%d h%d",
+        ctx.getSource().sendSuccess(() -> Component.literal(String.format("성벽 내부 %dx%d 청크, x[%d..%d] z[%d..%d] y%d 높이 %d",
             geo.half() * 2, geo.half() * 2, geo.minX(), geo.maxX(), geo.minZ(), geo.maxZ(), geo.baseY(), geo.height())), false);
         state.segments().forEach((id, segment) -> ctx.getSource().sendSuccess(() -> Component.literal(
-            String.format("  %s: %d/%d%s", id, segment.hp(), segment.maxHp(), segment.collapsed() ? " [collapsed]" : "")), false));
+            String.format("  %s: %d/%d%s", id, segment.hp(), segment.maxHp(), segment.collapsed() ? " [붕괴]" : "")), false));
         return 1;
     }
 
@@ -194,7 +194,7 @@ public class DefenseCommands {
 
         String segment = StringArgumentType.getString(ctx, "segment");
         if (!WallManager.state(level).segments().containsKey(segment)) {
-            ctx.getSource().sendFailure(Component.literal("Unknown segment: " + segment));
+            ctx.getSource().sendFailure(Component.literal("알 수 없는 성벽 구간: " + segment));
             return 0;
         }
 
@@ -217,15 +217,15 @@ public class DefenseCommands {
             }
         } else {
             if (target != null && !WallManager.state(level).segments().containsKey(target)) {
-                ctx.getSource().sendFailure(Component.literal("알 수 없는 성벽 구간: " + target + ". all, N/E/S/W 또는 /cd admin wall info의 구간 ID를 입력하세요."));
+                ctx.getSource().sendFailure(Component.literal("알 수 없는 성벽 구간: " + target));
                 return 0;
             }
 
             WallManager.repair(level, target, amount);
         }
 
-        ctx.getSource().sendSuccess(() -> Component.literal("Repaired " + (target == null ? "all segments" : target)
-            + (amount > 0 ? " (각 구간 +" + amount + " HP, 최대 체력까지)" : " (최대 체력까지)")), true);
+        ctx.getSource().sendSuccess(() -> Component.literal("성벽 수리: " + (target == null ? "전체" : target)
+            + (amount > 0 ? " +" + amount + " HP" : "")), true);
         return 1;
     }
 
@@ -236,7 +236,7 @@ public class DefenseCommands {
         }
 
         WallManager.expand(level);
-        ctx.getSource().sendSuccess(() -> Component.literal("Wall expanded"), true);
+        ctx.getSource().sendSuccess(() -> Component.literal("성벽을 확장했습니다."), true);
         return 1;
     }
 
@@ -247,7 +247,7 @@ public class DefenseCommands {
         }
 
         WallManager.rebuild(level);
-        ctx.getSource().sendSuccess(() -> Component.literal("Wall rebuilt"), true);
+        ctx.getSource().sendSuccess(() -> Component.literal("성벽을 재건했습니다."), true);
         return 1;
     }
 }

@@ -41,7 +41,7 @@ public record WaveSpec(String label, List<MobEntry> mobs, int maxAlive, int spaw
             root.has("maxAlive") ? root.get("maxAlive").getAsInt() : 60,
             root.has("spawnInterval") ? Math.max(1, root.get("spawnInterval").getAsInt()) : 10,
             (int) number(root, "spawnBatchSize", 1, 1, 16),
-            number(root, "healthMultiplier", 1, 1, 32),
+            number(root, "healthMultiplier", 1, .1, 32),
             number(root, "damageMultiplier", 1, 1, 32),
             number(root, "speedMultiplier", 1, 1, 2),
             WaveRules.parse(root.has("rules") ? root.getAsJsonObject("rules") : new JsonObject()));

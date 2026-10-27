@@ -1,0 +1,88 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/flame_turret_oak",
+    "heartwood": "coredefender:block/flame_turret_heartwood",
+    "bow": "coredefender:block/flame_turret_bow",
+    "iron": "coredefender:block/flame_turret_iron",
+    "steel": "coredefender:block/flame_turret_steel",
+    "rope": "coredefender:block/flame_turret_rope",
+    "feather": "coredefender:block/flame_turret_feather",
+    "leather": "coredefender:block/flame_turret_leather",
+    "ember": "coredefender:block/flame_turret_ember",
+    "lamp": "coredefender:block/flame_turret_lamp",
+    "particle": "coredefender:block/flame_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "ignition core",
+      "from": [
+        -1.2,
+        0.6,
+        12.4
+      ],
+      "to": [
+        1.2,
+        3,
+        15.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.4,
+            2.4
+          ],
+          "texture": "#ember"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.4,
+            2.4
+          ],
+          "texture": "#ember"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.4
+          ],
+          "texture": "#ember"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.4
+          ],
+          "texture": "#ember"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.4,
+            3.0
+          ],
+          "texture": "#ember"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.4,
+            3.0
+          ],
+          "texture": "#ember"
+        }
+      }
+    }
+  ]
+}

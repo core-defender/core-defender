@@ -1,0 +1,88 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/arrow_turret_oak",
+    "heartwood": "coredefender:block/arrow_turret_heartwood",
+    "bow": "coredefender:block/arrow_turret_bow",
+    "iron": "coredefender:block/arrow_turret_iron",
+    "steel": "coredefender:block/arrow_turret_steel",
+    "rope": "coredefender:block/arrow_turret_rope",
+    "feather": "coredefender:block/arrow_turret_feather",
+    "leather": "coredefender:block/arrow_turret_leather",
+    "ember": "coredefender:block/arrow_turret_ember",
+    "lamp": "coredefender:block/arrow_turret_lamp",
+    "particle": "coredefender:block/arrow_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "yaw bearing",
+      "from": [
+        -3,
+        -2.8,
+        -3
+      ],
+      "to": [
+        3,
+        -1.3,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
+        }
+      }
+    }
+  ]
+}

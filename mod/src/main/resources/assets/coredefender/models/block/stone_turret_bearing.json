@@ -1,0 +1,87 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "oak": "coredefender:block/stone_turret_oak",
+    "heartwood": "coredefender:block/stone_turret_heartwood",
+    "iron": "coredefender:block/stone_turret_iron",
+    "steel": "coredefender:block/stone_turret_steel",
+    "rope": "coredefender:block/stone_turret_rope",
+    "stone": "coredefender:block/stone_turret_stone",
+    "ready": "coredefender:block/stone_turret_ready",
+    "warning": "coredefender:block/stone_turret_warning",
+    "amp": "coredefender:block/stone_turret_amp",
+    "stopped": "coredefender:block/stone_turret_stopped",
+    "particle": "#oak"
+  },
+  "elements": [
+    {
+      "name": "rotating bearing",
+      "from": [
+        4.5,
+        5.7,
+        4.5
+      ],
+      "to": [
+        11.5,
+        6.7,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.0
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.0
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.0
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.0
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            7.0
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            7.0
+          ],
+          "texture": "#steel"
+        }
+      }
+    }
+  ]
+}

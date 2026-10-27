@@ -1,0 +1,87 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "particle": "#iron",
+    "oak": "coredefender:block/oil_turret_oak",
+    "heartwood": "coredefender:block/oil_turret_heartwood",
+    "iron": "coredefender:block/oil_turret_iron",
+    "steel": "coredefender:block/oil_turret_steel",
+    "oil": "coredefender:block/oil_turret_oil",
+    "red": "coredefender:block/oil_turret_red",
+    "amber": "coredefender:block/oil_turret_amber",
+    "green": "coredefender:block/oil_turret_green",
+    "gray": "coredefender:block/oil_turret_gray"
+  },
+  "elements": [
+    {
+      "name": "status inset",
+      "from": [
+        6.1,
+        3.2,
+        1.5
+      ],
+      "to": [
+        9.9,
+        5.8,
+        1.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.8,
+            2.6
+          ],
+          "texture": "#gray"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.8,
+            2.6
+          ],
+          "texture": "#gray"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            2.6
+          ],
+          "texture": "#gray"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            2.6
+          ],
+          "texture": "#gray"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.2
+          ],
+          "texture": "#gray"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.2
+          ],
+          "texture": "#gray"
+        }
+      }
+    }
+  ]
+}

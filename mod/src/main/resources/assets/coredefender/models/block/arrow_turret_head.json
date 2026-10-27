@@ -1,0 +1,650 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/arrow_turret_oak",
+    "heartwood": "coredefender:block/arrow_turret_heartwood",
+    "bow": "coredefender:block/arrow_turret_bow",
+    "iron": "coredefender:block/arrow_turret_iron",
+    "steel": "coredefender:block/arrow_turret_steel",
+    "rope": "coredefender:block/arrow_turret_rope",
+    "feather": "coredefender:block/arrow_turret_feather",
+    "leather": "coredefender:block/arrow_turret_leather",
+    "ember": "coredefender:block/arrow_turret_ember",
+    "lamp": "coredefender:block/arrow_turret_lamp",
+    "particle": "coredefender:block/arrow_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "crossbow stock",
+      "from": [
+        -2,
+        -1.75,
+        -7
+      ],
+      "to": [
+        2,
+        0.0,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ],
+          "texture": "#heartwood"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ],
+          "texture": "#heartwood"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.75,
+            13
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.75,
+            13
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ],
+          "texture": "#heartwood"
+        }
+      }
+    },
+    {
+      "name": "raised bolt guide",
+      "from": [
+        -2.5,
+        0.0,
+        -6
+      ],
+      "to": [
+        -1.25,
+        0.75,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            0.75
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            0.75
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            12
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            12
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            12
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            12
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "raised bolt guide",
+      "from": [
+        1.25,
+        0.0,
+        -6
+      ],
+      "to": [
+        2.5,
+        0.75,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            0.75
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            0.75
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            12
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            12
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            12
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            12
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "front limb socket",
+      "from": [
+        -3,
+        -1.0,
+        3
+      ],
+      "to": [
+        3,
+        1.0,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            6,
+            2.0
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            2.0
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            2.0
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            2.0
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "trigger sear",
+      "from": [
+        -1,
+        0.0,
+        -6.4
+      ],
+      "to": [
+        1,
+        1.0999999999999996,
+        -5.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            1.1
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            1.1
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.1
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.1
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            1.0
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            1.0
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "rear stock binding",
+      "from": [
+        -2.2,
+        -1.9000000000000004,
+        -6.03
+      ],
+      "to": [
+        2.1999999999999993,
+        0.09999999999999964,
+        -5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4.4,
+            2.0
+          ],
+          "texture": "#leather"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4.4,
+            2.0
+          ],
+          "texture": "#leather"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.0
+          ],
+          "texture": "#leather"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.0
+          ],
+          "texture": "#leather"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4.4,
+            1
+          ],
+          "texture": "#leather"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4.4,
+            1
+          ],
+          "texture": "#leather"
+        }
+      }
+    },
+    {
+      "name": "winding axle",
+      "from": [
+        -3.75,
+        -1.5,
+        -4
+      ],
+      "to": [
+        3.75,
+        -0.5,
+        -3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            7.5,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            7.5,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            7.5,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            7.5,
+            1
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "crank arm",
+      "from": [
+        3.75,
+        -2.8000000000000007,
+        -4
+      ],
+      "to": [
+        4.5,
+        -0.5,
+        -3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            2.3
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            2.3
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.3
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.3
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "crank wooden handle",
+      "from": [
+        4.5,
+        -3.0,
+        -4.199999999999999
+      ],
+      "to": [
+        6,
+        -2.0999999999999996,
+        -2.8000000000000007
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            1.5
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            1.5
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.9
+          ],
+          "texture": "#bow"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.9
+          ],
+          "texture": "#bow"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.5
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.5
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        }
+      }
+    }
+  ]
+}

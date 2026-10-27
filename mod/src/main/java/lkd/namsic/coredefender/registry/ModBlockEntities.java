@@ -2,6 +2,7 @@ package lkd.namsic.coredefender.registry;
 
 import lkd.namsic.coredefender.CoreDefender;
 import lkd.namsic.coredefender.DefenseDimension;
+import lkd.namsic.coredefender.block.CoreBlockEntity;
 import lkd.namsic.coredefender.supply.RestrictedItemHandler;
 import lkd.namsic.coredefender.supply.SupplyBlockEntity;
 import lkd.namsic.coredefender.turret.BasicTurretBlockEntity;
@@ -25,6 +26,10 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BasicTurretBlockEntity>> BASIC_TURRET =
         BLOCK_ENTITIES.register("basic_turret",
             () -> BlockEntityType.Builder.of(BasicTurretBlockEntity::new, ModBlocks.BASIC_TURRET.get(), ModBlocks.STONE_TURRET.get(), ModBlocks.FLAME_TURRET.get(), ModBlocks.OIL_TURRET.get()).build(null));
+
+    @SuppressWarnings("DataFlowIssue")
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoreBlockEntity>> CORE =
+        BLOCK_ENTITIES.register("core", () -> BlockEntityType.Builder.of(CoreBlockEntity::new, ModBlocks.CORE.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SupplyBlockEntity>> SUPPLY =

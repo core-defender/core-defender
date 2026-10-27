@@ -21,6 +21,11 @@ repositories {
         url = 'https://maven.latvian.dev/releases'
         content { includeGroup 'dev.latvian.mods' }
     }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei' }
+    }
 }
 
 neoForge {
@@ -56,6 +61,10 @@ dependencies {
     // KubeJS 브리지(플러그인/바인딩/이벤트). 런타임에는 모드팩의 KubeJS 를 사용한다.
     compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}") { transitive = false }
     compileOnly("dev.latvian.mods:rhino:${rhino_version}") { transitive = false }
+
+    // JEI 플러그인. 런타임에는 모드팩의 JEI 를 사용한다.
+    compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}") { transitive = false }
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}") { transitive = false }
 }
 
 tasks.named('processResources') {

@@ -9,6 +9,8 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -72,11 +74,11 @@ public class SupplyBlock extends BaseEntityBlock {
         }
 
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof SupplyBlockEntity supply) {
-            if (upgradeTier != supply.getTier() + 1) {
-                player.displayClientMessage(Component.translatable("message.coredefender.supply_upgrade_order", supply.getTier() + 1), true);
-            } else if (supply.upgrade()) {
+            if (upgradeTier == supply.getTier() + 1 && supply.upgrade()) {
                 stack.consume(1, player);
-                player.displayClientMessage(Component.translatable("message.coredefender.supply_upgraded", supply.getTier()), true);
+                level.playSound(null, pos, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1F, 1F);
+            } else {
+                level.playSound(null, pos, SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, .6F, 1.2F);
             }
         }
 

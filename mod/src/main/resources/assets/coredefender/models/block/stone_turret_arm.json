@@ -1,0 +1,710 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "oak": "coredefender:block/stone_turret_oak",
+    "heartwood": "coredefender:block/stone_turret_heartwood",
+    "iron": "coredefender:block/stone_turret_iron",
+    "steel": "coredefender:block/stone_turret_steel",
+    "rope": "coredefender:block/stone_turret_rope",
+    "stone": "coredefender:block/stone_turret_stone",
+    "ready": "coredefender:block/stone_turret_ready",
+    "warning": "coredefender:block/stone_turret_warning",
+    "amp": "coredefender:block/stone_turret_amp",
+    "stopped": "coredefender:block/stone_turret_stopped",
+    "particle": "#oak"
+  },
+  "elements": [
+    {
+      "name": "throwing beam",
+      "from": [
+        7,
+        8,
+        -3
+      ],
+      "to": [
+        9,
+        10,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            15
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            15
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            15
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            15
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "counterweight end",
+      "from": [
+        6,
+        7,
+        12
+      ],
+      "to": [
+        10,
+        11,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            4
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            4
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "pivot sleeve",
+      "from": [
+        6.75,
+        7.75,
+        6.75
+      ],
+      "to": [
+        9.25,
+        10.25,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "rope binding",
+      "from": [
+        6.875,
+        7.875,
+        3
+      ],
+      "to": [
+        9.125,
+        10.125,
+        4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            1
+          ],
+          "texture": "#rope"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            1
+          ],
+          "texture": "#rope"
+        }
+      }
+    },
+    {
+      "name": "rope binding",
+      "from": [
+        6.875,
+        7.875,
+        5
+      ],
+      "to": [
+        9.125,
+        10.125,
+        6
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            2.25
+          ],
+          "texture": "#rope"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            1
+          ],
+          "texture": "#rope"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            1
+          ],
+          "texture": "#rope"
+        }
+      }
+    },
+    {
+      "name": "cup floor",
+      "from": [
+        4.5,
+        9,
+        -4
+      ],
+      "to": [
+        11.5,
+        10.03,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1
+          ],
+          "texture": "#heartwood"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1
+          ],
+          "texture": "#heartwood"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#heartwood"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#heartwood"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            6
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            6
+          ],
+          "texture": "#heartwood"
+        }
+      }
+    },
+    {
+      "name": "cup side",
+      "from": [
+        4.47,
+        10,
+        -4.03
+      ],
+      "to": [
+        5.5,
+        12,
+        2.03
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            6
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            6
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "cup side",
+      "from": [
+        10.5,
+        10,
+        -4.03
+      ],
+      "to": [
+        11.53,
+        12,
+        2.03
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            6
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            6
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "cup rim",
+      "from": [
+        5.5,
+        10,
+        -4.03
+      ],
+      "to": [
+        10.5,
+        11.5,
+        -3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "cup rim",
+      "from": [
+        5.5,
+        10,
+        1
+      ],
+      "to": [
+        10.5,
+        11.5,
+        2.03
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1
+          ],
+          "texture": "#iron"
+        }
+      }
+    }
+  ]
+}

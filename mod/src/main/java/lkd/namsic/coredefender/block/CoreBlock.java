@@ -11,10 +11,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class CoreBlock extends Block {
+public class CoreBlock extends Block implements EntityBlock {
     public static final MapCodec<CoreBlock> CODEC = simpleCodec(CoreBlock::new);
 
     public CoreBlock(Properties properties) {
@@ -24,6 +26,11 @@ public class CoreBlock extends Block {
     @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new CoreBlockEntity(pos, state);
     }
 
     /**

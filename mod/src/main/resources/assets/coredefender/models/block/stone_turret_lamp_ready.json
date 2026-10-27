@@ -1,0 +1,87 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "oak": "coredefender:block/stone_turret_oak",
+    "heartwood": "coredefender:block/stone_turret_heartwood",
+    "iron": "coredefender:block/stone_turret_iron",
+    "steel": "coredefender:block/stone_turret_steel",
+    "rope": "coredefender:block/stone_turret_rope",
+    "stone": "coredefender:block/stone_turret_stone",
+    "ready": "coredefender:block/stone_turret_ready",
+    "warning": "coredefender:block/stone_turret_warning",
+    "amp": "coredefender:block/stone_turret_amp",
+    "stopped": "coredefender:block/stone_turret_stopped",
+    "particle": "#oak"
+  },
+  "elements": [
+    {
+      "name": "status lamp",
+      "from": [
+        6.5,
+        3.5,
+        0
+      ],
+      "to": [
+        9.5,
+        5.5,
+        0.375
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.0
+          ],
+          "texture": "#ready"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.0
+          ],
+          "texture": "#ready"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.375,
+            2.0
+          ],
+          "texture": "#ready"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.375,
+            2.0
+          ],
+          "texture": "#ready"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.375
+          ],
+          "texture": "#ready"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.375
+          ],
+          "texture": "#ready"
+        }
+      }
+    }
+  ]
+}

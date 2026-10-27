@@ -51,7 +51,7 @@
             "elite": true
           }
         ],
-        "healthMultiplier": 1,
+        "healthMultiplier": 0.5,
         "damageMultiplier": 1.2,
         "speedMultiplier": 1.05,
         "maxAlive": 96,

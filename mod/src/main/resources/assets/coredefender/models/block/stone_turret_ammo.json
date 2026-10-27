@@ -1,0 +1,156 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "oak": "coredefender:block/stone_turret_oak",
+    "heartwood": "coredefender:block/stone_turret_heartwood",
+    "iron": "coredefender:block/stone_turret_iron",
+    "steel": "coredefender:block/stone_turret_steel",
+    "rope": "coredefender:block/stone_turret_rope",
+    "stone": "coredefender:block/stone_turret_stone",
+    "ready": "coredefender:block/stone_turret_ready",
+    "warning": "coredefender:block/stone_turret_warning",
+    "amp": "coredefender:block/stone_turret_amp",
+    "stopped": "coredefender:block/stone_turret_stopped",
+    "particle": "#oak"
+  },
+  "elements": [
+    {
+      "name": "loaded stone",
+      "from": [
+        5.75,
+        10,
+        -2.75
+      ],
+      "to": [
+        10.25,
+        14,
+        1.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4.5,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4.5,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4.0,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4.0,
+            4
+          ],
+          "texture": "#stone"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4.5,
+            4.0
+          ],
+          "texture": "#stone"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4.5,
+            4.0
+          ],
+          "texture": "#stone"
+        }
+      }
+    },
+    {
+      "name": "stone crown",
+      "from": [
+        6.5,
+        14,
+        -2
+      ],
+      "to": [
+        9.5,
+        14.75,
+        0.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.75
+          ],
+          "texture": "#stone"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.75
+          ],
+          "texture": "#stone"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            0.75
+          ],
+          "texture": "#stone"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.5,
+            0.75
+          ],
+          "texture": "#stone"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.5
+          ],
+          "texture": "#stone"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            2.5
+          ],
+          "texture": "#stone"
+        }
+      }
+    }
+  ]
+}

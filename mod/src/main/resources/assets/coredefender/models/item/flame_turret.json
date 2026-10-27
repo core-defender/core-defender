@@ -1,202 +1,2721 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": true,
   "textures": {
-    "particle": "minecraft:block/iron_block",
-    "metal": "minecraft:block/iron_block",
-    "wood": "minecraft:block/copper_block"
+    "oak": "coredefender:block/flame_turret_oak",
+    "heartwood": "coredefender:block/flame_turret_heartwood",
+    "bow": "coredefender:block/flame_turret_bow",
+    "iron": "coredefender:block/flame_turret_iron",
+    "steel": "coredefender:block/flame_turret_steel",
+    "rope": "coredefender:block/flame_turret_rope",
+    "feather": "coredefender:block/flame_turret_feather",
+    "leather": "coredefender:block/flame_turret_leather",
+    "ember": "coredefender:block/flame_turret_ember",
+    "lamp": "coredefender:block/flame_turret_lamp",
+    "particle": "coredefender:block/flame_turret_oak"
   },
   "elements": [
     {
+      "name": "long ground runner",
       "from": [
-        1,
-        0,
+        2,
+        0.0,
         1
       ],
       "to": [
-        15,
-        3,
+        5,
+        3.0,
         15
       ],
       "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
         "north": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3,
+            3.0
+          ],
+          "texture": "#heartwood"
         },
         "south": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3,
+            3.0
+          ],
+          "texture": "#heartwood"
         },
         "west": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
         },
         "east": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3,
+            14
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3,
+            14
+          ],
+          "texture": "#heartwood"
         }
       }
     },
     {
+      "name": "runner iron shoe",
       "from": [
-        3,
-        3,
-        3
+        1.85,
+        0.0,
+        1
       ],
       "to": [
-        13,
-        11,
-        13
+        5.15,
+        3.3000000000000003,
+        3
       ],
       "faces": {
-        "down": {
-          "texture": "#wood"
-        },
-        "up": {
-          "texture": "#wood"
-        },
         "north": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
         },
         "south": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
         },
         "west": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
         },
         "east": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
         }
       }
     },
     {
+      "name": "shoe rivet",
       "from": [
-        2,
+        3,
+        3.3000000000000003,
+        1.55
+      ],
+      "to": [
+        4,
+        3.75,
+        2.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "runner iron shoe",
+      "from": [
+        1.85,
+        0.0,
+        13
+      ],
+      "to": [
+        5.15,
+        3.3000000000000003,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "shoe rivet",
+      "from": [
+        3,
+        3.3000000000000003,
+        13.55
+      ],
+      "to": [
+        4,
+        3.75,
+        14.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "long ground runner",
+      "from": [
         11,
-        2
+        0.0,
+        1
       ],
       "to": [
         14,
-        12,
-        14
+        3.0,
+        15
       ],
       "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
         "north": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3,
+            3.0
+          ],
+          "texture": "#heartwood"
         },
         "south": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3,
+            3.0
+          ],
+          "texture": "#heartwood"
         },
         "west": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
         },
         "east": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#heartwood",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3,
+            14
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3,
+            14
+          ],
+          "texture": "#heartwood"
         }
       }
     },
     {
+      "name": "runner iron shoe",
+      "from": [
+        10.85,
+        0.0,
+        1
+      ],
+      "to": [
+        14.15,
+        3.3000000000000003,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "shoe rivet",
+      "from": [
+        12,
+        3.3000000000000003,
+        1.55
+      ],
+      "to": [
+        13,
+        3.75,
+        2.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "runner iron shoe",
+      "from": [
+        10.85,
+        0.0,
+        13
+      ],
+      "to": [
+        14.15,
+        3.3000000000000003,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            3.3000000000000003
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.3,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "shoe rivet",
+      "from": [
+        12,
+        3.3000000000000003,
+        13.55
+      ],
+      "to": [
+        13,
+        3.75,
+        14.45
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.9,
+            0.44999999999999996
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "cross sill",
+      "from": [
+        1,
+        3.0,
+        5.5
+      ],
+      "to": [
+        15,
+        6.0,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            14
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            3.0
+          ],
+          "texture": "#oak"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            3.0
+          ],
+          "texture": "#oak"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            14
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            14
+          ],
+          "texture": "#oak",
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "name": "central timber column",
+      "from": [
+        5.5,
+        6.0,
+        5.5
+      ],
+      "to": [
+        10.5,
+        15.75,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            9.75
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            9.75
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            9.75
+          ],
+          "texture": "#oak"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            9.75
+          ],
+          "texture": "#oak"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            5.0
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            5.0
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "splayed supporting strut",
+      "from": [
+        3.5,
+        4.5,
+        7
+      ],
+      "to": [
+        5.5,
+        13.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            2
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            2
+          ],
+          "texture": "#heartwood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          4.5,
+          4.5,
+          8
+        ],
+        "axis": "z",
+        "angle": -22.5
+      }
+    },
+    {
+      "name": "splayed supporting strut",
+      "from": [
+        10.5,
+        4.5,
+        7
+      ],
+      "to": [
+        12.5,
+        13.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            9.0
+          ],
+          "texture": "#heartwood"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            2
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2.0,
+            2
+          ],
+          "texture": "#heartwood"
+        }
+      },
+      "rotation": {
+        "origin": [
+          11.5,
+          4.5,
+          8
+        ],
+        "axis": "z",
+        "angle": 22.5
+      }
+    },
+    {
+      "name": "column iron collar",
+      "from": [
+        5.25,
+        6.75,
+        5.25
+      ],
+      "to": [
+        10.75,
+        8.25,
+        10.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            5.5
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            5.5
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "front collar rivet",
+      "from": [
+        7.5,
+        6.8999999999999995,
+        5.05
+      ],
+      "to": [
+        8.5,
+        8.100000000000001,
+        5.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.2
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.2
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "column iron collar",
+      "from": [
+        5.25,
+        12.75,
+        5.25
+      ],
+      "to": [
+        10.75,
+        14.25,
+        10.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            5.5
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.5,
+            5.5
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "front collar rivet",
+      "from": [
+        7.5,
+        12.899999999999999,
+        5.05
+      ],
+      "to": [
+        8.5,
+        14.100000000000001,
+        5.25
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.2,
+            1.2000000000000002
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.2
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.2
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "square bearing seat",
+      "from": [
+        4.5,
+        15.0,
+        4.5
+      ],
+      "to": [
+        11.5,
+        16.5,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.5
+          ],
+          "texture": "#heartwood"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.5
+          ],
+          "texture": "#heartwood"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.5
+          ],
+          "texture": "#heartwood"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            1.5
+          ],
+          "texture": "#heartwood"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            7.0
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            7.0,
+            7.0
+          ],
+          "texture": "#heartwood"
+        }
+      }
+    },
+    {
+      "name": "fixed iron bearing",
       "from": [
         5,
-        12,
+        16.5,
         5
       ],
       "to": [
         11,
-        18,
+        18.0,
         11
       ],
       "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
         "north": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            6,
+            1.5
+          ],
+          "texture": "#iron"
         },
         "south": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            6,
+            1.5
+          ],
+          "texture": "#iron"
         },
         "west": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            6,
+            1.5
+          ],
+          "texture": "#iron"
         },
         "east": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            6,
+            1.5
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
         }
       }
     },
     {
+      "name": "status lamp frame",
+      "from": [
+        5.5,
+        3,
+        4.7
+      ],
+      "to": [
+        10.5,
+        6,
+        5.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            3
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            3
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.7999999999999998,
+            3
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.7999999999999998,
+            3
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            0.7999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            0.7999999999999998
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "status lens",
+      "from": [
+        6,
+        3.5,
+        4.5
+      ],
+      "to": [
+        10,
+        5.5,
+        4.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.20000000000000018,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.20000000000000018,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.20000000000000018
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.20000000000000018
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "name": "yaw bearing",
+      "from": [
+        5,
+        18.0,
+        5
+      ],
+      "to": [
+        11,
+        19.5,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            1.4999999999999998
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "timber cradle",
       "from": [
         3,
-        17,
+        19.5,
         2
       ],
       "to": [
         13,
-        24,
-        11
+        20.8,
+        12
       ],
       "faces": {
-        "down": {
-          "texture": "#wood"
-        },
-        "up": {
-          "texture": "#wood"
-        },
         "north": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            10,
+            1.3
+          ],
+          "texture": "#heartwood"
         },
         "south": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            10,
+            1.3
+          ],
+          "texture": "#heartwood"
         },
         "west": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            10,
+            1.3
+          ],
+          "texture": "#heartwood"
         },
         "east": {
-          "texture": "#wood"
+          "uv": [
+            0,
+            0,
+            10,
+            1.3
+          ],
+          "texture": "#heartwood"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            10,
+            10
+          ],
+          "texture": "#heartwood"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            10,
+            10
+          ],
+          "texture": "#heartwood"
         }
       }
     },
     {
+      "name": "iron reservoir",
       "from": [
-        6,
-        18,
+        4,
+        20.0,
+        3
+      ],
+      "to": [
+        12,
+        25.8,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            5.8
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            5.8
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            5.8
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            5.8
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "reservoir top",
+      "from": [
+        5,
+        25.8,
+        4
+      ],
+      "to": [
+        11,
+        26.8,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            6,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "filler cap",
+      "from": [
+        7,
+        26.8,
+        6
+      ],
+      "to": [
+        9,
+        27.8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            1
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "leather bellows",
+      "from": [
+        5,
+        20.8,
+        1
+      ],
+      "to": [
+        11,
+        24.8,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            6,
+            4
+          ],
+          "texture": "#leather"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            4
+          ],
+          "texture": "#leather"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            4
+          ],
+          "texture": "#leather"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            4
+          ],
+          "texture": "#leather"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#leather"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            6,
+            2
+          ],
+          "texture": "#leather"
+        }
+      }
+    },
+    {
+      "name": "nozzle pipe",
+      "from": [
+        6.3,
+        21.0,
         11
       ],
       "to": [
-        10,
-        22,
-        22
+        9.7,
+        24.4,
+        18.4
       ],
       "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
         "north": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.4,
+            3.4
+          ],
+          "texture": "#iron"
         },
         "south": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            3.4,
+            3.4
+          ],
+          "texture": "#iron"
         },
         "west": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            7.4,
+            3.4
+          ],
+          "texture": "#iron"
         },
         "east": {
-          "texture": "#metal"
+          "uv": [
+            0,
+            0,
+            7.4,
+            3.4
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.4,
+            7.4
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.4,
+            7.4
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "tank band",
+      "from": [
+        3.8,
+        19.8,
+        4
+      ],
+      "to": [
+        12.2,
+        26.0,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            1
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "tank band",
+      "from": [
+        3.8,
+        19.8,
+        9
+      ],
+      "to": [
+        12.2,
+        26.0,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            6.2
+          ],
+          "texture": "#steel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            1
+          ],
+          "texture": "#steel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8.4,
+            1
+          ],
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "name": "wood side brace",
+      "from": [
+        3.5,
+        19.8,
+        3
+      ],
+      "to": [
+        4.5,
+        24.3,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            7
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            7
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "wood side brace",
+      "from": [
+        11.5,
+        19.8,
+        3
+      ],
+      "to": [
+        12.5,
+        24.3,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7,
+            4.5
+          ],
+          "texture": "#oak"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            7
+          ],
+          "texture": "#oak"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            7
+          ],
+          "texture": "#oak"
+        }
+      }
+    },
+    {
+      "name": "open nozzle rim",
+      "from": [
+        5.5,
+        20.2,
+        18
+      ],
+      "to": [
+        10.5,
+        21.2,
+        20.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.0
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.0
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            1.0
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            1.0
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "open nozzle rim",
+      "from": [
+        5.5,
+        24.2,
+        18
+      ],
+      "to": [
+        10.5,
+        25.2,
+        20.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.0000000000000004
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            1.0000000000000004
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            1.0000000000000004
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            1.0000000000000004
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "open nozzle rim",
+      "from": [
+        5.5,
+        21.2,
+        18
+      ],
+      "to": [
+        6.5,
+        24.2,
+        20.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "open nozzle rim",
+      "from": [
+        9.5,
+        21.2,
+        18
+      ],
+      "to": [
+        10.5,
+        24.2,
+        20.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            3.0
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.0,
+            2.3000000000000007
+          ],
+          "texture": "#iron"
+        }
+      }
+    },
+    {
+      "name": "recessed nozzle",
+      "from": [
+        6.5,
+        21.2,
+        18
+      ],
+      "to": [
+        9.5,
+        24.2,
+        18.1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            3.0
+          ],
+          "texture": "#leather"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            3.0
+          ],
+          "texture": "#leather"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.09999999999999964,
+            3.0
+          ],
+          "texture": "#leather"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.09999999999999964,
+            3.0
+          ],
+          "texture": "#leather"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.09999999999999964
+          ],
+          "texture": "#leather"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.09999999999999964
+          ],
+          "texture": "#leather"
         }
       }
     }
-  ]
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        -3,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        -3,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  }
 }

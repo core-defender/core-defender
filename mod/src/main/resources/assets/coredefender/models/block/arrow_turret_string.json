@@ -1,0 +1,88 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/arrow_turret_oak",
+    "heartwood": "coredefender:block/arrow_turret_heartwood",
+    "bow": "coredefender:block/arrow_turret_bow",
+    "iron": "coredefender:block/arrow_turret_iron",
+    "steel": "coredefender:block/arrow_turret_steel",
+    "rope": "coredefender:block/arrow_turret_rope",
+    "feather": "coredefender:block/arrow_turret_feather",
+    "leather": "coredefender:block/arrow_turret_leather",
+    "ember": "coredefender:block/arrow_turret_ember",
+    "lamp": "coredefender:block/arrow_turret_lamp",
+    "particle": "coredefender:block/arrow_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "string",
+      "from": [
+        -0.144,
+        -0.144,
+        0
+      ],
+      "to": [
+        0.144,
+        0.144,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            0.288,
+            0.288
+          ],
+          "texture": "#rope"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            0.288,
+            0.288
+          ],
+          "texture": "#rope"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            12,
+            0.288
+          ],
+          "texture": "#rope"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            12,
+            0.288
+          ],
+          "texture": "#rope"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            0.288,
+            12
+          ],
+          "texture": "#rope"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            0.288,
+            12
+          ],
+          "texture": "#rope"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/arrow_turret_oak",
+    "heartwood": "coredefender:block/arrow_turret_heartwood",
+    "bow": "coredefender:block/arrow_turret_bow",
+    "iron": "coredefender:block/arrow_turret_iron",
+    "steel": "coredefender:block/arrow_turret_steel",
+    "rope": "coredefender:block/arrow_turret_rope",
+    "feather": "coredefender:block/arrow_turret_feather",
+    "leather": "coredefender:block/arrow_turret_leather",
+    "ember": "coredefender:block/arrow_turret_ember",
+    "lamp": "coredefender:block/arrow_turret_lamp",
+    "particle": "coredefender:block/arrow_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "status lens",
+      "from": [
+        6,
+        3.5,
+        4.5
+      ],
+      "to": [
+        10,
+        5.5,
+        4.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            0.20000000000000018,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            0.20000000000000018,
+            2.0
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.20000000000000018
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            0.20000000000000018
+          ],
+          "texture": "#lamp",
+          "tintindex": 0
+        }
+      }
+    }
+  ]
+}

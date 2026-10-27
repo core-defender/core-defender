@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/arrow"
+    "layer0": "coredefender:item/module_multishot_1"
   }
 }

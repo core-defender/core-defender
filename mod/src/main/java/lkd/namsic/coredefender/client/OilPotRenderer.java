@@ -1,44 +1,45 @@
 package lkd.namsic.coredefender.client;
 
-import net.minecraft.nbt.CompoundTag;
-
-import net.neoforged.neoforge.client.model.data.ModelData;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import lkd.namsic.coredefender.CoreDefender;
 import lkd.namsic.coredefender.compat.OilBatch;
 import lkd.namsic.coredefender.compat.VineryOil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import lkd.namsic.coredefender.CoreDefender;
-import lkd.namsic.coredefender.registry.ModItems;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 @EventBusSubscriber(modid = CoreDefender.MOD_ID, value = Dist.CLIENT)
 public final class OilPotRenderer {
+    private static final ModelResourceLocation SEEDS = model("oil_pot_seeds");
+    private static final ModelResourceLocation MASH = model("oil_pot_mash");
+    private static final ModelResourceLocation OIL = model("oil_pot_oil");
+
     private OilPotRenderer() {
     }
 
+    private static ModelResourceLocation model(String name) {
+        return ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath(CoreDefender.MOD_ID, "block/" + name));
+    }
+
     @SubscribeEvent
-    public static void tooltip(ItemTooltipEvent event) {
-        if (BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()).toString().equals("vinery:grapevine_pot")) {
-            event.getToolTip().add(Component.translatable("tooltip.coredefender.oil_pot").withStyle(ChatFormatting.GOLD));
-            event.getToolTip().add(Component.translatable("tooltip.coredefender.oil_pot_controls").withStyle(ChatFormatting.GRAY));
-            event.getToolTip().add(Component.translatable("tooltip.coredefender.oil_pot_break").withStyle(ChatFormatting.GRAY));
-        } else if (event.getItemStack().is(ModItems.SEED_OIL_BOTTLE.get())) {
-            event.getToolTip().add(Component.translatable("tooltip.coredefender.oil_bottle").withStyle(ChatFormatting.GRAY));
-        }
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
+        event.register(SEEDS);
+        event.register(MASH);
+        event.register(OIL);
     }
 
     public static void render(BlockEntity entity, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
@@ -52,19 +53,14 @@ public final class OilPotRenderer {
         pose.pushPose();
         pose.translate(.08, .065, .08);
         pose.scale(.84F, Math.max(.01F, surface - .065F), .84F);
-        // NeoForge explicitly treats null as the model-selected render type.
-        //noinspection DataFlowIssue
-        mc.getBlockRenderer().renderSingleBlock((batch.stomps() > 0 ? Blocks.YELLOW_TERRACOTTA : Blocks.HAY_BLOCK).defaultBlockState(),
-            pose, buffers, light, overlay, ModelData.EMPTY, null);
+        drawModel(batch.stomps() > 0 ? MASH : SEEDS, RenderType.solid(), pose, buffers, light, overlay);
         pose.popPose();
         // 씨앗이 점차 잠기고, 압착이 끝나면 황금빛 액체 표면만 남는다.
         if (batch.stomps() > 0) {
             pose.pushPose();
             pose.translate(.08, surface, .08);
             pose.scale(.84F, .025F, .84F);
-            // NeoForge explicitly treats null as the model-selected render type.
-            //noinspection DataFlowIssue
-            mc.getBlockRenderer().renderSingleBlock(Blocks.HONEY_BLOCK.defaultBlockState(), pose, buffers, light, overlay, ModelData.EMPTY, null);
+            drawModel(OIL, RenderType.translucent(), pose, buffers, light, overlay);
             pose.popPose();
         }
 
@@ -87,5 +83,11 @@ public final class OilPotRenderer {
                 pose.popPose();
             }
         }
+    }
+
+    private static void drawModel(ModelResourceLocation location, RenderType type, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        BakedModel model = Minecraft.getInstance().getModelManager().getModel(location);
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+            pose.last(), buffers.getBuffer(type), null, model, 1F, 1F, 1F, light, overlay, ModelData.EMPTY, type);
     }
 }

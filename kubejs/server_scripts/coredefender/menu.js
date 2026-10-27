@@ -70,19 +70,13 @@ function cdBuildMenuState(player) {
 
 function cdOpenMenu(player) {
   if (!cdState) cdInit(player.server)
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   CoreDefenderUI.open(player, JSON.stringify(cdBuildMenuState(player)))
 }
 
 function cdUpdateMenu(player) {
-  // Java bindings and JSON properties are supplied by CoreDefender at runtime.
-  //noinspection JSUnresolvedReference
   CoreDefenderUI.update(player, JSON.stringify(cdBuildMenuState(player)))
 }
 
-// Java bindings and JSON properties are supplied by CoreDefender at runtime.
-//noinspection JSUnresolvedReference
 CoreDefenderEvents.menuAction(event => {
   let player = event.player
   let server = player.server

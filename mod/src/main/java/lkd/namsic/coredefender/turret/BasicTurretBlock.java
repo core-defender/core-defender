@@ -11,8 +11,9 @@ import com.mojang.serialization.MapCodec;
 import lkd.namsic.coredefender.registry.*;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -80,7 +81,7 @@ public class BasicTurretBlock extends BaseEntityBlock {
                         stack.setCount(remainder.getCount());
                     }
 
-                    player.displayClientMessage(Component.literal("포탑에 자원을 보충했습니다."), true);
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1F, 1F);
                 }
             }
 

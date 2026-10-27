@@ -1,0 +1,179 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "oak": "coredefender:block/arrow_turret_oak",
+    "heartwood": "coredefender:block/arrow_turret_heartwood",
+    "bow": "coredefender:block/arrow_turret_bow",
+    "iron": "coredefender:block/arrow_turret_iron",
+    "steel": "coredefender:block/arrow_turret_steel",
+    "rope": "coredefender:block/arrow_turret_rope",
+    "feather": "coredefender:block/arrow_turret_feather",
+    "leather": "coredefender:block/arrow_turret_leather",
+    "ember": "coredefender:block/arrow_turret_ember",
+    "lamp": "coredefender:block/arrow_turret_lamp",
+    "particle": "coredefender:block/arrow_turret_oak"
+  },
+  "elements": [
+    {
+      "name": "swept wooden bow limb",
+      "from": [
+        0,
+        -0.5,
+        3.25
+      ],
+      "to": [
+        7.75,
+        0.75,
+        4.75
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            7.75
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            7.75
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.25
+          ],
+          "texture": "#bow"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.25
+          ],
+          "texture": "#bow"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            7.75
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.5,
+            7.75
+          ],
+          "texture": "#bow",
+          "rotation": 90
+        }
+      },
+      "rotation": {
+        "origin": [
+          0,
+          0,
+          4
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    },
+    {
+      "name": "bow tip iron cap",
+      "from": [
+        6.5,
+        -0.6500000000000004,
+        3.0999999999999996
+      ],
+      "to": [
+        7.78,
+        0.9000000000000004,
+        4.9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            1.55
+          ],
+          "texture": "#iron"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            1.55
+          ],
+          "texture": "#iron"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1.8,
+            1.55
+          ],
+          "texture": "#iron"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1.8,
+            1.55
+          ],
+          "texture": "#iron"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            1.8
+          ],
+          "texture": "#iron"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1.25,
+            1.8
+          ],
+          "texture": "#iron"
+        }
+      },
+      "rotation": {
+        "origin": [
+          0,
+          0,
+          4
+        ],
+        "axis": "y",
+        "angle": 22.5
+      }
+    }
+  ]
+}
