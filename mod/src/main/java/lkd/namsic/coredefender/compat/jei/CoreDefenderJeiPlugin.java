@@ -5,6 +5,7 @@ import java.util.List;
 import lkd.namsic.coredefender.CoreDefender;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -26,12 +27,14 @@ public final class CoreDefenderJeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new SeedOilPressingCategory(registration.getJeiHelpers().getGuiHelper()));
+        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new SeedOilPressingCategory(guiHelper), new TurretInfoCategory(guiHelper));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(SeedOilPressingCategory.TYPE, List.of(SeedOilPressingCategory.Recipe.INSTANCE));
+        registration.addRecipes(TurretInfoCategory.TYPE, TurretInfoCategory.turrets());
     }
 
     @Override

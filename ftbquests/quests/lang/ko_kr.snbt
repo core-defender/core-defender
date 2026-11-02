@@ -2,24 +2,83 @@
 	chapter.1E960ED338E5E587.title: "챕터 3"
 	chapter.2C13359262EC55D3.title: "챕터 1"
 	chapter.33F049FE08D5F9AE.title: "Intro"
+	chapter.653310435D44E0D1.title: "챕터 1"
 	chapter.6E458A34CE6C734E.title: "챕터 2"
 	chapter_group.12452EAAD8722BAC.title: "Main"
+	quest.020511EF774ED324.quest_desc: [
+		"당장은 만들 수 있는 방어 시설이 많지 않습니다."
+		"하지만 여유를 부릴 시간은 없겠네요."
+		""
+		"일단 포탑 토대를 만들고 기본 포탑들을 배치해봅시다."
+	]
+	quest.020511EF774ED324.quest_subtitle: "포탑을 제작합시다"
+	quest.05BB7BCB7C15D146.quest_desc: [
+		"깨어나 보니 낯선 세계에 떨어져 있습니다."
+		"왠지 무언가를 지켜야 할 것만 같은 기분이 듭니다."
+		""
+		"뭘 지켜야 하는 걸까요?"
+		"&#656565[K 버튼을 눌러보세요]&r"
+	]
+	quest.05BB7BCB7C15D146.quest_subtitle: "코어 디펜더에 오신 것을 환영합니다"
+	quest.05BB7BCB7C15D146.title: "환영합니다!"
 	quest.07124738A0EE732A.quest_desc: ["커스텀 아이템 추가하기"]
 	quest.07124738A0EE732A.title: "안산암 혼합물"
 	quest.1B3D1C1FBE77729D.quest_desc: ["모드팩 소개"]
 	quest.1B3D1C1FBE77729D.title: "Core Defender"
+	quest.1CD353D4DF2733C8.quest_desc: [
+		"당신은 본능적으로 코어가 곧 위험해지리란 것을 깨달았습니다."
+		"코어를 보호하기 위해서는 자동화된 설비가 필수겠네요."
+		""
+		"물론 직접 뛰어다녀도 되긴 하지만..."
+		"아마 그것만으로는 충분하지 않을 겁니다."
+	]
+	quest.1CD353D4DF2733C8.quest_subtitle: "철은 모든 것의 기초입니다"
 	quest.1E17904CE2E11DCF.title: "기본적인 도구"
+	quest.21B45C57ABF61622.quest_desc: [
+		"화살 포탑은 단일 대상을 빠르게 공격하는 포탑입니다."
+		"꽤나 많은 화살을 소모하지만 그만큼 성능도 준수해 보이네요."
+		""
+		"다가오는 적들을 벌집으로 만듭시다!"
+	]
+	quest.21B45C57ABF61622.quest_subtitle: "최종무기 활"
 	quest.241857C1B3054A39.title: "안산암 장비"
 	quest.262ED7C438F77BC0.quest_desc: ["커스텀 아이템 추가하기"]
 	quest.262ED7C438F77BC0.title: "설계도 1: 선풍기"
 	quest.2DF5E6F130EE318A.title: "탐험가의 길"
+	quest.341C39AE41E464C4.quest_desc: [
+		"기름 포탑은 근접하는 적들에게 기름을 부어 광역 데미지를 입히는 포탑입니다."
+		"사거리는 짧지만 근접하는 다수의 적들을 빠르게 해치울 수 있습니다."
+		""
+		"근접하는 적들을 모두 불태워볼까요?"
+	]
+	quest.341C39AE41E464C4.quest_subtitle: "앗 뜨거!"
+	quest.3C9D41A7E85B2F06.quest_desc: [
+		"당신은 디펜스 월드라는 신비한 차원에 들어왔습니다."
+		"차원의 중앙에는 알 수 없는 코어 블록이 있네요."
+		""
+		"뭔가 지켜야 할 것 같은 느낌은 이 블록에서 온 것 같습니다."
+		""
+		"순간 당신은 무언가가 시작된 것을 느낍니다..."
+	]
+	quest.3C9D41A7E85B2F06.quest_subtitle: "여긴 대체 어디죠?"
+	quest.3C9D41A7E85B2F06.title: "디펜스 월드"
 	quest.48D88D31D5EA50C4.quest_desc: ["두 가지 역할 소개"]
 	quest.48D88D31D5EA50C4.title: "시작"
+	quest.49637C70274A6947.quest_desc: [
+		"투석 포탑은 돌과 석탄을 소모하여 광역 공격을 하는 포탑입니다."
+		"공격 속도는 느리지만 데미지 하나는 끝내줍니다."
+		"심층암을 사용하면 사거리 약간을 희생하는 대신 공격력을 더 끌어올릴 수도 있습니다."
+		"이 포탑만 있으면 광질하느라 쌓인 돌을 효과적으로 방어에 쓸 수 있겠어요."
+		""
+		"적들의 머리를 깨버립시다!"
+	]
+	quest.49637C70274A6947.quest_subtitle: "남는 돌을 버리는 대신 던져보세요"
 	quest.694AD4C73E3CCF33.title: "Create 기초"
 	quest.6BD5A54E77B50733.title: "공학도의 길"
 	quest.73902FBC18661721.title: "포탑 토대 1"
 	quest.7399F21C22904DE8.title: "쇠뇌 포탑"
 	quest.77864CF6C3A8507F.title: "던전 이름 1"
+	task.2E22533F0D62E979.title: "환영합니다!"
 	task.3FE657AC08F8E81D.title: "Welcome"
 	task.4CA1A1AFF4009CE1.title: "포탑 토대 1"
 	task.57EF426EF549E068.title: "시작"

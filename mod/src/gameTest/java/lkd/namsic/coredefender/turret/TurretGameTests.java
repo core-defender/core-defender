@@ -363,4 +363,15 @@ public class TurretGameTests {
             h.assertTrue(t.arrowCount() == 0, "Multishot must use the two available arrows without requiring a full volley");
         });
     }
+
+    @GameTest(template = "empty")
+    public void crudeArrowsLoadWithReducedDamage(GameTestHelper h) {
+        BasicTurretBlockEntity t = this.enabledTurret(h, 0);
+        ItemStack rest = t.inventory.insertItem(0, new ItemStack(ModItems.CRUDE_ARROW.get(), 8), false);
+        h.assertTrue(rest.isEmpty(), "Arrow turret must accept crude arrows as ammunition");
+        h.assertTrue(t.data(8) == 300, "Crude arrows must deal 3 damage; actual=" + t.data(8));
+        t.inventory.setStackInSlot(0, new ItemStack(Items.ARROW, 8));
+        h.assertTrue(t.data(8) == 500, "Regular arrows keep 5 damage; actual=" + t.data(8));
+        h.succeed();
+    }
 }

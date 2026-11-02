@@ -42,9 +42,12 @@ const run = expression => vm.runInContext(expression, context);
 const state = () => JSON.parse(run('JSON.stringify(cdState)'));
 function seconds(count) { for (let i = 0; i < count; i++) { server.tickCount += 20; hooks.tick({ server }); } }
 hooks.loaded({ server });
+player.level.dimension = 'minecraft:overworld';
 seconds(600);
-assert.equal(started.length, 0, 'Entry/online time must not enable waves');
-run('cdEnable(server)'); seconds(539);
+assert.equal(state().enabled, false, 'Online time outside the defense dimension must not enable waves');
+player.level.dimension = 'coredefender:defense';
+seconds(539);
+assert.equal(state().enabled, true, 'Entering the defense dimension enables waves');
 assert.equal(state().remaining, 61);
 run('cdEnable(server)');
 assert.equal(state().remaining, 61, 'Repeated start must not reset the countdown');

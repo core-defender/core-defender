@@ -1,0 +1,173 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "653310435d44e0d1"
+	group: "12452EAAD8722BAC"
+	icon: {
+		id: "minecraft:zombie_head"
+	}
+	id: "653310435D44E0D1"
+	images: [ ]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			id: "05BB7BCB7C15D146"
+			tasks: [{
+				id: "2E22533F0D62E979"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["05BB7BCB7C15D146"]
+			icon: {
+				id: "coredefender:core"
+			}
+			id: "3C9D41A7E85B2F06"
+			rewards: [
+				{
+					count: 32
+					id: "2D3E96587A665240"
+					item: {
+						count: 1
+						id: "minecraft:oak_log"
+					}
+					type: "item"
+				}
+				{
+					id: "673F09AC015CAC1D"
+					item: {
+						count: 1
+						id: "minecraft:stone_pickaxe"
+					}
+					type: "item"
+				}
+				{
+					id: "72FC4EAA57D0F567"
+					item: {
+						count: 1
+						id: "minecraft:stone_shovel"
+					}
+					type: "item"
+				}
+				{
+					id: "26DD5A6D6A351726"
+					item: {
+						count: 1
+						id: "minecraft:stone_sword"
+					}
+					type: "item"
+				}
+				{
+					id: "6C16E957EBE6B823"
+					item: {
+						count: 1
+						id: "minecraft:stone_axe"
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "77463B55D0B9D2BB"
+					item: {
+						count: 1
+						id: "minecraft:bread"
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "28E711A2B3F16522"
+					item: {
+						count: 1
+						id: "minecraft:torch"
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				dimension: "coredefender:defense"
+				id: "71E4B0C2D9A6358F"
+				type: "dimension"
+			}]
+			x: 2.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["3C9D41A7E85B2F06"]
+			dependency_requirement: "all_started"
+			id: "1CD353D4DF2733C8"
+			require_sequential_tasks: true
+			tasks: [{
+				id: "1D1ADF92687101D0"
+				item: { count: 1, id: "minecraft:iron_ingot" }
+				type: "item"
+			}]
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1CD353D4DF2733C8"]
+			id: "020511EF774ED324"
+			tasks: [{
+				id: "6F6A0BC2936310AB"
+				item: { count: 1, id: "coredefender:turret_base_1" }
+				type: "item"
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["020511EF774ED324"]
+			id: "21B45C57ABF61622"
+			tasks: [{
+				id: "3F7F69B8C8DE5940"
+				item: { count: 1, id: "coredefender:basic_turret" }
+				type: "item"
+			}]
+			x: 8.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["020511EF774ED324"]
+			id: "49637C70274A6947"
+			tasks: [{
+				id: "10726D54CB7E7B7C"
+				item: { count: 1, id: "coredefender:stone_turret" }
+				type: "item"
+			}]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["020511EF774ED324"]
+			id: "341C39AE41E464C4"
+			tasks: [{
+				id: "26B6E5BA9EF25722"
+				item: { count: 1, id: "coredefender:oil_turret" }
+				type: "item"
+			}]
+			x: 8.0d
+			y: 2.0d
+		}
+		{
+			dependencies: [
+				"21B45C57ABF61622"
+				"341C39AE41E464C4"
+				"49637C70274A6947"
+			]
+			dependency_requirement: "one_completed"
+			id: "1AD59438097FFAF4"
+			tasks: [{
+				count: 64L
+				id: "12D28F99C1075AD9"
+				item: { count: 1, id: "minecraft:rotten_flesh" }
+				type: "item"
+			}]
+			x: 10.0d
+			y: 0.0d
+		}
+	]
+}

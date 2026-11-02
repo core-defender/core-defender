@@ -25,7 +25,7 @@ function cdReloadConfig(server, player) {
 
 function cdApplyConfigTimer(server, player) {
   if (CoreDefenderWave.isActive()) return player.tell(Text.red('웨이브 진행 중에는 준비 타이머를 바꿀 수 없습니다'))
-  if (!cdState.enabled) return player.tell(Text.red('먼저 /cd start로 자동 진행을 켜주세요'))
+  if (!cdState.enabled) return player.tell(Text.red('먼저 디펜스 기지에 입장하거나 /cd start로 자동 진행을 켜주세요'))
   cdSchedule(cdState, CD.waveDelaySeconds)
   cdSave(server)
   player.tell(Text.green('준비 타이머를 ' + CD.waveDelaySeconds + '초로 다시 시작했습니다.'))
@@ -114,10 +114,12 @@ function cdAdvance(server, player) {
   server.tell(Text.gold('[디펜스] 난이도 2단계 - 2-1 웨이브까지 ' + CD.waveDelaySeconds + '초'))
 }
 
-function cdWaitingText(server) {
+// 남은 시간은 관리자 상태에서만 보인다. 플레이어에게는 1분 전 경보만 준다.
+function cdWaitingText(server, showTime) {
   if (cdState.autoPaused) return '관리자가 자동 시작을 중지함'
-  if (!cdState.enabled) return '/cd start 명령 대기'
+  if (!cdState.enabled) return '디펜스 기지 입장 대기'
   if (cdCollapsedSegments(server).length > 0) return '성벽 복구 대기'
+  if (!showTime) return '다음 웨이브 대기 중'
   return '자동 시작까지 ' + Math.floor(cdState.remaining / 60) + '분 ' + cdState.remaining % 60 + '초'
 }
 
@@ -253,11 +255,11 @@ function cdCmdLeave(server, player) {
   }
 }
 
-function cdCmdStatus(server, player) {
+function cdCmdStatus(server, player, showTime) {
   let wall = cdWall(server)
   let wave = cdWaveInfo()
   player.tell(Text.gray(wave.active ? `${wave.label} 진행 중 - 남은 적 ${wave.remaining}/${wave.total}`
-    : `웨이브 ${cdProgressLabel(cdState)} / ${cdWaitingText(server)}`))
+    : `웨이브 ${cdProgressLabel(cdState)} / ${cdWaitingText(server, showTime)}`))
   player.tell(Text.gray(`성벽 내부 ${wall.interiorChunks}x${wall.interiorChunks} 청크`))
   wall.segments.forEach(s => player.tell(Text.gray(`  ${s.id}: ${s.hp}/${s.maxHp}${s.collapsed ? ' [붕괴]' : ''}`)))
 }
@@ -276,6 +278,12 @@ ServerEvents.tick(event => {
   if (server.tickCount % 20 !== 0) return
 
   if (server.players.isEmpty()) return
+  if (!cdState.enabled && !cdState.autoPaused) {
+    // 명령·포털·다른 모드 이동 모두 같은 경로로 처리하려고 입장 이벤트 대신 위치를 확인한다.
+    let entered = false
+    server.players.forEach(p => { if (cdInDefense(p)) entered = true })
+    if (entered) cdEnable(server)
+  }
   cdState.uptime++
   let action = cdCountdown(cdState, CoreDefenderWave.isActive(), cdCollapsedSegments(server).length > 0)
   if (action === 'warn') {
@@ -380,9 +388,10 @@ ServerEvents.commandRegistry(event => {
       cdEnable(server)
     })))
     .then(Commands.literal('repair').executes(run((server, player) => cdCmdRepair(server, player))))
-    .then(Commands.literal('status').executes(run((server, player) => cdCmdStatus(server, player))))
+    .then(Commands.literal('status').executes(run((server, player) => cdCmdStatus(server, player, false))))
     .then(Commands.literal('admin')
       .requires(src => src.hasPermission(2))
+      .then(Commands.literal('status').executes(run((server, player) => cdCmdStatus(server, player, true))))
       .then(Commands.literal('auto')
         .then(Commands.literal('off').executes(run(server => cdAdminAuto(server, false))))
         .then(Commands.literal('on').executes(run(server => cdAdminAuto(server, true)))))

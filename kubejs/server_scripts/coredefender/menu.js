@@ -50,7 +50,7 @@ function cdBuildMenuState(player) {
     state.active = { remaining: waveInfo.remaining, total: waveInfo.total }
     state.wave = cdWaveState(wave.stage || next.stage, `${waveInfo.label} 진행 중`, wave.mult)
   } else {
-    state.wave = cdWaveState(next.stage, `${next.label} / ${cdWaitingText(server)}`, next.mult)
+    state.wave = cdWaveState(next.stage, `${next.label} / ${cdWaitingText(server, false)}`, next.mult)
   }
 
   let advanceReason = cdAdvanceReason(cdState, waveInfo.active, wall.segments.some(s => s.collapsed))

@@ -9,10 +9,20 @@ public record TurretStats(int kind, double damageBonus, double speedBonus, int p
     public static final int ARROW = 0, STONE = 1, FLAME = 2, OIL = 3;
     public static final int FLAME_OIL_PER_TICK = 4;
     public static final int OIL_PER_POUR = 10 * FLAME_OIL_PER_TICK, OIL_LIFETIME = 120;
+    public static final int OIL_LAVA_PER_POUR = 10, FIRE_HITS = 4, AMP_SHOTS = 16;
+
+    public static final double CRUDE_ARROW_DAMAGE = 3;
 
     public double damage(boolean deep, int amplifier) {
-        return (this.kind == ARROW ? 5 : this.kind == STONE ? (deep ? 13 : 9) : 3)
-            * (1 + this.damageBonus + (amplifier == 2 ? .25 : amplifier == 3 ? .3 : 0));
+        return (this.kind == ARROW ? 5 : this.kind == STONE ? (deep ? 13 : 9) : 3) * this.damageMultiplier(amplifier);
+    }
+
+    public double crudeArrowDamage() {
+        return CRUDE_ARROW_DAMAGE * this.damageMultiplier(0);
+    }
+
+    private double damageMultiplier(int amplifier) {
+        return 1 + this.damageBonus + (amplifier == 2 ? .25 : amplifier == 3 ? .3 : 0);
     }
 
     public int interval(int amplifier) {

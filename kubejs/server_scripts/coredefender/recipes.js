@@ -29,12 +29,16 @@ ServerEvents.recipes(event => {
     'III'
   ], { N: 'minecraft:iron_nugget', I: 'minecraft:iron_ingot' })
 
-  // 화살 포탑 (공학 이전)
-  event.shaped('coredefender:basic_turret', [
-    'SBS',
-    'IRI',
-    'CCC'
-  ], { S: 'minecraft:stick', I: 'minecraft:iron_ingot', C: 'minecraft:cobblestone', B: 'minecraft:bow', R: 'minecraft:redstone' }).id('coredefender:basic_turret')
+  // 화살 포탑 전용 저가 탄약 (피해 3)
+  event.shapeless(Item.of('coredefender:crude_arrow', 4), ['minecraft:stick', 'minecraft:iron_nugget'])
+    .id('coredefender:crude_arrow')
+
+  // 기본 포탑 토대
+  event.shaped('coredefender:turret_base_1', [
+    'PPP',
+    'III',
+    'PPP'
+  ], { P: '#minecraft:planks', I: 'minecraft:iron_ingot' }).id('coredefender:turret_base_1')
 
   // 보급 송수신기
   event.shaped('coredefender:supply_sender', [

@@ -61,7 +61,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
         public boolean isItemValid(int slot, ItemStack stack) {
             int kind = BasicTurretBlockEntity.this.kind();
             if (slot < 9) {
-                return kind == 0 ? stack.is(Items.ARROW) || stack.is(Items.TIPPED_ARROW) || stack.is(Items.SPECTRAL_ARROW) : kind == 1 && (slot == 8 ? fuelValue(stack) > 0 : stack.is(STONE) || stack.is(DEEP));
+                return kind == 0 ? stack.is(Items.ARROW) || stack.is(Items.TIPPED_ARROW) || stack.is(Items.SPECTRAL_ARROW) || stack.is(ModItems.CRUDE_ARROW.get()) : kind == 1 && (slot == 8 ? fuelValue(stack) > 0 : stack.is(STONE) || stack.is(DEEP));
             }
 
             if (slot < 11) {
@@ -201,6 +201,18 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
         return this.kind() == 1 && slot >= 0 && this.inventory.getStackInSlot(slot).is(DEEP);
     }
 
+    /**
+     * 다음 발사에 쓰일 탄약 기준 피해. 화살 포탑은 첫 탄약 칸이 조잡한 화살이면 약해진다.
+     */
+    private double shotDamage(TurretStats s, int amp) {
+        int slot = this.ammoSlot();
+        if (this.kind() == TurretStats.ARROW && slot >= 0 && this.inventory.getStackInSlot(slot).is(ModItems.CRUDE_ARROW.get())) {
+            return s.crudeArrowDamage();
+        }
+
+        return s.damage(this.deep(), amp);
+    }
+
     public static int fuelValue(ItemStack s) {
         return s.is(Items.COAL_BLOCK) ? 72 : s.is(Items.COAL) || s.is(Items.CHARCOAL) ? 8 : 0;
     }
@@ -218,7 +230,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
 
     public int amplifier() {
         if (this.kind() == TurretStats.OIL) {
-            return this.lava.getFluidAmount() >= 10 ? 3 : 0;
+            return this.lava.getFluidAmount() >= TurretStats.OIL_LAVA_PER_POUR ? 3 : 0;
         }
 
         if (this.kind() == 2) {
@@ -468,7 +480,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
 
                 arrow.shoot(aim.x, aim.y, aim.z, 2.4F, 0);
                 CompoundTag data = arrow.getPersistentData();
-                data.putDouble("cd_damage", s.damage(false, 0));
+                data.putDouble("cd_damage", ammo.is(ModItems.CRUDE_ARROW.get()) ? s.crudeArrowDamage() : s.damage(false, 0));
                 data.putInt("cd_pierce", s.pierce());
                 data.putInt("cd_ricochet", s.ricochet());
                 data.putLong("cd_origin", this.worldPosition.asLong());
@@ -491,7 +503,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
 
             if (amp != 0 && this.ampShots == 0) {
                 this.ampType = amp;
-                this.ampShots = 16;
+                this.ampShots = TurretStats.AMP_SHOTS;
                 this.inventory.extractItem(11, 1, false);
             }
 
@@ -592,7 +604,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
 
         this.oil.drain(TurretStats.OIL_PER_POUR, IFluidHandler.FluidAction.EXECUTE);
         if (amp == 3) {
-            this.lava.drain(10, IFluidHandler.FluidAction.EXECUTE);
+            this.lava.drain(TurretStats.OIL_LAVA_PER_POUR, IFluidHandler.FluidAction.EXECUTE);
         }
 
         this.oilSpill.pour(outlet, now, stats, amp);
@@ -872,7 +884,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
                 yield this.trackedTarget == null ? -1 : this.trackedTarget.getId() & 65535;
             }
             case 8 -> {
-                yield (int) Math.round(s.damage(this.deep(), amp) * 100);
+                yield (int) Math.round(this.shotDamage(s, amp) * 100);
             }
             case 9 -> {
                 yield (int) Math.round(s.range(this.deep(), amp) * 100);
@@ -884,7 +896,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
                 yield (int) Math.round(s.radius(this.deep()) * 100);
             }
             case 12 -> {
-                yield (int) Math.round(s.damage(this.deep(), amp) * (this.kind() >= 2 ? 4 : 1) * 20 / s.interval(amp) * 100);
+                yield (int) Math.round(this.shotDamage(s, amp) * (this.kind() >= 2 ? TurretStats.FIRE_HITS : 1) * 20 / s.interval(amp) * 100);
             }
             case 13 -> {
                 yield (int) Math.min(Integer.MAX_VALUE, Math.round(this.actualDps() * 100)) & 65535;
@@ -1078,7 +1090,7 @@ public class BasicTurretBlockEntity extends BlockEntity implements MenuProvider 
         this.stopWithoutAmp = tag.getBoolean("stopAmp");
         this.usedAmp = tag.getBoolean("usedAmp");
         this.fuelShots = Math.clamp(tag.getInt("fuelShots"), 0, 72);
-        this.ampShots = Math.clamp(tag.getInt("ampShots"), 0, 16);
+        this.ampShots = Math.clamp(tag.getInt("ampShots"), 0, TurretStats.AMP_SHOTS);
         this.ampType = Math.clamp(tag.getInt("ampType"), 0, 2);
         this.reloadStarted = tag.getLong("reloadStarted");
         this.lastShot = tag.getLong("lastShot");

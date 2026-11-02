@@ -1,12 +1,14 @@
 // Arrow, stone and oil turrets are available before Create; flame remains registered for a later tier.
 ServerEvents.recipes(event => {
-  event.shaped('coredefender:stone_turret', ['SLS', 'IPI', 'CCC'], {
-    S: 'minecraft:string', L: '#minecraft:logs', I: 'minecraft:iron_ingot', P: 'minecraft:piston', C: 'minecraft:cobblestone'
-  }).id('coredefender:stone_turret')
+  // 세 포탑은 무기부(W)만 다르고 토대·조준 부품은 같다.
+  const turret = (id, weapon) => event.shaped(id, [' WH', ' TS', 'PCP'], {
+    W: weapon, H: 'minecraft:tripwire_hook', T: 'coredefender:turret_base_1', S: 'minecraft:string',
+    P: '#minecraft:wooden_slabs', C: 'minecraft:comparator'
+  }).id(id)
+  turret('coredefender:basic_turret', 'minecraft:bow')
+  turret('coredefender:stone_turret', 'minecraft:iron_shovel')
+  turret('coredefender:oil_turret', 'minecraft:bucket')
   event.remove({output: 'coredefender:flame_turret'})
-  event.shaped('coredefender:oil_turret', ['IBI', 'LFL', 'CCC'], {
-    I: 'minecraft:iron_ingot', B: 'minecraft:bucket', L: '#minecraft:logs', F: 'minecraft:furnace', C: 'minecraft:cobblestone'
-  }).id('coredefender:oil_turret')
   event.shaped('coredefender:range_analyzer', [' C ', ' R ', ' I '], {
     C: 'minecraft:copper_ingot', R: 'minecraft:redstone', I: 'minecraft:iron_ingot'
   }).id('coredefender:range_analyzer')

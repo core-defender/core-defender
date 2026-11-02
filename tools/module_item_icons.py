@@ -83,6 +83,28 @@ def special(name):
         d.line((4, 7, 4, 11), fill='#d1e1d2')
         d.rectangle((6, 9, 9, 12), fill='#dfd2a6')
         d.line((7, 11, 8, 10), fill='#617043')
+    elif name == 'crude_arrow':
+        d.line((3, 12, 11, 4), fill=INK, width=2)
+        d.line((3, 12, 11, 4), fill=WOOD)
+        d.polygon([(10, 3), (13, 2), (12, 5)], fill='#9aa3a3')
+        d.point((12, 3), fill='#d0d7d5')
+        d.line((2, 11, 4, 13), fill='#c3b597')
+        d.point((2, 13), fill='#8a7a5c')
+    elif name == 'turret_base_1':
+        d.rectangle((1, 3, 14, 13), fill=INK)
+        d.rectangle((2, 4, 13, 6), fill='#a8834f')
+        d.line((2, 4, 13, 4), fill='#c9a46a')
+        d.rectangle((2, 10, 13, 12), fill='#8f6a3c')
+        d.line((2, 10, 13, 10), fill='#a8834f')
+        for x in (6, 10):
+            d.line((x, 5, x, 6), fill='#6e4e2a')
+        for x in (5, 9):
+            d.line((x, 11, x, 12), fill='#5f4223')
+        d.rectangle((2, 7, 13, 9), fill='#9aa3a3')
+        d.line((2, 7, 13, 7), fill='#d0d7d5')
+        d.line((2, 9, 13, 9), fill='#6d7676')
+        for x in (4, 8, 11):
+            d.point((x, 8), fill='#e4e9e7')
     elif name == 'range_analyzer':
         d.line((5, 10, 2, 14), fill=INK, width=4)
         d.line((5, 10, 2, 14), fill=WOOD, width=2)
@@ -138,7 +160,7 @@ def main():
     textures = ASSETS / 'textures/item'
     names = sorted(p.stem for p in models.glob('module_*.json')) + [
         'range_analyzer', 'seed_oil_bottle', 'supply_upgrade_1',
-        'supply_upgrade_2', 'supply_upgrade_3', 'wall_expansion_plan']
+        'supply_upgrade_2', 'supply_upgrade_3', 'turret_base_1', 'crude_arrow', 'wall_expansion_plan']
     textures.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     sheet = Image.new('RGB', (1000, 80 + ((len(names) + 5) // 6) * 150), '#262b31')

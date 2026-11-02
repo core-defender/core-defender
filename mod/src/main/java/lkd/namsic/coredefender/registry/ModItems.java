@@ -46,6 +46,18 @@ public class ModItems {
     public static final DeferredItem<Item> WALL_EXPANSION_PLAN = ModBlocks.ITEMS.registerSimpleItem("wall_expansion_plan");
 
     /**
+     * 화살 포탑 전용 저가 탄약. 피해는 TurretStats.CRUDE_ARROW_DAMAGE
+     */
+    public static final DeferredItem<Item> CRUDE_ARROW = ModBlocks.ITEMS.registerSimpleItem("crude_arrow");
+
+    /**
+     * 포탑 제작용 기본 토대
+     */
+    // Registered entry point: invoked by the game registry, scripts, or annotation discovery.
+    @SuppressWarnings("unused")
+    public static final DeferredItem<Item> TURRET_BASE_1 = ModBlocks.ITEMS.registerSimpleItem("turret_base_1");
+
+    /**
      * 보급 송수신기 강화 부품 (1: Create, 2: IE, 3: Mekanism 단계 재료로 제작)
      */
     public static final DeferredItem<Item> SUPPLY_UPGRADE_1 = ModBlocks.ITEMS.registerSimpleItem("supply_upgrade_1");
