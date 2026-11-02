@@ -1,0 +1,22 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "2"
+	group: "12452EAAD8722BAC"
+	icon: {
+		id: "minecraft:netherrack"
+	}
+	id: "6E458A34CE6C734E"
+	images: [ ]
+	order_index: 1
+	quest_links: [ ]
+	quests: [{
+		id: "514E6CFC07856999"
+		tasks: [{
+			id: "0DB984CF90DF0243"
+			type: "checkmark"
+		}]
+		x: 0.0d
+		y: 0.0d
+	}]
+}

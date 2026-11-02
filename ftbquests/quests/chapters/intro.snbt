@@ -1,0 +1,19 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "intro"
+	group: ""
+	id: "33F049FE08D5F9AE"
+	images: [ ]
+	order_index: 0
+	quest_links: [ ]
+	quests: [{
+		id: "1B3D1C1FBE77729D"
+		tasks: [{
+			id: "3FE657AC08F8E81D"
+			type: "checkmark"
+		}]
+		x: 0.0d
+		y: 0.0d
+	}]
+}

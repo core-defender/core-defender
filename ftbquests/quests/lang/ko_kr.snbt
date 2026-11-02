@@ -1,0 +1,26 @@
+{
+	chapter.1E960ED338E5E587.title: "챕터 3"
+	chapter.2C13359262EC55D3.title: "챕터 1"
+	chapter.33F049FE08D5F9AE.title: "Intro"
+	chapter.6E458A34CE6C734E.title: "챕터 2"
+	chapter_group.12452EAAD8722BAC.title: "Main"
+	quest.07124738A0EE732A.quest_desc: ["커스텀 아이템 추가하기"]
+	quest.07124738A0EE732A.title: "안산암 혼합물"
+	quest.1B3D1C1FBE77729D.quest_desc: ["모드팩 소개"]
+	quest.1B3D1C1FBE77729D.title: "Core Defender"
+	quest.1E17904CE2E11DCF.title: "기본적인 도구"
+	quest.241857C1B3054A39.title: "안산암 장비"
+	quest.262ED7C438F77BC0.quest_desc: ["커스텀 아이템 추가하기"]
+	quest.262ED7C438F77BC0.title: "설계도 1: 선풍기"
+	quest.2DF5E6F130EE318A.title: "탐험가의 길"
+	quest.48D88D31D5EA50C4.quest_desc: ["두 가지 역할 소개"]
+	quest.48D88D31D5EA50C4.title: "시작"
+	quest.694AD4C73E3CCF33.title: "Create 기초"
+	quest.6BD5A54E77B50733.title: "공학도의 길"
+	quest.73902FBC18661721.title: "포탑 토대 1"
+	quest.7399F21C22904DE8.title: "쇠뇌 포탑"
+	quest.77864CF6C3A8507F.title: "던전 이름 1"
+	task.3FE657AC08F8E81D.title: "Welcome"
+	task.4CA1A1AFF4009CE1.title: "포탑 토대 1"
+	task.57EF426EF549E068.title: "시작"
+}
