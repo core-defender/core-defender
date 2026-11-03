@@ -32,6 +32,7 @@ player.server = server;
 const context = vm.createContext({
   ServerEvents: { loaded: fn => hooks.loaded = fn, unloaded: fn => hooks.unloaded = fn, tick: fn => hooks.tick = fn, commandRegistry() {} },
   CoreDefenderEvents: { waveCleared: fn => hooks.clear = fn, waveFailed: fn => hooks.fail = fn },
+  EntityEvents: { death: fn => hooks.death = fn },
   CoreDefenderWave: { defaultConfig: () => configJson, readConfig: () => editableConfig, isMobType: (_, id) => id.startsWith('minecraft:'), isItemType: id => typeof id === 'string' && id.includes(':'), isActive: () => active, start: (s, json) => { active = true; started.push(JSON.parse(json)); return ''; }, abort: () => active = false },
   CoreDefenderWall: { info: () => JSON.stringify({ segments: [{ id: 'N0', collapsed }] }) },
   Text: { gold: x => x, red: x => x, green: x => x, yellow: x => x, gray: x => x },
@@ -157,4 +158,25 @@ active = false;
 collapsed = true;
 run('cdStartWave(server, player, true)');
 assert.equal(started.length, beforeForced + 2, 'Force cannot start with collapsed walls');
+{
+  active = false; collapsed = false;
+  run('cdAdminAuto(server, true); cdState.tier = 1; cdState.stage = 1; cdState.repeats = 0; cdState.wave = null; cdState.culls = {}');
+  const base = () => JSON.parse(run('JSON.stringify(cdComposeBase(CD, cdState).stage.mobs)'));
+  const next = () => JSON.parse(run('JSON.stringify(cdNextStage().stage.mobs)'));
+  const kill = (type, tags = [], byPlayer = true) => hooks.death({ entity: { type, tags: { contains: t => tags.includes(t) }, server }, source: { player: byPlayer ? player : null } });
+  const zombies = mobs => mobs.filter(m => m.type === 'minecraft:zombie' && !m.elite).reduce((n, m) => n + m.count, 0);
+  const before = zombies(base());
+  kill('minecraft:zombie', [], false);
+  kill('minecraft:zombie', ['cd_wave']);
+  kill('minecraft:pig');
+  assert.equal(zombies(next()), before, 'Only player kills of non-wave mobs in the next wave count');
+  for (let i = 0; i < before * 2; i++) kill('minecraft:zombie');
+  assert.equal(zombies(next()), Math.ceil(before / 2), 'Pre-wave kills shrink a wave to half at most');
+  const elite = next().find(m => m.type === 'minecraft:zombie' && m.elite);
+  assert.ok(!elite || elite.count === base().find(m => m.type === 'minecraft:zombie' && m.elite).count, 'Elite counts are never reduced');
+  seconds(600);
+  assert.equal(zombies(started.at(-1).mobs), Math.ceil(before / 2), 'Started wave uses the reduced counts');
+  assert.deepEqual(state().culls, {}, 'Kills are consumed when the wave starts');
+}
+console.log('PASS: pre-wave kills shrink the next wave to half, only player kills of matching non-wave mobs, consumed on start');
 console.log('PASS: persistent admin auto off/on, force while paused, no overlap, no implicit resume and collapsed-wall guard');

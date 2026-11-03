@@ -12,7 +12,9 @@ import lkd.namsic.coredefender.CoreDefender;
 import lkd.namsic.coredefender.DefenseDimension;
 import lkd.namsic.coredefender.wave.WaveMobs;
 import lkd.namsic.coredefender.wave.WaveProjectiles;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -62,6 +64,23 @@ public final class BarrierSystem {
         }
 
         return shapes.isEmpty() ? motion : BarrierGeometry.clipMovement(entity.getBoundingBox(), motion, shapes);
+    }
+
+    /**
+     * 성벽 안쪽과 바깥을 잇는 유체 흐름이면 true. 장벽은 블록이 아니라 바닐라 유체 판정이 막지 못한다.
+     */
+    public static boolean blocksFluid(BlockGetter getter, BlockPos from, BlockPos to) {
+        if (!(getter instanceof ServerLevel level) || !DefenseDimension.is(level)) {
+            return false;
+        }
+
+        WallState state = WallManager.state(level);
+        if (!state.built()) {
+            return false;
+        }
+
+        WallGeometry geo = state.geometry();
+        return geo.isInterior(from.getX(), from.getZ()) != geo.isInterior(to.getX(), to.getZ());
     }
 
     public record Impact(String segment, Vec3 point) {

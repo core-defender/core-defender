@@ -12,91 +12,6 @@
 	quest_links: [ ]
 	quests: [
 		{
-			dependencies: ["48D88D31D5EA50C4"]
-			id: "6BD5A54E77B50733"
-			tasks: [{
-				id: "44889902806FC435"
-				type: "checkmark"
-			}]
-			x: 0.0d
-			y: -2.0d
-		}
-		{
-			dependencies: ["48D88D31D5EA50C4"]
-			id: "2DF5E6F130EE318A"
-			tasks: [{
-				id: "51F9D1CC1F335C08"
-				type: "checkmark"
-			}]
-			x: 0.0d
-			y: 2.0d
-		}
-		{
-			id: "48D88D31D5EA50C4"
-			tasks: [{
-				id: "57EF426EF549E068"
-				type: "checkmark"
-			}]
-			x: 0.0d
-			y: 0.0d
-		}
-		{
-			dependencies: [
-				"6BD5A54E77B50733"
-				"2DF5E6F130EE318A"
-			]
-			dependency_requirement: "one_completed"
-			icon: {
-				id: "minecraft:stone_pickaxe"
-			}
-			id: "1E17904CE2E11DCF"
-			tasks: [
-				{
-					id: "657A3FB611A489C2"
-					item: { count: 1, id: "minecraft:stone_pickaxe" }
-					type: "item"
-				}
-				{
-					id: "1C6E3DB2FD4B826D"
-					item: { count: 1, id: "minecraft:stone_axe" }
-					optional_task: true
-					type: "item"
-				}
-				{
-					id: "4FCC55C2A26B1B39"
-					item: { count: 1, id: "minecraft:stone_sword" }
-					optional_task: true
-					type: "item"
-				}
-			]
-			x: 2.0d
-			y: 0.0d
-		}
-		{
-			dependencies: ["1E17904CE2E11DCF"]
-			id: "2446E33818FA3255"
-			tasks: [{
-				id: "1922BFAC9A1E0F1C"
-				item: { count: 1, id: "minecraft:iron_ingot" }
-				type: "item"
-			}]
-			x: 3.0d
-			y: 0.0d
-		}
-		{
-			dependencies: ["73902FBC18661721"]
-			dependency_requirement: "one_started"
-			id: "7399F21C22904DE8"
-			tasks: [{
-				id: "3590A915D4CA5052"
-				item: { count: 1, id: "coredefender:basic_turret" }
-				type: "item"
-			}]
-			x: 2.0d
-			y: -3.0d
-		}
-		{
-			dependencies: ["2446E33818FA3255"]
 			id: "694AD4C73E3CCF33"
 			tasks: [
 				{
@@ -119,20 +34,7 @@
 			y: -2.0d
 		}
 		{
-			dependencies: ["77864CF6C3A8507F"]
-			id: "262ED7C438F77BC0"
-			tasks: [{
-				id: "3A86F8CDFC637967"
-				type: "checkmark"
-			}]
-			x: 6.0d
-			y: 2.0d
-		}
-		{
-			dependencies: [
-				"262ED7C438F77BC0"
-				"694AD4C73E3CCF33"
-			]
+			dependencies: ["694AD4C73E3CCF33"]
 			id: "449F38F213B886FD"
 			tasks: [{
 				id: "771D0787EC2C20B3"
@@ -141,19 +43,6 @@
 			}]
 			x: 6.0d
 			y: -2.0d
-		}
-		{
-			dependencies: [
-				"262ED7C438F77BC0"
-				"08DFF6144AFAB79C"
-			]
-			id: "241857C1B3054A39"
-			tasks: [{
-				id: "1CFB44560DD0531A"
-				type: "checkmark"
-			}]
-			x: 8.0d
-			y: 2.0d
 		}
 		{
 			dependencies: ["07124738A0EE732A"]
@@ -167,38 +56,6 @@
 			y: -2.0d
 		}
 		{
-			dependencies: ["73902FBC18661721"]
-			id: "2D6F05A882E43C57"
-			tasks: [{
-				id: "3ED963B7A5F50180"
-				item: { count: 1, id: "coredefender:stone_turret" }
-				type: "item"
-			}]
-			x: 3.0d
-			y: -3.0d
-		}
-		{
-			dependencies: ["73902FBC18661721"]
-			id: "1526DE6C41A23656"
-			tasks: [{
-				id: "39A46F1B8E7FD4F7"
-				item: { count: 1, id: "coredefender:oil_turret" }
-				type: "item"
-			}]
-			x: 4.0d
-			y: -3.0d
-		}
-		{
-			dependencies: ["2446E33818FA3255"]
-			id: "73902FBC18661721"
-			tasks: [{
-				id: "4CA1A1AFF4009CE1"
-				type: "checkmark"
-			}]
-			x: 3.0d
-			y: -2.0d
-		}
-		{
 			dependencies: ["449F38F213B886FD"]
 			id: "07124738A0EE732A"
 			tasks: [{
@@ -207,16 +64,6 @@
 			}]
 			x: 7.0d
 			y: -2.0d
-		}
-		{
-			dependencies: ["2446E33818FA3255"]
-			id: "77864CF6C3A8507F"
-			tasks: [{
-				id: "22E2A72BF171081E"
-				type: "checkmark"
-			}]
-			x: 5.0d
-			y: 2.0d
 		}
 	]
 }

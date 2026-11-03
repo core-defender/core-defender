@@ -1,9 +1,9 @@
 // Arrow, stone and oil turrets are available before Create; flame remains registered for a later tier.
 ServerEvents.recipes(event => {
   // 세 포탑은 무기부(W)만 다르고 토대·조준 부품은 같다.
-  const turret = (id, weapon) => event.shaped(id, [' WH', ' TS', 'PCP'], {
+  const turret = (id, weapon) => event.shaped(id, [' WH', ' TS', 'PRP'], {
     W: weapon, H: 'minecraft:tripwire_hook', T: 'coredefender:turret_base_1', S: 'minecraft:string',
-    P: '#minecraft:wooden_slabs', C: 'minecraft:comparator'
+    P: '#minecraft:wooden_slabs', R: 'minecraft:repeater'
   }).id(id)
   turret('coredefender:basic_turret', 'minecraft:bow')
   turret('coredefender:stone_turret', 'minecraft:iron_shovel')

@@ -18,7 +18,7 @@ public class Balance {
      */
     public static final int BARRICADE_PATH_COST = 40;
 
-    public static final float SPIKE_DAMAGE = 2.0F;
+    public static final float SPIKE_DAMAGE = 5.0F;
     public static final int SPIKE_INTERVAL = 10;
 
     /**

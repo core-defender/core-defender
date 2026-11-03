@@ -29,6 +29,7 @@ function setup(bridgeAvailable = true) {
     CoreDefenderWave: {readConfig: () => JSON.stringify({waveDelaySeconds: 600}), abort: () => calls.push(['abort']), isActive: () => true},
     CoreDefenderWall: {reset: (_, scope) => {calls.push(['reset', scope]); return bridgeAvailable;}},
     CoreDefenderEvents: {waveCleared() {}, waveFailed() {}},
+    EntityEvents: {death() {}},
     ServerEvents: {loaded() {}, unloaded() {}, tick() {}, commandRegistry(fn) {
       fn({commands: {literal: node, argument: node}, arguments: {INTEGER: {create() {}, getResult() {}}}, register: tree => {root = tree;}});
     }}

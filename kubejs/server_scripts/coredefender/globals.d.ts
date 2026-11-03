@@ -1,6 +1,7 @@
 // IDE 전용 선언. KubeJS 는 .js 만 로드하며, 아래 이름은 KubeJS 와 coredefender 모드가 런타임에 주입한다.
 
 declare const ServerEvents: any
+declare const EntityEvents: any
 declare const Item: any
 declare const CoreDefenderEvents: any
 declare const CoreDefenderUI: any

@@ -108,6 +108,7 @@ function cdAdvance(server, player) {
   cdState.tier++
   cdState.stage = 0
   cdState.repeats = 0
+  cdState.culls = {}
   cdState.enabled = true
   cdSchedule(cdState, CD.waveDelaySeconds)
   cdSave(server)
@@ -163,6 +164,7 @@ function cdStartWave(server, player, anywhere) {
     return
   }
   cdState.wave = { tier: cdState.tier, index: next.index, mult: next.mult, stage: next.stage }
+  cdState.culls = {}
   cdSave(server)
   server.tell(Text.gold(`[디펜스] ${label} 시작! 보상 x${next.mult}`))
 }
@@ -260,6 +262,12 @@ function cdCmdStatus(server, player, showTime) {
   let wave = cdWaveInfo()
   player.tell(Text.gray(wave.active ? `${wave.label} 진행 중 - 남은 적 ${wave.remaining}/${wave.total}`
     : `웨이브 ${cdProgressLabel(cdState)} / ${cdWaitingText(server, showTime)}`))
+  let culls = cdState.culls || {}
+  let base = cdComposeBase(CD, cdState).stage
+  Object.keys(culls).forEach(type => {
+    let [ns, path] = type.split(':')
+    player.tell(Text.gray('사전 처치 ').append(Text.translate(`entity.${ns}.${path}`)).append(` ${culls[type]}/${cdCullLimit(base, type)}`))
+  })
   player.tell(Text.gray(`성벽 내부 ${wall.interiorChunks}x${wall.interiorChunks} 청크`))
   wall.segments.forEach(s => player.tell(Text.gray(`  ${s.id}: ${s.hp}/${s.maxHp}${s.collapsed ? ' [붕괴]' : ''}`)))
 }
@@ -296,6 +304,14 @@ ServerEvents.tick(event => {
   if (cdState.uptime % 30 === 0) cdSave(server)
 })
 
+// 대기 중 플레이어가 다음 웨이브와 같은 종류의 몹을 잡으면 그 웨이브가 줄어든다 (차원 무관, 웨이브·테스트 적 제외).
+EntityEvents.death(event => {
+  if (!cdState || !cdState.enabled || CoreDefenderWave.isActive()) return
+  let entity = event.entity
+  if (!event.source.player || entity.tags.contains('cd_wave')) return
+  if (cdRecordCull(CD, cdState, String(entity.type))) cdSave(entity.server)
+})
+
 CoreDefenderEvents.waveCleared(event => {
   let server = event.server
   let wave = cdState.wave || { index: cdState.stage, mult: 1 }
@@ -326,6 +342,7 @@ function cdAdminSetStage(server, stage) {
   if (CoreDefenderWave.isActive()) return
   cdState.stage = Math.max(0, Math.min(9, Number(stage) - 1))
   cdState.repeats = 0
+  cdState.culls = {}
   cdSchedule(cdState, CD.waveDelaySeconds)
   cdSave(server)
   server.tell(Text.yellow(`[디펜스] 다음 웨이브가 ${cdProgressLabel(cdState)}(으)로 설정되었습니다.`))

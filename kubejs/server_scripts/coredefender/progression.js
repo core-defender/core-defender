@@ -25,6 +25,12 @@ function cdBossKind(state) {
 }
 
 function cdComposeWave(config, state) {
+  let wave = cdComposeBase(config, state)
+  cdApplyCulls(wave.stage, state.culls || {})
+  return wave
+}
+
+function cdComposeBase(config, state) {
   let index = Math.min(9, state.stage)
   let base = config.tiers[state.tier - 1][index]
   let stage = JSON.parse(JSON.stringify(base))
@@ -38,6 +44,41 @@ function cdComposeWave(config, state) {
     stage.mobs.push(entry)
   }
   return { index: index, stage: stage, label: cdProgressLabel(state), mult: 1 }
+}
+
+// 대기 중 처치한 같은 종류 몹만큼 다음 웨이브 항목을 줄인다. 항목마다 절반(올림)은 남기고 정예·보스는 줄이지 않는다.
+/**
+ * @param {{mobs: Array<{type: string, count: number, boss?: string, elite?: boolean, breaker?: boolean}>}} stage
+ * @param {string} type
+ */
+function cdCullable(stage, type) {
+  let entries = stage.mobs.filter(m => m.type === type && !m.boss && !m.elite)
+  return entries.filter(m => !m.breaker).concat(entries.filter(m => m.breaker))
+}
+
+function cdCullLimit(stage, type) {
+  return cdCullable(stage, type).reduce((sum, m) => sum + m.count - Math.ceil(m.count / 2), 0)
+}
+
+function cdApplyCulls(stage, culls) {
+  Object.keys(culls).forEach(type => {
+    let left = culls[type]
+    cdCullable(stage, type).forEach(m => {
+      let cut = Math.min(left, m.count - Math.ceil(m.count / 2))
+      m.count -= cut
+      left -= cut
+    })
+  })
+}
+
+// 반영되면 true. 다음 웨이브에 없는 종류이거나 이미 절반까지 줄었으면 false.
+function cdRecordCull(config, state, type) {
+  let limit = cdCullLimit(cdComposeBase(config, state).stage, type)
+  state.culls = state.culls || {}
+  let current = state.culls[type] || 0
+  if (current >= limit) return false
+  state.culls[type] = current + 1
+  return true
 }
 
 function cdSchedule(state, delay) {

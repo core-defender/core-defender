@@ -17,20 +17,10 @@ ServerEvents.recipes(event => {
     'coredefender:seed_oil_bottle', 'coredefender:seed_oil_bottle'
   ]).id('coredefender:seed_oil_bucket_from_bottles')
 
-  // 킬존 (공학 이전)
-  event.shaped(Item.of('coredefender:barricade', 4), [
-    'S S',
-    'PPP',
-    'PPP'
-  ], { S: 'minecraft:stick', P: '#minecraft:planks' })
-
-  event.shaped(Item.of('coredefender:spike_trap', 4), [
-    'N N',
-    'III'
-  ], { N: 'minecraft:iron_nugget', I: 'minecraft:iron_ingot' })
+  // 바리케이드·가시 함정은 탐험 보상 전용이라 제작법이 없다.
 
   // 화살 포탑 전용 저가 탄약 (피해 3)
-  event.shapeless(Item.of('coredefender:crude_arrow', 4), ['minecraft:stick', 'minecraft:iron_nugget'])
+  event.shapeless(Item.of('coredefender:crude_arrow', 2), ['minecraft:stick', 'minecraft:iron_nugget'])
     .id('coredefender:crude_arrow')
 
   // 기본 포탑 토대

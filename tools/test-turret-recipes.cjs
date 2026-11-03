@@ -25,7 +25,14 @@ assert.ok(recipes.some(r=>r.out==='coredefender:oil_turret'));
 assert.ok(!recipes.some(r=>r.out==='coredefender:flame_turret'));
 assert.ok(removed.some(r=>r.output==='coredefender:flame_turret'));
 assert.equal(new Set(recipes.filter(r=>r.id).map(r=>r.id)).size,recipes.filter(r=>r.id).length);
-assert.ok(recipes.find(r=>r.out==='coredefender:basic_turret').keys.I==='minecraft:iron_ingot');
+for(const [id,weapon] of [['basic_turret','minecraft:bow'],['stone_turret','minecraft:iron_shovel'],['oil_turret','minecraft:bucket']]){
+ const r=recipes.find(x=>x.out===`coredefender:${id}`);
+ assert.equal(r.keys.W,weapon);
+ assert.equal(r.keys.T,'coredefender:turret_base_1');
+ assert.ok(Object.values(r.keys).includes('minecraft:repeater')&&!Object.values(r.keys).includes('minecraft:comparator'),`${id} must use a repeater, not a Nether-quartz comparator`);
+}
+assert.ok(recipes.some(r=>r.id==='coredefender:crude_arrow'&&r.out.count===2));
+for(const id of ['coredefender:barricade','coredefender:spike_trap'])assert.ok(!recipes.some(r=>r.out===id||(r.out&&r.out.id===id)),`${id} is exploration-only`);
 for(const r of recipes.filter(r=>r.id&&r.id.match(/module_.+_1$/)))assert.ok(r.ingredients.every(i=>!i.includes('create:')));
 for(const r of recipes.filter(r=>r.pattern)){
  assert.ok(r.pattern.length<=3&&r.pattern.every(row=>row.length<=3));
@@ -34,4 +41,4 @@ for(const r of recipes.filter(r=>r.pattern)){
 for(const r of recipes.filter(r=>r.ingredients)){
  let slots=0;for(const ingredient of r.ingredients){const m=ingredient.match(/^(\d+)x /);slots+=m?Number(m[1]):1;}assert.ok(slots<=9,`${r.id}: ${slots} crafting slots`);
 }
-console.log('PASS: repair access, 30 module recipes, 6 legacy conversions and crafting grid sizes');
+console.log('PASS: repair access, turret recipes, crude arrows, 30 module recipes, 6 legacy conversions and crafting grid sizes');

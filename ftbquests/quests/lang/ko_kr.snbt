@@ -1,9 +1,7 @@
 {
-	chapter.1E960ED338E5E587.title: "챕터 3"
 	chapter.2C13359262EC55D3.title: "챕터 1"
 	chapter.33F049FE08D5F9AE.title: "Intro"
 	chapter.653310435D44E0D1.title: "챕터 1"
-	chapter.6E458A34CE6C734E.title: "챕터 2"
 	chapter_group.12452EAAD8722BAC.title: "Main"
 	quest.020511EF774ED324.quest_desc: [
 		"당장은 만들 수 있는 방어 시설이 많지 않습니다."
@@ -19,21 +17,46 @@
 		"뭘 지켜야 하는 걸까요?"
 		"&#656565[K 버튼을 눌러보세요]&r"
 	]
-	quest.05BB7BCB7C15D146.quest_subtitle: "코어 디펜더에 오신 것을 환영합니다"
-	quest.05BB7BCB7C15D146.title: "환영합니다!"
+	quest.05BB7BCB7C15D146.quest_subtitle: "코어 디펜더?"
+	quest.05BB7BCB7C15D146.title: "여정의 시작"
 	quest.07124738A0EE732A.quest_desc: ["커스텀 아이템 추가하기"]
 	quest.07124738A0EE732A.title: "안산암 혼합물"
+	quest.09B3E717F37CA06E.quest_desc: [
+		"기름 포탑을 쓰기 위해서는 종자유가 필요합니다."
+		"나중에는 자동화를 할 수 있겠지만... 일단은 수동으로 얻어야 할 것 같네요."
+		""
+		"포도 덩굴 화분에 씨앗을 넣고 발로 밟아봅시다."
+		"효율이 나쁘긴 하지만 초반에 종자유를 얻을 유일한 방법입니다."
+	]
+	quest.09B3E717F37CA06E.quest_subtitle: "기름을 얻어봅시다"
+	quest.09B3E717F37CA06E.title: "종자유 병"
+	quest.0A317B587312D6A0.quest_desc: [
+		"화살 포탑을 쓰다보니 화살이 부족해지지 않았나요?"
+		"막대기와 철 조각 1개로 화살을 만들 수 있습니다!"
+		""
+		"물론 활로 직접 쏘지 못하고 데미지가 조금 낮긴 하지만,"
+		"포탑을 놀게 두는 것 보다는 낫지 않을까요?"
+	]
+	quest.0A317B587312D6A0.quest_subtitle: "화살을 제작하는 또 다른 방법"
+	quest.0B80B2739BBF1C24.quest_desc: [
+		"이 세계에는 알 수 없는 구조물이 많은 것 같습니다."
+		"물론 몬스터로 뒤덮여있지만, 곳곳에 배치된 상자에서 많은 보상을 얻을 수 있지 않을까요?"
+		""
+		"당신은 조용히 방어를 준비하기 보다 공격적으로 적을 찾아 다니기로 결정했습니다!"
+	]
+	quest.0B80B2739BBF1C24.quest_subtitle: "몬스터를 기다리기만 할 수는 없죠"
+	quest.0B80B2739BBF1C24.title: "탐험의 시간"
 	quest.1B3D1C1FBE77729D.quest_desc: ["모드팩 소개"]
 	quest.1B3D1C1FBE77729D.title: "Core Defender"
 	quest.1CD353D4DF2733C8.quest_desc: [
 		"당신은 본능적으로 코어가 곧 위험해지리란 것을 깨달았습니다."
 		"코어를 보호하기 위해서는 자동화된 설비가 필수겠네요."
+		"자동화 설비를 만들기 위해 충분한 양의 철을 구해둡시다."
 		""
 		"물론 직접 뛰어다녀도 되긴 하지만..."
 		"아마 그것만으로는 충분하지 않을 겁니다."
 	]
 	quest.1CD353D4DF2733C8.quest_subtitle: "철은 모든 것의 기초입니다"
-	quest.1E17904CE2E11DCF.title: "기본적인 도구"
 	quest.21B45C57ABF61622.quest_desc: [
 		"화살 포탑은 단일 대상을 빠르게 공격하는 포탑입니다."
 		"꽤나 많은 화살을 소모하지만 그만큼 성능도 준수해 보이네요."
@@ -41,10 +64,12 @@
 		"다가오는 적들을 벌집으로 만듭시다!"
 	]
 	quest.21B45C57ABF61622.quest_subtitle: "최종무기 활"
-	quest.241857C1B3054A39.title: "안산암 장비"
-	quest.262ED7C438F77BC0.quest_desc: ["커스텀 아이템 추가하기"]
-	quest.262ED7C438F77BC0.title: "설계도 1: 선풍기"
-	quest.2DF5E6F130EE318A.title: "탐험가의 길"
+	quest.277F955C4599FAAC.quest_desc: [
+		"몬스터를 죽이다 보니 뭔가 안전해지는 느낌입니다."
+		"몬스터의 공세 전에 미리 몬스터를 죽이면 공세 규모가 줄어드는게 아닐까요?"
+	]
+	quest.277F955C4599FAAC.quest_subtitle: "조금 안전해진 기분"
+	quest.277F955C4599FAAC.title: "최선의 방어는 공격"
 	quest.341C39AE41E464C4.quest_desc: [
 		"기름 포탑은 근접하는 적들에게 기름을 부어 광역 데미지를 입히는 포탑입니다."
 		"사거리는 짧지만 근접하는 다수의 적들을 빠르게 해치울 수 있습니다."
@@ -62,8 +87,14 @@
 	]
 	quest.3C9D41A7E85B2F06.quest_subtitle: "여긴 대체 어디죠?"
 	quest.3C9D41A7E85B2F06.title: "디펜스 월드"
-	quest.48D88D31D5EA50C4.quest_desc: ["두 가지 역할 소개"]
-	quest.48D88D31D5EA50C4.title: "시작"
+	quest.42D94C8EA2C4DD4F.quest_desc: [
+		"디펜스 차원의 코어의 영역 바깥에는 대부분의 블록을 설치할 수 없는 것 같습니다."
+		"하지만 바리케이트는 다행히 설치할 수 있는 것 같네요."
+		""
+		"바리케이트를 영리하게 활용하여 좀비의 경로를 유도해봅시다."
+		"&#656565바리케이트는 탐험을 통해서만 획득할 수 있습니다.&r"
+	]
+	quest.42D94C8EA2C4DD4F.quest_subtitle: "몬스터의 경로를 제한할 방법"
 	quest.49637C70274A6947.quest_desc: [
 		"투석 포탑은 돌과 석탄을 소모하여 광역 공격을 하는 포탑입니다."
 		"공격 속도는 느리지만 데미지 하나는 끝내줍니다."
@@ -73,13 +104,16 @@
 		"적들의 머리를 깨버립시다!"
 	]
 	quest.49637C70274A6947.quest_subtitle: "남는 돌을 버리는 대신 던져보세요"
+	quest.553796774DD643BC.quest_desc: [
+		"코어 블록을 지키기 위해 당신은 함정을 쓰기로 합니다."
+		"몬스터들은 함정을 보지 못하고 그대로 걸어와 죽을거예요."
+		""
+		"하지만 조심하세요. 가시는 대상을 가리면서 공격하지 않습니다."
+		"&#656565가시 함정은 탐험을 통해서만 획득할 수 있습니다.&r"
+	]
+	quest.553796774DD643BC.quest_subtitle: "생각보다 많이 아파요"
 	quest.694AD4C73E3CCF33.title: "Create 기초"
-	quest.6BD5A54E77B50733.title: "공학도의 길"
-	quest.73902FBC18661721.title: "포탑 토대 1"
-	quest.7399F21C22904DE8.title: "쇠뇌 포탑"
-	quest.77864CF6C3A8507F.title: "던전 이름 1"
 	task.2E22533F0D62E979.title: "환영합니다!"
 	task.3FE657AC08F8E81D.title: "Welcome"
-	task.4CA1A1AFF4009CE1.title: "포탑 토대 1"
-	task.57EF426EF549E068.title: "시작"
+	task.77F84EC5112643B6.title: "ㅁ"
 }

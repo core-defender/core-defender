@@ -6,6 +6,7 @@ import lkd.namsic.coredefender.wave.WaveMobs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -15,7 +16,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * 킬존 가시 함정: 지나갈 수 있지만 웨이브 몹을 느리게 하고 피해를 준다.
+ * 킬존 가시 함정: 지나갈 수 있지만 웨이브 몹을 느리게 하고 피해를 준다. 플레이어도 피해를 받는다.
  */
 public class SpikeTrapBlock extends Block {
     public static final MapCodec<SpikeTrapBlock> CODEC = simpleCodec(SpikeTrapBlock::new);
@@ -38,11 +39,20 @@ public class SpikeTrapBlock extends Block {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide || !(entity instanceof LivingEntity living) || !WaveMobs.isWaveMob(living)) {
+        if (level.isClientSide || !(entity instanceof LivingEntity living)) {
             return;
         }
 
-        entity.makeStuckInBlock(state, SLOW);
+        boolean waveMob = WaveMobs.isWaveMob(living);
+        if (!waveMob && !(living instanceof Player)) {
+            return;
+        }
+
+        // 플레이어는 피해만 받는다. 감속은 킬존에서 몹을 붙잡아 두는 용도다.
+        if (waveMob) {
+            entity.makeStuckInBlock(state, SLOW);
+        }
+
         if (level.getGameTime() % Balance.SPIKE_INTERVAL == 0) {
             living.hurt(level.damageSources().cactus(), Balance.SPIKE_DAMAGE);
         }
